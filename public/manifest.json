@@ -1,0 +1,9 @@
+{
+  "short_name": "TransEU Agent",
+  "name": "TransEU Agent - System zarządzania profilami asystentów",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

@@ -1,0 +1,994 @@
+{
+  "agents": [
+    {
+      "id": 1,
+      "name": "Agent Transportowy Premium",
+      "description": "Agent specjalizujący się w transporcie międzynarodowym z pełnym zakresem usług",
+      "isActive": true,
+      "createdAt": "2025-03-18T14:30:00.000Z",
+      "updatedAt": "2025-03-18T14:30:00.000Z",
+      "specializations": [
+        "Transport międzynarodowy",
+        "Transport chłodniczy",
+        "Transport ADR"
+      ],
+      "priorityClients": [
+        "Nestle",
+        "Unilever",
+        "P&G"
+      ],
+      "cargoTypes": [
+        "Palety",
+        "Chłodnia",
+        "ADR"
+      ],
+      "additionalServices": [
+        "Ubezpieczenie cargo",
+        "Śledzenie GPS",
+        "Raportowanie"
+      ]
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "status": "negotiating",
+      "clientName": "Nestle Polska S.A.",
+      "clientId": "NES-PL-2025",
+      "priority": "high",
+      "assignedAgentId": 1,
+      "assignedAgentName": "Agent Transportowy Premium",
+      "assignedAgentType": "automation",
+      "createdAt": "2025-03-18T08:00:00.000Z",
+      "updatedAt": "2025-03-19T10:15:00.000Z",
+      "expiresAt": "2025-03-22T23:59:59.000Z",
+      "contractorName": "Nestle Polska S.A.",
+      "pickup": {
+        "date": "2025-03-20T08:00:00.000Z",
+        "timeWindow": "08:00-12:00",
+        "address": "ul. Przemysłowa 10",
+        "city": "Warszawa",
+        "country": "Polska",
+        "postalCode": "02-486",
+        "contactPerson": "Marta Kowalska",
+        "contactPhone": "+48 501 234 567",
+        "contactEmail": "m.kowalska@nestle.pl",
+        "additionalInfo": "Wjazd od strony ul. Fabrycznej, brama nr 3",
+        "location": {
+          "address": "ul. Przemysłowa 10, 02-486 Warszawa, Polska"
+        }
+      },
+      "delivery": {
+        "date": "2025-03-21T10:00:00.000Z",
+        "timeWindow": "10:00-14:00",
+        "address": "Industriestraße 25",
+        "city": "Berlin",
+        "country": "Niemcy",
+        "postalCode": "10115",
+        "contactPerson": "Hans Schmidt",
+        "contactPhone": "+49 123 456 789",
+        "contactEmail": "h.schmidt@nestle.de",
+        "additionalInfo": "Dostawa musi być awizowana 2h przed przyjazdem",
+        "location": {
+          "address": "Industriestraße 25, 10115 Berlin, Niemcy"
+        }
+      },
+      "cargo": {
+        "type": "Palety EUR",
+        "weight": 12000,
+        "weightUnit": "kg",
+        "volume": 45,
+        "volumeUnit": "m³",
+        "loadingMeters": 12,
+        "packages": 24,
+        "packageType": "Palety 120x80cm",
+        "description": "Artykuły spożywcze - produkty suche",
+        "adr": false,
+        "temperature": null,
+        "stackable": true,
+        "fragile": false,
+        "additionalRequirements": "Towar musi być zabezpieczony przed wilgocią"
+      },
+      "vehicle": {
+        "type": "Plandeka",
+        "requirements": ["Winda", "Pas ADR", "GPS"],
+        "capacity": "24t",
+        "size": "Standard 13.6m",
+        "additionalEquipment": "Pasy transportowe, maty antypoślizgowe"
+      },
+      "financials": {
+        "value": 1800,
+        "currency": "EUR",
+        "ratePerKm": 1.2,
+        "estimatedDistance": 580,
+        "distance": 580,
+        "fuelCost": 450,
+        "driverCost": 250,
+        "additionalCosts": [
+          {
+            "name": "Ubezpieczenie cargo",
+            "value": 150,
+            "currency": "EUR"
+          }
+        ],
+        "estimatedCosts": 850,
+        "estimatedProfit": 950,
+        "margin": 53,
+        "valuePerKm": 3.1,
+        "paymentTerm": "30"
+      },
+      "profitabilityScore": 85,
+      "notes": "Priorytetowy klient, zapewnić najwyższą jakość obsługi. Transport realizowany w ramach stałej umowy współpracy.",
+      "documents": [
+        {
+          "type": "Zlecenie transportowe",
+          "number": "ZT/NES/2025/0320",
+          "date": "2025-03-18T08:05:00.000Z"
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2025-03-18T08:00:00.000Z",
+          "status": "new",
+          "description": "Zlecenie utworzone w systemie"
+        },
+        {
+          "date": "2025-03-18T08:15:00.000Z",
+          "status": "negotiating",
+          "description": "Rozpoczęto negocjacje warunków zlecenia"
+        },
+        {
+          "date": "2025-03-19T10:15:00.000Z",
+          "status": "negotiating",
+          "description": "Zaktualizowano warunki cenowe"
+        }
+      ],
+      "conversation": {
+        "id": 1,
+        "orderId": 1,
+        "status": "active",
+        "messages": [
+          {
+            "id": 1,
+            "content": "Dzień dobry, przesyłam szczegóły zlecenia transportu z Warszawy do Berlina. Proszę o informację czy są Państwo w stanie zrealizować to zlecenie?",
+            "sentAt": "2025-03-18T08:05:00.000Z",
+            "senderId": "client",
+            "senderName": "Anna Nowak",
+            "attachments": []
+          },
+          {
+            "id": 2,
+            "content": "Dzień dobry, dziękuję za przesłanie zlecenia. Tak, jesteśmy w stanie zrealizować ten transport. Czy wymagają Państwo dodatkowych usług poza standardowym transportem?",
+            "sentAt": "2025-03-18T08:30:00.000Z",
+            "senderId": "agent",
+            "senderName": "Agent Transportowy Premium",
+            "attachments": []
+          },
+          {
+            "id": 3,
+            "content": "Potrzebujemy dodatkowego ubezpieczenia cargo oraz potwierdzenia dostawy z podpisem odbiorcy.",
+            "sentAt": "2025-03-18T09:15:00.000Z",
+            "senderId": "client",
+            "senderName": "Anna Nowak",
+            "attachments": []
+          },
+          {
+            "id": 4,
+            "content": "Potwierdzam, że możemy zapewnić dodatkowe ubezpieczenie cargo oraz potwierdzenie dostawy z podpisem odbiorcy. Koszt dodatkowego ubezpieczenia to 150 EUR. Czy akceptują Państwo tę stawkę?",
+            "sentAt": "2025-03-19T10:05:00.000Z",
+            "senderId": "agent",
+            "senderName": "Agent Transportowy Premium",
+            "attachments": []
+          },
+          {
+            "id": 5,
+            "content": "Tak, akceptujemy stawkę 150 EUR. Proszę o przygotowanie umowy.",
+            "sentAt": "2025-03-19T10:30:00.000Z",
+            "senderId": "client",
+            "senderName": "Anna Nowak",
+            "attachments": []
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "status": "negotiating",
+      "clientName": "Frosta Sp. z o.o.",
+      "clientId": "FRO-PL-2025",
+      "priority": "medium",
+      "assignedAgentId": 1,
+      "assignedAgentName": "Agent Transportowy Premium",
+      "assignedAgentType": "automation",
+      "createdAt": "2025-03-18T09:30:00.000Z",
+      "updatedAt": "2025-03-19T11:45:00.000Z",
+      "expiresAt": "2025-03-23T23:59:59.000Z",
+      "contractorName": "Frosta Sp. z o.o.",
+      "pickup": {
+        "date": "2025-03-21T07:00:00.000Z",
+        "timeWindow": "07:00-10:00",
+        "address": "ul. Chłodnicza 5",
+        "city": "Bydgoszcz",
+        "country": "Polska",
+        "postalCode": "85-744",
+        "contactPerson": "Tomasz Nowak",
+        "contactPhone": "+48 602 345 678",
+        "contactEmail": "t.nowak@frosta.pl",
+        "additionalInfo": "Zakład produkcyjny, wjazd dla ciężarówek od ul. Magazynowej",
+        "location": {
+          "address": "ul. Chłodnicza 5, 85-744 Bydgoszcz, Polska"
+        }
+      },
+      "delivery": {
+        "date": "2025-03-22T14:00:00.000Z",
+        "timeWindow": "14:00-18:00",
+        "address": "Kühlstraße 12",
+        "city": "Hamburg",
+        "country": "Niemcy",
+        "postalCode": "22087",
+        "contactPerson": "Klaus Meyer",
+        "contactPhone": "+49 176 987 654",
+        "contactEmail": "k.meyer@frosta.de",
+        "additionalInfo": "Centrum dystrybucyjne, wymagana temperatura -18°C",
+        "location": {
+          "address": "Kühlstraße 12, 22087 Hamburg, Niemcy"
+        }
+      },
+      "cargo": {
+        "type": "Mrożonki",
+        "weight": 18000,
+        "weightUnit": "kg",
+        "volume": 40,
+        "volumeUnit": "m³",
+        "loadingMeters": 10,
+        "packages": 30,
+        "packageType": "Palety 120x80cm",
+        "description": "Mrożone produkty spożywcze",
+        "adr": false,
+        "temperature": -18,
+        "stackable": false,
+        "fragile": true,
+        "additionalRequirements": "Utrzymanie stałej temperatury -18°C przez cały transport"
+      },
+      "vehicle": {
+        "type": "Chłodnia",
+        "requirements": ["Agregat chłodniczy", "GPS", "Termograf"],
+        "capacity": "22t",
+        "size": "Standard 13.6m",
+        "additionalEquipment": "Termograf z wydrukiem, system monitorowania temperatury"
+      },
+      "financials": {
+        "value": 2200,
+        "currency": "EUR",
+        "ratePerKm": 1.5,
+        "estimatedDistance": 720,
+        "distance": 720,
+        "fuelCost": 580,
+        "driverCost": 320,
+        "additionalCosts": [
+          {
+            "name": "Dodatkowe ubezpieczenie",
+            "value": 200,
+            "currency": "EUR"
+          },
+          {
+            "name": "Koszt paliwa do agregatu",
+            "value": 120,
+            "currency": "EUR"
+          }
+        ],
+        "estimatedCosts": 1220,
+        "estimatedProfit": 980,
+        "margin": 45,
+        "valuePerKm": 3.05,
+        "paymentTerm": "21"
+      },
+      "profitabilityScore": 75,
+      "notes": "Transport wymaga specjalistycznej chłodni z możliwością monitorowania temperatury. Klient wymaga raportów temperatury po dostawie.",
+      "documents": [
+        {
+          "type": "Zlecenie transportowe",
+          "number": "ZT/FRO/2025/0321",
+          "date": "2025-03-18T09:35:00.000Z"
+        },
+        {
+          "type": "Specyfikacja temperatury",
+          "number": "ST/FRO/2025/0321",
+          "date": "2025-03-18T09:40:00.000Z"
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2025-03-18T09:30:00.000Z",
+          "status": "new",
+          "description": "Zlecenie utworzone w systemie"
+        },
+        {
+          "date": "2025-03-18T10:15:00.000Z",
+          "status": "negotiating",
+          "description": "Rozpoczęto negocjacje warunków zlecenia"
+        },
+        {
+          "date": "2025-03-19T11:45:00.000Z",
+          "status": "negotiating",
+          "description": "Zaktualizowano wymagania dotyczące temperatury"
+        }
+      ],
+      "conversation": {
+        "id": 2,
+        "orderId": 2,
+        "status": "active",
+        "messages": [
+          {
+            "id": 1,
+            "content": "Dzień dobry, potrzebujemy transportu mrożonek z naszego zakładu w Bydgoszczy do centrum dystrybucyjnego w Hamburgu. Wymagana temperatura -18°C. Czy możecie zrealizować takie zlecenie?",
+            "sentAt": "2025-03-18T09:35:00.000Z",
+            "senderId": "client",
+            "senderName": "Tomasz Nowak",
+            "attachments": []
+          },
+          {
+            "id": 2,
+            "content": "Dzień dobry Panie Tomaszu, dziękuję za zapytanie. Tak, mamy dostępne pojazdy chłodnicze z możliwością utrzymania temperatury -18°C. Czy potrzebują Państwo dodatkowych usług, takich jak monitoring temperatury w czasie rzeczywistym?",
+            "sentAt": "2025-03-18T10:00:00.000Z",
+            "senderId": "agent",
+            "senderName": "Agent Transportowy Premium",
+            "attachments": []
+          },
+          {
+            "id": 3,
+            "content": "Tak, monitoring temperatury jest dla nas kluczowy. Potrzebujemy również wydruku z termografu po dostawie jako potwierdzenie utrzymania łańcucha chłodniczego.",
+            "sentAt": "2025-03-18T10:45:00.000Z",
+            "senderId": "client",
+            "senderName": "Tomasz Nowak",
+            "attachments": []
+          },
+          {
+            "id": 4,
+            "content": "Oczywiście, zapewnimy monitoring temperatury oraz wydruk z termografu. Czy mają Państwo jakieś dodatkowe wymagania dotyczące pojazdu lub kierowcy?",
+            "sentAt": "2025-03-19T09:15:00.000Z",
+            "senderId": "agent",
+            "senderName": "Agent Transportowy Premium",
+            "attachments": []
+          },
+          {
+            "id": 5,
+            "content": "Kierowca powinien mieć doświadczenie w transporcie mrożonek i znać procedury awaryjne w przypadku awarii agregatu. Pojazd musi być wyposażony w zapasowy agregat lub mieć umowę serwisową na trasie.",
+            "sentAt": "2025-03-19T10:30:00.000Z",
+            "senderId": "client",
+            "senderName": "Tomasz Nowak",
+            "attachments": []
+          },
+          {
+            "id": 6,
+            "content": "Potwierdzam, że nasi kierowcy mają doświadczenie w transporcie mrożonek i znają procedury awaryjne. Wszystkie nasze pojazdy chłodnicze mają umowy serwisowe na trasach międzynarodowych. Przygotowałem wstępną ofertę cenową na 2200 EUR. Czy ta stawka jest dla Państwa akceptowalna?",
+            "sentAt": "2025-03-19T11:45:00.000Z",
+            "senderId": "agent",
+            "senderName": "Agent Transportowy Premium",
+            "attachments": []
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "status": "accepted",
+      "clientName": "Volkswagen Poznań Sp. z o.o.",
+      "clientId": "VW-PL-2025",
+      "priority": "high",
+      "assignedAgentId": 2,
+      "assignedAgentName": "Agent Transportowy Standard",
+      "assignedAgentType": "automation",
+      "createdAt": "2025-03-16T12:00:00.000Z",
+      "updatedAt": "2025-03-19T10:15:00.000Z",
+      "pickup": {
+        "date": "2025-03-17T10:00:00.000Z",
+        "timeWindow": "10:00-12:00",
+        "address": "ul. Warszawska 349",
+        "city": "Poznań",
+        "country": "Polska",
+        "postalCode": "61-060",
+        "contactPerson": "Thomas Müller",
+        "contactPhone": "+48 618 765 432",
+        "contactEmail": "t.mueller@vw-poznan.pl",
+        "additionalInfo": "Załadunek z magazynu części zamiennych, brama 12, wymagane środki ochrony osobistej"
+      },
+      "delivery": {
+        "date": "2025-03-18T14:00:00.000Z",
+        "timeWindow": "12:00-14:00",
+        "address": "Heinrich-Nordhoff-Straße 56",
+        "city": "Wolfsburg",
+        "country": "Niemcy",
+        "postalCode": "38440",
+        "contactPerson": "Hans Weber",
+        "contactPhone": "+49 5361 9-0",
+        "contactEmail": "h.weber@volkswagen.de",
+        "additionalInfo": "Dostawa do fabryki głównej, brama towarowa B4, wymagana wcześniejsza awizacja"
+      },
+      "cargo": {
+        "type": "Palety EUR",
+        "weight": 14500,
+        "weightUnit": "kg",
+        "volume": 32,
+        "volumeUnit": "m³",
+        "loadingMeters": 9,
+        "packages": 18,
+        "packageType": "Palety specjalne VW 120x100cm",
+        "description": "Części samochodowe - elementy karoserii",
+        "adr": false,
+        "temperature": null,
+        "stackable": false,
+        "fragile": true,
+        "additionalRequirements": "Towar wymaga ostrożnego transportu, zabezpieczenia przed przesunięciem"
+      },
+      "vehicle": {
+        "type": "Plandeka",
+        "requirements": ["GPS", "System mocowania ładunku", "Certyfikat VDA 4.2"],
+        "capacity": "24t",
+        "size": "Standard 13.6m",
+        "additionalEquipment": "Belki rozporowe, pasy transportowe, narożniki ochronne"
+      },
+      "financials": {
+        "value": 1450,
+        "currency": "EUR",
+        "ratePerKm": 1.3,
+        "estimatedDistance": 520,
+        "estimatedCosts": 676,
+        "estimatedProfit": 774,
+        "paymentTerm": "14 dni",
+        "additionalCosts": [
+          {
+            "name": "Ubezpieczenie cargo o podwyższonej wartości",
+            "value": 180,
+            "currency": "EUR"
+          }
+        ]
+      },
+      "profitabilityScore": 78,
+      "notes": "Klient strategiczny, transport realizowany w ramach stałej umowy współpracy. Wymagane przestrzeganie procedur bezpieczeństwa VW Group.",
+      "documents": [
+        {
+          "type": "Zlecenie transportowe",
+          "number": "ZT/VW/2025/0317",
+          "date": "2025-03-16T12:05:00.000Z"
+        },
+        {
+          "type": "Umowa transportowa",
+          "number": "UT/VW/2025/0317",
+          "date": "2025-03-16T14:30:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "status": "accepted",
+      "clientName": "Danone Polska Sp. z o.o.",
+      "clientId": "DAN-PL-2025",
+      "priority": "medium",
+      "assignedAgentId": 1,
+      "assignedAgentName": "Agent Transportowy Premium",
+      "assignedAgentType": "automation",
+      "createdAt": "2025-03-15T09:00:00.000Z",
+      "updatedAt": "2025-03-19T11:00:00.000Z",
+      "pickup": {
+        "date": "2025-03-18T08:00:00.000Z",
+        "timeWindow": "08:00-10:00",
+        "address": "ul. Bohaterów Warszawy 23",
+        "city": "Wrocław",
+        "country": "Polska",
+        "postalCode": "50-078",
+        "contactPerson": "Michał Lewandowski",
+        "contactPhone": "+48 713 456 789",
+        "contactEmail": "m.lewandowski@danone.com",
+        "additionalInfo": "Załadunek z magazynu chłodniczego, wymagana temperatura w naczepie +4°C"
+      },
+      "delivery": {
+        "date": "2025-03-19T10:00:00.000Z",
+        "timeWindow": "10:00-12:00",
+        "address": "Milchstraße 15",
+        "city": "Monachium",
+        "country": "Niemcy",
+        "postalCode": "80331",
+        "contactPerson": "Stefan Bauer",
+        "contactPhone": "+49 892 345 6789",
+        "contactEmail": "s.bauer@danone.de",
+        "additionalInfo": "Dostawa do centrum dystrybucyjnego, dok 5-8, wymagana awizacja 1h przed dostawą"
+      },
+      "cargo": {
+        "type": "Palety EUR",
+        "weight": 16500,
+        "weightUnit": "kg",
+        "volume": 36,
+        "volumeUnit": "m³",
+        "loadingMeters": 11,
+        "packages": 22,
+        "packageType": "Palety 120x80cm",
+        "description": "Produkty mleczne - jogurty, serki, napoje mleczne",
+        "adr": false,
+        "temperature": 4,
+        "temperatureUnit": "°C",
+        "temperatureRange": "2-6",
+        "stackable": true,
+        "fragile": true,
+        "additionalRequirements": "Wymagany ciągły monitoring temperatury, odchylenia max ±1°C"
+      },
+      "vehicle": {
+        "type": "Chłodnia",
+        "requirements": ["Agregat", "GPS", "Monitoring temperatury", "Certyfikat ATP"],
+        "capacity": "22t",
+        "size": "Standard 13.6m",
+        "additionalEquipment": "System rejestracji temperatury z wydrukiem, przegroda termiczna"
+      },
+      "financials": {
+        "value": 1300,
+        "currency": "EUR",
+        "ratePerKm": 1.25,
+        "estimatedDistance": 630,
+        "estimatedCosts": 787.5,
+        "estimatedProfit": 512.5,
+        "paymentTerm": "21 dni",
+        "additionalCosts": [
+          {
+            "name": "Opłata za utrzymanie temperatury",
+            "value": 100,
+            "currency": "EUR"
+          },
+          {
+            "name": "Dodatkowe ubezpieczenie",
+            "value": 80,
+            "currency": "EUR"
+          }
+        ]
+      },
+      "profitabilityScore": 68,
+      "notes": "Klient wymaga szczegółowych raportów z monitoringu temperatury. Wymagana certyfikacja ATP dla pojazdu.",
+      "documents": [
+        {
+          "type": "Zlecenie transportowe",
+          "number": "ZT/DAN/2025/0318",
+          "date": "2025-03-15T09:15:00.000Z"
+        },
+        {
+          "type": "Umowa transportowa",
+          "number": "UT/DAN/2025/0318",
+          "date": "2025-03-15T11:30:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "status": "negotiating",
+      "clientName": "BASF Polska Sp. z o.o.",
+      "clientId": "BASF-PL-2025",
+      "priority": "high",
+      "assignedAgentId": 3,
+      "assignedAgentName": "Agent Transportowy ADR",
+      "assignedAgentType": "automation",
+      "createdAt": "2025-03-17T15:00:00.000Z",
+      "updatedAt": "2025-03-19T12:05:00.000Z",
+      "pickup": {
+        "date": "2025-03-21T09:00:00.000Z",
+        "timeWindow": "09:00-12:00",
+        "address": "ul. Chemiczna 7",
+        "city": "Śrem",
+        "country": "Polska",
+        "postalCode": "63-100",
+        "contactPerson": "Jan Kowalski",
+        "contactPhone": "+48 612 345 678",
+        "contactEmail": "j.kowalski@basf.com",
+        "additionalInfo": "Załadunek z magazynu substancji niebezpiecznych, wymagane uprawnienia ADR, brama 3"
+      },
+      "delivery": {
+        "date": "2025-03-22T14:00:00.000Z",
+        "timeWindow": "14:00-16:00",
+        "address": "Carl-Bosch-Straße 38",
+        "city": "Ludwigshafen",
+        "country": "Niemcy",
+        "postalCode": "67056",
+        "contactPerson": "Hans Schmidt",
+        "contactPhone": "+49 621 60-0",
+        "contactEmail": "h.schmidt@basf.com",
+        "additionalInfo": "Dostawa do zakładu produkcyjnego, brama towarowa C, wymagana awizacja 24h przed dostawą"
+      },
+      "cargo": {
+        "type": "Palety przemysłowe",
+        "weight": 22000,
+        "weightUnit": "kg",
+        "volume": 40,
+        "volumeUnit": "m³",
+        "loadingMeters": 13,
+        "packages": 26,
+        "packageType": "Bębny stalowe 200L na paletach",
+        "description": "Substancje chemiczne - rozpuszczalniki organiczne",
+        "adr": true,
+        "adrClass": "3",
+        "unNumber": "UN1993",
+        "packagingGroup": "II",
+        "temperature": null,
+        "stackable": false,
+        "fragile": false,
+        "additionalRequirements": "Transport zgodny z przepisami ADR, wymagane dokumenty przewozowe ADR"
+      },
+      "vehicle": {
+        "type": "Plandeka ADR",
+        "requirements": ["Certyfikat ADR", "GPS", "Monitoring online", "Wyposażenie ADR"],
+        "capacity": "24t",
+        "size": "Standard 13.6m",
+        "additionalEquipment": "Kompletne wyposażenie ADR, gaśnice, środki neutralizujące"
+      },
+      "financials": {
+        "value": 2200,
+        "currency": "EUR",
+        "ratePerKm": 1.6,
+        "estimatedDistance": 800,
+        "estimatedCosts": 1280,
+        "estimatedProfit": 920,
+        "paymentTerm": "30 dni",
+        "additionalCosts": [
+          {
+            "name": "Opłata ADR",
+            "value": 150,
+            "currency": "EUR"
+          },
+          {
+            "name": "Ubezpieczenie specjalne",
+            "value": 200,
+            "currency": "EUR"
+          }
+        ]
+      },
+      "profitabilityScore": 75,
+      "notes": "Transport substancji niebezpiecznych klasy 3 ADR. Kierowca musi posiadać aktualne uprawnienia ADR. Wymagane specjalne ubezpieczenie ładunku.",
+      "documents": [
+        {
+          "type": "Zlecenie transportowe",
+          "number": "ZT/BASF/2025/0321",
+          "date": "2025-03-17T15:05:00.000Z"
+        },
+        {
+          "type": "Karta charakterystyki",
+          "number": "KC/BASF/UN1993/2025",
+          "date": "2025-03-17T15:10:00.000Z"
+        }
+      ]
+    }
+  ],
+  "conversations": [
+    {
+      "id": 1,
+      "orderId": 1,
+      "messages": [
+        {
+          "id": 1,
+          "content": "Dzień dobry, przesyłam szczegóły zlecenia transportu z Warszawy do Berlina. Proszę o informację czy są Państwo w stanie zrealizować to zlecenie?",
+          "sentAt": "2025-03-18T08:05:00.000Z",
+          "senderId": "client",
+          "senderName": "Anna Nowak",
+          "attachments": []
+        },
+        {
+          "id": 2,
+          "content": "Dzień dobry, dziękuję za przesłanie zlecenia. Tak, jesteśmy w stanie zrealizować ten transport. Czy wymagają Państwo dodatkowych usług poza standardowym transportem?",
+          "sentAt": "2025-03-18T08:30:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy Premium",
+          "attachments": []
+        },
+        {
+          "id": 3,
+          "content": "Potrzebujemy dodatkowego ubezpieczenia cargo oraz potwierdzenia dostawy z podpisem odbiorcy.",
+          "sentAt": "2025-03-18T09:15:00.000Z",
+          "senderId": "client",
+          "senderName": "Anna Nowak",
+          "attachments": []
+        },
+        {
+          "id": 4,
+          "content": "Potwierdzam, że możemy zapewnić dodatkowe ubezpieczenie cargo oraz potwierdzenie dostawy z podpisem odbiorcy. Koszt dodatkowego ubezpieczenia to 150 EUR. Czy akceptują Państwo tę stawkę?",
+          "sentAt": "2025-03-19T10:05:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy Premium",
+          "attachments": []
+        },
+        {
+          "id": 5,
+          "content": "Tak, akceptujemy stawkę 150 EUR. Proszę o przygotowanie umowy.",
+          "sentAt": "2025-03-19T10:30:00.000Z",
+          "senderId": "client",
+          "senderName": "Anna Nowak",
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "orderId": 2,
+      "messages": [
+        {
+          "id": 1,
+          "content": "Dzień dobry, potrzebujemy transportu mrożonek z naszego zakładu w Bydgoszczy do centrum dystrybucyjnego w Hamburgu. Wymagana temperatura -18°C. Czy możecie zrealizować takie zlecenie?",
+          "sentAt": "2025-03-18T09:35:00.000Z",
+          "senderId": "client",
+          "senderName": "Tomasz Nowak",
+          "attachments": []
+        },
+        {
+          "id": 2,
+          "content": "Dzień dobry Panie Tomaszu, dziękuję za zapytanie. Tak, mamy dostępne pojazdy chłodnicze z możliwością utrzymania temperatury -18°C. Czy potrzebują Państwo dodatkowych usług, takich jak monitoring temperatury w czasie rzeczywistym?",
+          "sentAt": "2025-03-18T10:00:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy Premium",
+          "attachments": []
+        },
+        {
+          "id": 3,
+          "content": "Tak, monitoring temperatury jest dla nas kluczowy. Potrzebujemy również wydruku z termografu po dostawie jako potwierdzenie utrzymania łańcucha chłodniczego.",
+          "sentAt": "2025-03-18T10:45:00.000Z",
+          "senderId": "client",
+          "senderName": "Tomasz Nowak",
+          "attachments": []
+        },
+        {
+          "id": 4,
+          "content": "Oczywiście, zapewnimy monitoring temperatury oraz wydruk z termografu. Czy mają Państwo jakieś dodatkowe wymagania dotyczące pojazdu lub kierowcy?",
+          "sentAt": "2025-03-19T09:15:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy Premium",
+          "attachments": []
+        },
+        {
+          "id": 5,
+          "content": "Kierowca powinien mieć doświadczenie w transporcie mrożonek i znać procedury awaryjne w przypadku awarii agregatu. Pojazd musi być wyposażony w zapasowy agregat lub mieć umowę serwisową na trasie.",
+          "sentAt": "2025-03-19T10:30:00.000Z",
+          "senderId": "client",
+          "senderName": "Tomasz Nowak",
+          "attachments": []
+        },
+        {
+          "id": 6,
+          "content": "Potwierdzam, że nasi kierowcy mają doświadczenie w transporcie mrożonek i znają procedury awaryjne. Wszystkie nasze pojazdy chłodnicze mają umowy serwisowe na trasach międzynarodowych. Przygotowałem wstępną ofertę cenową na 2200 EUR. Czy ta stawka jest dla Państwa akceptowalna?",
+          "sentAt": "2025-03-19T11:45:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy Premium",
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "orderId": 3,
+      "messages": [
+        {
+          "id": 1,
+          "content": "Dzień dobry, potrzebujemy transportu części samochodowych z Poznania do fabryki w Wolfsburgu. Towar musi być dostarczony najpóźniej 18.03.2025 do godz. 14:00.",
+          "sentAt": "2025-03-16T12:05:00.000Z",
+          "senderId": "client",
+          "senderName": "Thomas Müller",
+          "attachments": []
+        },
+        {
+          "id": 2,
+          "content": "Dzień dobry, transport części samochodowych z Poznania do Wolfsburga jest możliwy w wymaganym terminie. Proponowana stawka to 1450 EUR. Czy wymagane są specjalne warunki transportu lub dodatkowe usługi?",
+          "sentAt": "2025-03-16T12:30:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy Standard",
+          "attachments": []
+        },
+        {
+          "id": 3,
+          "content": "Dziękuję za szybką odpowiedź. Części wymagają ostrożnego transportu, ale nie ma specjalnych wymagań temperaturowych. Potrzebujemy dokładnego śledzenia przesyłki i powiadomień o statusie transportu. Czy jest to możliwe?",
+          "sentAt": "2025-03-16T13:15:00.000Z",
+          "senderId": "client",
+          "senderName": "Thomas Müller",
+          "attachments": []
+        },
+        {
+          "id": 4,
+          "content": "Oczywiście, zapewniamy pełne śledzenie przesyłki w czasie rzeczywistym oraz automatyczne powiadomienia o statusie transportu. Mogą Państwo śledzić transport przez naszą platformę online, a także otrzymywać powiadomienia e-mail lub SMS na każdym etapie transportu. Czy stawka 1450 EUR jest akceptowalna?",
+          "sentAt": "2025-03-16T13:45:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy Standard",
+          "attachments": []
+        },
+        {
+          "id": 5,
+          "content": "Tak, akceptujemy stawkę 1450 EUR. Proszę o przygotowanie umowy i potwierdzenie dokładnej godziny odbioru towaru z naszego magazynu w Poznaniu.",
+          "sentAt": "2025-03-16T14:30:00.000Z",
+          "senderId": "client",
+          "senderName": "Thomas Müller",
+          "attachments": []
+        },
+        {
+          "id": 6,
+          "content": "Dziękuję za akceptację. Odbiór towaru z magazynu w Poznaniu zaplanowany jest na 17.03.2025 o godz. 10:00. Przesyłam umowę do podpisu. Proszę o potwierdzenie, że termin odbioru jest odpowiedni.",
+          "sentAt": "2025-03-19T10:15:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy Standard",
+          "attachments": [
+            {
+              "id": 1,
+              "name": "Umowa_Volkswagen_Transport_2025-03-17.pdf",
+              "type": "application/pdf"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "content": "Potwierdzam termin odbioru 17.03.2025 o godz. 10:00. Umowa została podpisana i odsyłam ją w załączniku. Proszę o informację, gdy transport będzie w drodze.",
+          "sentAt": "2025-03-19T10:45:00.000Z",
+          "senderId": "client",
+          "senderName": "Thomas Müller",
+          "attachments": [
+            {
+              "id": 2,
+              "name": "Umowa_Volkswagen_Transport_2025-03-17_podpisana.pdf",
+              "type": "application/pdf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "orderId": 4,
+      "messages": [
+        {
+          "id": 1,
+          "content": "Dzień dobry, przesyłam zapytanie o transport produktów mlecznych z Wrocławia do Monachium. Potrzebujemy pojazdu chłodniczego z monitoringiem temperatury.",
+          "sentAt": "2025-03-15T09:05:00.000Z",
+          "senderId": "client",
+          "senderName": "Michał Lewandowski",
+          "attachments": []
+        },
+        {
+          "id": 2,
+          "content": "Dzień dobry, dziękuję za zapytanie. Dysponujemy pojazdami chłodniczymi z ciągłym monitoringiem temperatury. Proponowana stawka za transport to 1300 EUR. Czy są jakieś dodatkowe wymagania dotyczące transportu?",
+          "sentAt": "2025-03-15T09:30:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy Premium",
+          "attachments": []
+        },
+        {
+          "id": 3,
+          "content": "Dzień dobry, dziękuję za szybką odpowiedź. Potrzebujemy utrzymania stałej temperatury 2-6°C. Czy możliwe jest dostarczenie raportu z monitoringu temperatury podczas transportu?",
+          "sentAt": "2025-03-15T10:15:00.000Z",
+          "senderId": "client",
+          "senderName": "Michał Lewandowski",
+          "attachments": []
+        },
+        {
+          "id": 4,
+          "content": "Oczywiście, zapewniamy utrzymanie temperatury w zakresie 2-6°C oraz dostarczymy pełny raport z monitoringu temperatury po zakończeniu transportu. Czy akceptują Państwo stawkę 1300 EUR za transport?",
+          "sentAt": "2025-03-15T10:45:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy Premium",
+          "attachments": []
+        },
+        {
+          "id": 5,
+          "content": "Tak, akceptujemy stawkę 1300 EUR. Proszę o przygotowanie umowy i potwierdzenie terminu transportu.",
+          "sentAt": "2025-03-15T11:30:00.000Z",
+          "senderId": "client",
+          "senderName": "Michał Lewandowski",
+          "attachments": []
+        },
+        {
+          "id": 6,
+          "content": "Dziękuję za akceptację. Przesyłam umowę do podpisu. Transport zostanie zrealizowany zgodnie z harmonogramem: załadunek 18.03.2025 o godz. 8:00 we Wrocławiu, rozładunek 19.03.2025 o godz. 10:00 w Monachium. Proszę o potwierdzenie otrzymania umowy.",
+          "sentAt": "2025-03-19T11:00:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy Premium",
+          "attachments": [
+            {
+              "id": 1,
+              "name": "Umowa_Danone_Transport_2025-03-18.pdf",
+              "type": "application/pdf"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "content": "Potwierdzam otrzymanie umowy. Podpisany dokument odsyłam w załączniku. Dziękuję za sprawną obsługę.",
+          "sentAt": "2025-03-19T11:30:00.000Z",
+          "senderId": "client",
+          "senderName": "Michał Lewandowski",
+          "attachments": [
+            {
+              "id": 2,
+              "name": "Umowa_Danone_Transport_2025-03-18_podpisana.pdf",
+              "type": "application/pdf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "orderId": 5,
+      "messages": [
+        {
+          "id": 1,
+          "content": "Dzień dobry, przesyłam zapytanie o transport substancji chemicznych z Krakowa do Wiednia. Szczegóły w załączniku. Czy możemy ustalić cenę na poziomie 2000 EUR?",
+          "sentAt": "2025-03-17T15:05:00.000Z",
+          "senderId": "client",
+          "senderName": "Robert Dąbrowski",
+          "attachments": [
+            {
+              "id": 1,
+              "name": "Specyfikacja_ADR.pdf",
+              "type": "application/pdf"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "content": "Dziękuję za informację. Przesyłam szczegóły w załączniku. Ze względu na klasę ADR i długość trasy, nasza stawka to 2200 EUR. Czy akceptują Państwo tę cenę?",
+          "sentAt": "2025-03-17T15:30:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy ADR",
+          "attachments": [
+            {
+              "id": 2,
+              "name": "Wycena_BASF_Kraków_Wiedeń.pdf",
+              "type": "application/pdf"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "content": "Dziękuję za wycenę. Potrzebujemy jeszcze informacji o możliwości śledzenia transportu w czasie rzeczywistym oraz certyfikaty kierowcy do przewozu ADR klasy 3.",
+          "sentAt": "2025-03-18T09:15:00.000Z",
+          "senderId": "client",
+          "senderName": "Robert Dąbrowski",
+          "attachments": []
+        },
+        {
+          "id": 4,
+          "content": "Zapewniamy śledzenie transportu w czasie rzeczywistym przez naszą platformę online. Wszyscy nasi kierowcy posiadają aktualne certyfikaty ADR dla wszystkich klas, w tym klasy 3. Mogę przesłać przykładowe certyfikaty do wglądu. Czy potrzebują Państwo dodatkowych informacji?",
+          "sentAt": "2025-03-19T12:05:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy ADR",
+          "attachments": []
+        },
+        {
+          "id": 5,
+          "content": "Dziękuję za informacje. Proszę o przesłanie przykładowych certyfikatów kierowców. Czy możliwe jest również otrzymanie raportu z monitoringu temperatury podczas transportu?",
+          "sentAt": "2025-03-19T12:10:00.000Z",
+          "senderId": "client",
+          "senderName": "Robert Dąbrowski",
+          "attachments": []
+        },
+        {
+          "id": 6,
+          "content": "Oczywiście, przesyłam przykładowe certyfikaty ADR naszych kierowców. Zapewniamy również monitoring temperatury podczas transportu i dostarczymy pełny raport po zakończeniu. Czy stawka 2200 EUR jest dla Państwa akceptowalna?",
+          "sentAt": "2025-03-19T12:15:00.000Z",
+          "senderId": "agent",
+          "senderName": "Agent Transportowy ADR",
+          "attachments": [
+            {
+              "id": 3,
+              "name": "Certyfikaty_ADR_kierowcy.pdf",
+              "type": "application/pdf"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": 1,
+      "orderId": 3,
+      "name": "CMR-2025-03-123",
+      "type": "CMR",
+      "addedAt": "2025-03-18T16:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "orderId": 5,
+      "name": "ADR-2025-03-456",
+      "type": "Dokument ADR",
+      "addedAt": "2025-03-17T15:10:00.000Z"
+    }
+  ]
+}
