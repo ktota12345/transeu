@@ -3,9 +3,8 @@ import { Box, Button, Input, InputGroup, InputRightElement, Text, HStack, VStack
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { FiSearch } from 'react-icons/fi';
 
-// Klucz API Google Maps - w rzeczywistej aplikacji powinien być przechowywany w zmiennych środowiskowych
-// i nie powinien być umieszczany bezpośrednio w kodzie
-const GOOGLE_MAPS_API_KEY = "AIzaSyBU2valhDPZA7p-cA4MVgZe8CNjcMjaph8";
+// Klucz API Google Maps - pobierany z zmiennych środowiskowych
+const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
 const containerStyle = {
   width: '100%',
