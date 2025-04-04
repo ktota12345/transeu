@@ -108,7 +108,7 @@ app.post('/search-offers', async (req, res) => {
 // Endpoint do wyszukiwania ofert dla agenta i zapisywania historii
 app.post('/api/agents/:id/search-offers', async (req, res) => {
   const agentId = parseInt(req.params.id, 10); // Pobierz ID agenta z URL
-  console.log(`Backend: Received POST /api/agents/${agentId}/search-offers`);
+  console.log(`Backend: Received POST /api/agents/${agentId}/search-offers`, req.body);
   
   if (isNaN(agentId)) {
     return res.status(400).json({ success: false, error: 'Invalid agent ID.' });
@@ -140,23 +140,26 @@ app.post('/api/agents/:id/search-offers', async (req, res) => {
       return res.status(400).json({ success: false, error: `Start logistics base (ID: ${startBaseId}) is missing required address details (city, postalCode, country).` });
     }
 
-    // 5. Pobierz listę miast docelowych z agenta
-    const destinationCities = agent.selectedGermanDestinations; // Zakładamy, że to pole istnieje i jest tablicą
-    if (!Array.isArray(destinationCities) || destinationCities.length === 0) {
-      return res.status(400).json({ success: false, error: `Agent (ID: ${agentId}) has no selected German destination cities.` });
+    // 5. Pobierz miasto docelowe i promień poszukiwań z parametrów żądania lub z agenta
+    const destinationCity = req.body.destinationCity || agent.destinationCity;
+    if (!destinationCity) {
+      return res.status(400).json({ success: false, error: `Agent (ID: ${agentId}) has no destination city selected.` });
     }
-    // Wybieramy pierwsze miasto z listy jako cel
-    const targetDestinationCity = destinationCities[0];
+    
+    // Pobierz promień poszukiwań z parametrów żądania lub z agenta (domyślnie 30 km)
+    const searchRadius = req.body.searchRadius || agent.searchRadius || 30;
+    console.log(`Backend: Using destination city: ${destinationCity.name} with search radius: ${searchRadius} km`);
 
     // Pobierz aktualną datę 
     const now = new Date();
-    const oneMinuteAgo = new Date(now.getTime() - 60 * 1000); // Chwila wcześniej dla dolnej granicy exclusiveLeftLowerBoundDateTime
+    // Określ zakres czasowy dla wyszukiwania - ostatnie 6 godzin
+    const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000); // 6 godzin wstecz
 
-    // 6. Skonstruuj parametry wyszukiwania dla Timocom API (ZGODNIE Z DOKUMENTACJĄ loadingDate)
+    // 6. Skonstruuj parametry wyszukiwania dla Timocom API
     const searchParams = {
-      // --- Parametry lokalizacji (powrót do logicznej struktury) ---
+      // --- Parametry lokalizacji ---
       startLocation: {
-        objectType: "areaSearch", // Typ na górnym poziomie
+        objectType: "areaSearch",
         area: { 
           address: {
             objectType: "address",
@@ -164,43 +167,48 @@ app.post('/api/agents/:id/search-offers', async (req, res) => {
             postalCode: startLogisticsBase.address.postalCode,
             country: startLogisticsBase.address.country
           },
-          size_km: agent.timocomSettings?.startSearchRadius || 50
+          size_km: 50 // Stały promień dla lokalizacji startowej
         }
       },
       destinationLocation: {
-        objectType: "areaSearch", // Typ na górnym poziomie
+        objectType: "areaSearch",
         area: {
           address: {
             objectType: "address",
-            city: targetDestinationCity, 
-            country: "DE"
+            city: destinationCity.name,
+            country: "DE",
+            postalCode: destinationCity.postalCode || "",
+            geoCoordinate: destinationCity.coordinates ? {
+              latitude: destinationCity.coordinates.latitude,
+              longitude: destinationCity.coordinates.longitude
+            } : undefined
           },
-          size_km: agent.timocomSettings?.destinationSearchRadius || 50
+          size_km: searchRadius
         }
       },
-      // --- Parametry daty (ZGODNIE Z DOKUMENTACJĄ loadingDate) ---
-      exclusiveLeftLowerBoundDateTime: oneMinuteAgo.toISOString(), // Dolna granica
-      inclusiveRightUpperBoundDateTime: now.toISOString(), // Górna granica
-      loadingDate: { // Struktura wg dokumentacji dla "Individual Dates"
-        objectType: "individualDates", // ZGADUJEMY NAZWĘ TYPU!
+      // --- Parametry daty ---
+      // Parametry czasowe dla wyszukiwania ofert z ostatnich 6 godzin
+      exclusiveLeftLowerBoundDateTime: sixHoursAgo.toISOString(), // Dolna granica (wyłączna) - 6 godzin temu
+      inclusiveRightUpperBoundDateTime: now.toISOString(), // Górna granica (włączna) - teraz
+      // --- Parametry dat załadunku ---
+      loadingDate: {
+        objectType: "individualDates",
         dates: [
-          "2025-04-07",
-          "2025-04-08",
-          "2025-04-09",
-          "2025-04-10",
-          "2025-04-11"
+          new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0], // jutro
+          new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // pojutrze
+          new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // za 3 dni
+          new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // za 4 dni
+          new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]  // za 5 dni
         ]
       },
       // --- Parametry paginacji ---
       firstResult: 0, // Zaczynamy od początku
       maxResults: 30, // Prosimy o max 30 wyników
-      // --- Dodatkowe parametry z konfiguracji agenta ---
-      ...(agent.timocomSettings?.additionalParams || {}),
     };
     console.log(`Backend: Constructed Timocom search params for agent ${agentId}:`, JSON.stringify(searchParams, null, 2));
 
     // 7. Wywołaj funkcję wyszukującą oferty
-    const timocomApiResponse = await timocomApi.fetchExternalTimocomOffers(searchParams); // Zmieniono nazwę zmiennej dla jasności
+    const timocomApiResponse = await timocomApi.fetchExternalTimocomOffers(searchParams);
 
     // DODATKOWE LOGOWANIE STRUKTURY ODPOWIEDZI
     console.log('Backend: Raw timocomApiResponse structure:', JSON.stringify(timocomApiResponse, null, 2));
@@ -235,7 +243,13 @@ app.post('/api/agents/:id/search-offers', async (req, res) => {
       // Odpowiedź nieudana lub nieoczekiwana struktura
       const offersCount = 0; 
       const errorMessage = timocomApiResponse.error || 'Unknown error or unexpected response structure from Timocom API.';
-      console.error(`Backend: Failed to fetch or process offers from Timocom for agent ${agentId}. Error: ${errorMessage}`, timocomApiResponse.details || '');
+      console.error(`Backend: Failed to fetch or process offers from Timocom for agent ${agentId}. Error: ${errorMessage}`);
+      
+      // Zapisz szczegóły błędu, jeśli są dostępne
+      const errorDetails = timocomApiResponse.details || null;
+      if (errorDetails) {
+        console.error('Backend: Detailed error information:', JSON.stringify(errorDetails, null, 2));
+      }
 
       const agentHistoryEntry = {
         id: `hist-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
@@ -245,7 +259,7 @@ app.post('/api/agents/:id/search-offers', async (req, res) => {
         status: 'error',
         details: `Failed to fetch offers from Timocom: ${errorMessage}`,
         offers: [],
-        errorDetails: timocomApiResponse.details || null // Zapisz szczegóły błędu, jeśli dostępne
+        errorDetails: errorDetails
       };
 
       // Zapisz wpis do historii
@@ -255,7 +269,14 @@ app.post('/api/agents/:id/search-offers', async (req, res) => {
       console.log(`Backend: Saved failed search attempt to agent ${agentId} history.`);
 
       // Zwróć błąd do frontendu (Z TEGO BLOKU)
-      res.json({ success: false, message: agentHistoryEntry.details, offersCount: offersCount, offers: agentHistoryEntry.offers });
+      res.json({ 
+        success: false, 
+        error: errorMessage,
+        message: agentHistoryEntry.details, 
+        offersCount: offersCount, 
+        offers: agentHistoryEntry.offers,
+        errorDetails: errorDetails
+      });
     }
   } catch (error) {
     // Błąd wewnętrzny serwera (np. odczyt/zapis pliku, błąd agenta/bazy)

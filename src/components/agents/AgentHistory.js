@@ -46,6 +46,7 @@ import { fetchAgent } from '../../features/agents/agentsSlice';
 import { testTimocomConnection, fetchOffersForAllDestinations } from '../../api/timocomAdapterService';
 import { selectAllLogisticsBases, fetchLogisticsBases } from '../../features/company/logisticsBasesSlice';
 import axios from 'axios'; // Import axios
+import { germanStateCities } from '../../utils/germanCities';
 
 // Definiujemy bezpośrednio, ignorując zmienną środowiskową na razie
 const API_BASE_URL = 'http://localhost:5000';
@@ -269,16 +270,46 @@ const AgentHistory = () => {
     console.log(`Frontend: Triggering search offers for agent ID: ${id}`);
 
     try {
-      console.log('DEBUG: API_BASE_URL=', API_BASE_URL); // Dodajemy log
-      // Przywracamy pełny URL, bo proxy nie działa jak oczekiwano
-      const response = await axios.post(`${API_BASE_URL}/api/agents/${id}/search-offers`); 
+      // Pobierz aktualne dane agenta, jeśli nie są dostępne
+      const agentData = agent || (await dispatch(fetchAgent(id)).unwrap());
+      
+      if (!agentData) {
+        throw new Error('Nie można pobrać danych agenta');
+      }
+      
+      // Sprawdź, czy agent ma wybrane miasto docelowe
+      if (!agentData.destinationCity) {
+        throw new Error('Agent nie ma wybranego miasta docelowego. Zaktualizuj ustawienia agenta.');
+      }
+      
+      // Znajdź dane miasta docelowego
+      const destinationCity = germanStateCities.find(city => city.name === agentData.destinationCity);
+      if (!destinationCity) {
+        throw new Error(`Nie znaleziono danych dla miasta ${agentData.destinationCity}. Wybierz inne miasto docelowe.`);
+      }
+      
+      // Użyj promienia poszukiwań z ustawień agenta lub wartości domyślnej
+      const searchRadius = agentData.searchRadius || 30;
+      
+      console.log('DEBUG: API_BASE_URL=', API_BASE_URL);
+      console.log('Miasto docelowe:', destinationCity);
+      console.log('Promień poszukiwań:', searchRadius, 'km');
+      
+      // Przygotuj parametry wyszukiwania
+      const searchParams = {
+        destinationCity: destinationCity,
+        searchRadius: searchRadius
+      };
+      
+      // Wywołaj API z nowymi parametrami
+      const response = await axios.post(`${API_BASE_URL}/api/agents/${id}/search-offers`, searchParams); 
       
       console.log('Frontend: Search offers response:', response.data);
 
       if (response.data.success) {
         toast({
           title: 'Wyszukiwanie ofert zakończone',
-          description: response.data.message || `Pomyślnie wyszukano i zapisano ${response.data.offersFound} ofert.`, // Użyj wiadomości z backendu
+          description: response.data.message || `Pomyślnie wyszukano i zapisano ${response.data.offersFound} ofert.`,
           status: 'success',
           duration: 5000,
           isClosable: true,
@@ -293,12 +324,41 @@ const AgentHistory = () => {
     } catch (err) {
       console.error('Frontend: Error searching offers:', err);
       let errorMessage = 'Wystąpił błąd podczas wyszukiwania ofert.';
+      let errorDetails = null;
+      
       // Spróbuj uzyskać bardziej szczegółowy błąd z odpowiedzi axios
-      if (err.response && err.response.data && err.response.data.error) {
-        errorMessage = err.response.data.error;
+      if (err.response && err.response.data) {
+        if (err.response.data.error) {
+          errorMessage = err.response.data.error;
+        }
+        
+        // Pobierz szczegóły błędu, jeśli są dostępne
+        if (err.response.data.errorDetails) {
+          errorDetails = err.response.data.errorDetails;
+          console.log('Szczegóły błędu:', errorDetails);
+          
+          // Jeśli mamy szczegóły błędów walidacji, dodaj je do komunikatu
+          if (errorDetails.invalidParams && Array.isArray(errorDetails.invalidParams)) {
+            const invalidParamsInfo = errorDetails.invalidParams
+              .map(param => `${param.name}: ${param.userFriendlyMessage || param.reason}`)
+              .join('; ');
+            
+            errorMessage += ` Nieprawidłowe parametry: ${invalidParamsInfo}`;
+          }
+        }
       } else if (err.message) {
         errorMessage = err.message;
       }
+      
+      // Otwórz modal z szczegółami błędu
+      setTimocomResponse({ 
+        error: { 
+          message: errorMessage,
+          details: errorDetails 
+        }
+      });
+      onOpen();
+      
       toast({
         title: 'Błąd wyszukiwania ofert',
         description: errorMessage,
@@ -357,6 +417,33 @@ const AgentHistory = () => {
               <Code display="block" whiteSpace="pre" p={2} overflowX="auto">
                 {timocomResponse.error.message}
               </Code>
+              
+              {timocomResponse.error.details && (
+                <Box mt={3}>
+                  <Text fontWeight="bold">Szczegóły błędu:</Text>
+                  {timocomResponse.error.details.type && (
+                    <Text fontSize="sm">Typ błędu: {timocomResponse.error.details.type}</Text>
+                  )}
+                  
+                  {timocomResponse.error.details.invalidParams && (
+                    <Box mt={2}>
+                      <Text fontSize="sm" fontWeight="semibold">Nieprawidłowe parametry:</Text>
+                      <VStack align="start" spacing={1} mt={1}>
+                        {timocomResponse.error.details.invalidParams.map((param, idx) => (
+                          <Box key={idx} p={2} bg="red.50" borderRadius="md" width="100%">
+                            <Text fontSize="sm" fontWeight="bold">{param.name}</Text>
+                            <Text fontSize="sm">{param.userFriendlyMessage || param.reason}</Text>
+                          </Box>
+                        ))}
+                      </VStack>
+                    </Box>
+                  )}
+                  
+                  {timocomResponse.error.details.message && (
+                    <Text fontSize="sm" mt={2}>{timocomResponse.error.details.message}</Text>
+                  )}
+                </Box>
+              )}
             </Box>
           )}
         </ModalBody>

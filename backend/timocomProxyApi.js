@@ -113,11 +113,55 @@ const fetchExternalTimocomOffers = async (rawSearchParams) => {
     } catch (error) {
         console.error('Backend Error in fetchExternalTimocomOffers:', error.response ? `${error.response.status} ${JSON.stringify(error.response.data)}` : error.message);
         let errorMessage = 'Błąd podczas pobierania ofert z TIMOCOM.';
+        let errorDetails = null;
+
         if (error.response) {
-            // Próba odczytania bardziej szczegółowego błędu z odpowiedzi API
+            // Szczegółowa obsługa błędów HTTP
+            const statusCode = error.response.status;
             const errorData = error.response.data;
-            if (errorData && typeof errorData === 'object') {
-                errorMessage = errorData.message || errorData.title || JSON.stringify(errorData);
+            
+            // Loguj pełną strukturę błędu dla celów diagnostycznych
+            console.error(`Backend: Timocom API error ${statusCode}:`, JSON.stringify(errorData, null, 2));
+            
+            // Obsługa błędu 422 - Unprocessable Entity (błędy walidacji)
+            if (statusCode === 422 && errorData) {
+                errorMessage = errorData.title || 'Problem: Constraints are violated.';
+                
+                // Zbierz szczegółowe informacje o błędach walidacji
+                if (errorData.detail) {
+                    errorMessage += ` ${errorData.detail}`;
+                }
+                
+                // Zbierz informacje o nieprawidłowych parametrach
+                if (Array.isArray(errorData['invalid-params']) && errorData['invalid-params'].length > 0) {
+                    const invalidParams = errorData['invalid-params'].map(param => 
+                        `${param.name}: ${param.reason}`
+                    ).join(', ');
+                    
+                    errorDetails = {
+                        type: errorData.type || 'ValidationError',
+                        invalidParams: errorData['invalid-params'],
+                        message: `Invalid parameters: ${invalidParams}`,
+                        title: errorData.title || 'Validation Error'
+                    };
+                    
+                    // Dodaj bardziej przyjazne dla użytkownika komunikaty dla typowych błędów walidacji
+                    errorDetails.invalidParams.forEach(param => {
+                        if (param.name === 'exclusiveLeftLowerBoundDateTime' && param.reason.includes('must not be null')) {
+                            param.userFriendlyMessage = 'Wymagany jest początkowy czas wyszukiwania.';
+                        } else if (param.name === 'inclusiveRightUpperBoundDateTime' && param.reason.includes('must not be null')) {
+                            param.userFriendlyMessage = 'Wymagany jest końcowy czas wyszukiwania.';
+                        } else if (param.name.includes('DateTime') && param.reason.includes('format')) {
+                            param.userFriendlyMessage = 'Nieprawidłowy format daty/czasu. Wymagany format: ISO 8601 (np. 2023-01-01T12:00:00Z).';
+                        } else {
+                            param.userFriendlyMessage = `Błąd parametru: ${param.reason}`;
+                        }
+                    });
+                }
+            } else if (errorData && typeof errorData === 'object') {
+                // Obsługa innych błędów API
+                errorMessage = errorData.title || errorData.message || JSON.stringify(errorData);
+                errorDetails = errorData;
             } else if (typeof errorData === 'string') {
                 errorMessage = errorData;
             }
@@ -126,7 +170,13 @@ const fetchExternalTimocomOffers = async (rawSearchParams) => {
         } else {
             errorMessage = error.message;
         }
-        return { success: false, data: null, error: errorMessage, rawError: error }; // Zwracamy też surowy błąd
+        
+        return { 
+            success: false, 
+            data: null, 
+            error: errorMessage, 
+            details: errorDetails 
+        };
     }
 };
 
