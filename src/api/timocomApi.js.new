@@ -1,0 +1,472 @@
+import axios from 'axios';
+
+// JSON Server API configuration
+const TIMOCOM_API_URL = 'http://localhost:4002'; 
+const FREIGHT_OFFERS_ENDPOINT = '/timocom-offers';
+const FREIGHT_OFFER_DETAILS_ENDPOINT = '/timocom-offers'; 
+const TEST_ENDPOINT = '/timocom-offers'; // W przypadku JSON Servera testujemy przez pobranie ofert
+
+// Klucze do przechowywania danych w localStorage
+const LOCAL_STORAGE_KEYS = {
+  username: 'timocom_username',
+  password: 'timocom_password',
+  enabled: 'timocom_enabled'
+};
+
+// Helper function to get auth credentials
+const getTimocomCredentials = () => {
+  // First try to get from localStorage
+  let username = localStorage.getItem(LOCAL_STORAGE_KEYS.username);
+  let password = localStorage.getItem(LOCAL_STORAGE_KEYS.password);
+  
+  // If not found in localStorage, try environment variables
+  if (!username) {
+    username = process.env.REACT_APP_TIMOCOM_USERNAME || 'Janta'; 
+  }
+  
+  if (!password) {
+    password = process.env.REACT_APP_TIMOCOM_PASSWORD || 'mC9jfYKPQf-DSt9VO4Gyyw'; 
+  }
+  
+  return { username, password };
+};
+
+// Base API configuration
+const timocomApiClient = axios.create({
+  baseURL: TIMOCOM_API_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  timeout: 30000 
+});
+
+// Configure authentication - we're using Basic Auth based on Postman collection
+timocomApiClient.interceptors.request.use(config => {
+  const { username, password } = getTimocomCredentials();
+  
+  if (username && password) {
+    // Tworzymy nagłówek Basic Auth
+    const auth = 'Basic ' + window.btoa(`${username}:${password}`);
+    config.headers.Authorization = auth;
+    
+    console.log('Dodano nagłówek autoryzacji do żądania TIMOCOM');
+    console.log('URL:', config.url);
+    console.log('Użytkownik:', username);
+  } else {
+    console.warn('TIMOCOM API credentials not found. Set them in Settings or environment variables.');
+  }
+  
+  return config;
+});
+
+/**
+ * Fetch freight offers from TIMOCOM
+ * @param {Object} agentConfig - Agent configuration with search parameters
+ * @param {Object} options - Pagination options
+ * @returns {Promise<Object>} - API response with freight offers
+ */
+export const fetchTimocomFreightOffers = async (agentConfig, options = {}) => {
+  try {
+    const { username, password } = getTimocomCredentials();
+    
+    if (!username || !password) {
+      throw new Error('TIMOCOM API credentials are required.');
+    }
+    
+    // Przygotuj nagłówek Basic Auth
+    const auth = 'Basic ' + btoa(`${username}:${password}`);
+    
+    // W przypadku JSON Servera używamy GET zamiast POST
+    const response = await axios({
+      method: 'get',
+      url: `${TIMOCOM_API_URL}${FREIGHT_OFFERS_ENDPOINT}`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': auth
+      },
+      timeout: 30000
+    });
+    
+    // Jeśli nie ma ofert, zwracamy mockowe dane dla testu
+    if (!response.data || response.data.length === 0) {
+      return {
+        payload: [
+          {
+            id: 'test-offer-1',
+            loading: {
+              address: {
+                city: "Berlin",
+                country: "DE"
+              }
+            },
+            unloading: {
+              address: {
+                city: "München",
+                country: "DE"
+              }
+            }
+          }
+        ]
+      };
+    }
+    
+    return {
+      payload: response.data
+    };
+  } catch (error) {
+    console.error('Error fetching TIMOCOM freight offers:', error);
+    throw error;
+  }
+};
+
+/**
+ * Tests connection to TIMOCOM API
+ * @param {Object} params - Optional search parameters for test query
+ * @returns {Promise<Object>} - Returns test result data
+ * @throws {Error} - If connection fails
+ */
+export const testTimocomConnection = async (params = null) => {
+  try {
+    // Sprawdź, czy mamy dane uwierzytelniające
+    const { username, password } = getTimocomCredentials();
+    
+    if (!username || !password) {
+      throw new Error('Brak danych uwierzytelniających. Wprowadź nazwę użytkownika i hasło.');
+    }
+    
+    console.log('Testowanie połączenia z API TIMOCOM...');
+    console.log(`URL: ${TIMOCOM_API_URL}${TEST_ENDPOINT}`);
+    
+    // Przygotuj nagłówek Basic Auth
+    const auth = 'Basic ' + btoa(`${username}:${password}`);
+    
+    // Wykonaj rzeczywiste zapytanie do API - korzystamy z GET dla JSON Servera
+    const response = await axios({
+      method: 'get',
+      url: `${TIMOCOM_API_URL}${TEST_ENDPOINT}`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': auth
+      },
+      timeout: 30000
+    });
+    
+    console.log('Odpowiedź z API TIMOCOM:', response.status);
+    
+    // Return success result
+    return {
+      success: true,
+      status: response.status,
+      data: {
+        offers: response.data || [],
+        totalCount: response.data?.length || 0
+      }
+    };
+  } catch (error) {
+    // Prepare a more detailed error message
+    let errorMessage = 'Nieznany błąd połączenia';
+    
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      errorMessage = `Błąd serwera: ${error.response.status} - ${error.response.statusText}`;
+      console.error('Szczegóły odpowiedzi:', error.response.data);
+      
+      if (error.response.status === 401) {
+        errorMessage = 'Błąd uwierzytelniania. Sprawdź nazwę użytkownika i hasło.';
+      } else if (error.response.status === 403) {
+        errorMessage = 'Brak uprawnień do korzystania z API TIMOCOM. Skontaktuj się z obsługą TIMOCOM.';
+      } else if (error.response.status === 404) {
+        errorMessage = 'Nieprawidłowy adres API TIMOCOM. Sprawdź konfigurację lub upewnij się, że serwer JSON jest uruchomiony na porcie 4002.';
+      }
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error('Brak odpowiedzi:', error.request);
+      
+      if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Timeout podczas łączenia z serwerem. Serwer może być niedostępny.';
+      } else if (error.code === 'ENOTFOUND') {
+        errorMessage = 'Nie można znaleźć serwera. Sprawdź adres URL i połączenie internetowe.';
+      } else if (error.code === 'ERR_NETWORK') {
+        errorMessage = 'Błąd sieci. Sprawdź czy serwer JSON działa na porcie 4002.';
+      } else {
+        errorMessage = `Nie otrzymano odpowiedzi z serwera. Sprawdź połączenie internetowe. Kod błędu: ${error.code || 'nieznany'}`;
+      }
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      errorMessage = `Błąd konfiguracji: ${error.message}`;
+    }
+    
+    console.error('TIMOCOM API connection test failed:', error);
+    throw new Error(errorMessage);
+  }
+};
+
+/**
+ * Transforms agent configuration into TIMOCOM API search parameters
+ * @param {Object} agentConfig - The agent configuration object
+ * @returns {Object} Search parameters for TIMOCOM API
+ */
+export const buildSearchParamsFromAgentConfig = (agentConfig) => {
+  // Domyślne parametry wyszukiwania
+  const searchParams = {
+    startLocation: {
+      objectType: "areaSearch",
+      area: {
+        address: {
+          objectType: "address",
+          city: "Berlin",
+          country: "DE",
+          postalCode: "10115",
+          geoCoordinate: {
+            latitude: 52.52437,
+            longitude: 13.41053
+          }
+        },
+        size_km: 100
+      }
+    },
+    destinationLocation: {
+      objectType: "areaSearch",
+      area: {
+        address: {
+          objectType: "address",
+          city: "München",
+          country: "DE",
+          postalCode: "80331",
+          geoCoordinate: {
+            latitude: 48.13743,
+            longitude: 11.57549
+          }
+        },
+        size_km: 100
+      }
+    },
+    inclusiveRightUpperBoundDateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    firstResult: 0,
+    maxResults: 30
+  };
+
+  // Jeśli mamy konfigurację agenta, dostosuj parametry wyszukiwania
+  if (agentConfig) {
+    // Dostosuj parametry na podstawie konfiguracji agenta
+    // Na przykład: dostosuj promień wyszukiwania, lokalizację itp.
+    
+    // Przykład: ustawienie promienia wyszukiwania
+    if (agentConfig.timocomSettings && agentConfig.timocomSettings.startSearchRadius) {
+      searchParams.startLocation.area.size_km = agentConfig.timocomSettings.startSearchRadius;
+    }
+    
+    if (agentConfig.timocomSettings && agentConfig.timocomSettings.destinationSearchRadius) {
+      searchParams.destinationLocation.area.size_km = agentConfig.timocomSettings.destinationSearchRadius;
+    }
+    
+    // Przykład: ustawienie lokalizacji początkowej na podstawie bazy logistycznej
+    if (agentConfig.selectedLogisticsBase && agentConfig.selectedLogisticsBase.location) {
+      const base = agentConfig.selectedLogisticsBase;
+      
+      searchParams.startLocation.area.address = {
+        objectType: "address",
+        city: base.city || "Warszawa",
+        country: base.country || "PL",
+        postalCode: base.postalCode || "00-001",
+        geoCoordinate: {
+          latitude: base.location?.lat || 52.2297,
+          longitude: base.location?.lng || 21.0122
+        }
+      };
+    }
+    
+    // Przykład: ustawienie lokalizacji docelowej
+    if (agentConfig.timocomSettings && 
+        agentConfig.timocomSettings.destinationCities && 
+        agentConfig.timocomSettings.destinationCities.length > 0) {
+      
+      // Weź pierwsze miasto docelowe z listy
+      const destCity = agentConfig.timocomSettings.destinationCities[0];
+      
+      // Tutaj w rzeczywistej implementacji powinniśmy mieć mapowanie miast na współrzędne geograficzne
+      // Dla uproszczenia używamy domyślnych współrzędnych Berlina
+      searchParams.destinationLocation.area.address = {
+        objectType: "address",
+        city: destCity,
+        country: "DE",
+        postalCode: "10115", // Domyślny kod pocztowy Berlina
+        geoCoordinate: {
+          latitude: 52.52437,
+          longitude: 13.41053
+        }
+      };
+    }
+    
+    // Przykład: ustawienie parametrów pojazdu
+    if (agentConfig.vehicleType || agentConfig.specialEquipment) {
+      searchParams.vehicleProperties = {
+        bodyType: [],
+        loadingEquipment: [],
+        equipment: []
+      };
+      
+      // Mapowanie typów pojazdów
+      if (agentConfig.vehicleType) {
+        const vehicleTypeMapping = {
+          'Plandeka': 'TILT',
+          'Chłodnia': 'REFRIGERATOR',
+          'Izoterma': 'ISOTHERMAL',
+          'Kontener': 'BOX',
+          'Wywrotka': 'DUMPER',
+          'Cysterna': 'SILO',
+          'Platforma': 'PLATFORM'
+        };
+        
+        const timocomVehicleType = vehicleTypeMapping[agentConfig.vehicleType];
+        if (timocomVehicleType) {
+          searchParams.vehicleProperties.bodyType.push(timocomVehicleType);
+        }
+      }
+      
+      // Mapowanie wyposażenia specjalnego
+      if (agentConfig.specialEquipment && agentConfig.specialEquipment.length > 0) {
+        const equipmentMapping = {
+          'Winda': 'TAIL_LIFT',
+          'Pasowy system mocowania': 'BELT_SYSTEM',
+          'Załadunek boczny': 'SIDE_LOADING',
+          'GPS': 'GPS_TRACKING',
+          'System monitoringu temperatury': 'TEMPERATURE_RECORDER'
+        };
+        
+        agentConfig.specialEquipment.forEach(equipment => {
+          const timocomEquipment = equipmentMapping[equipment];
+          if (timocomEquipment && !searchParams.vehicleProperties.equipment.includes(timocomEquipment)) {
+            searchParams.vehicleProperties.equipment.push(timocomEquipment);
+          }
+        });
+      }
+      
+      // Add certificates if available
+      if (agentConfig.certificates && agentConfig.certificates.length > 0) {
+        const certificateMapping = {
+          'ADR': 'ADR_EQUIPMENT_SET',
+          'ATP': 'ATP_CERTIFICATE',
+          'HACCP': 'HACCP_CERTIFICATE',
+          'ISO': 'ISO_CERTIFICATE',
+          'GDP': 'GDP_CERTIFICATE'
+        };
+        
+        agentConfig.certificates.forEach(certificate => {
+          const timocomCertificate = certificateMapping[certificate];
+          if (timocomCertificate && !searchParams.vehicleProperties.equipment.includes(timocomCertificate)) {
+            searchParams.vehicleProperties.equipment.push(timocomCertificate);
+          }
+        });
+      }
+    }
+  }
+
+  return searchParams;
+};
+
+/**
+ * Fetches details for a specific TIMOCOM freight offer
+ * @param {string} offerId - The ID of the freight offer to fetch
+ * @returns {Promise<Object>} - The offer details
+ */
+export const fetchTimocomFreightOfferDetails = async (offerId) => {
+  try {
+    const url = `${FREIGHT_OFFER_DETAILS_ENDPOINT}/${offerId}`;
+    const response = await timocomApiClient.get(url);
+    
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching details for TIMOCOM offer ${offerId}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Maps TIMOCOM offer data to TransEU offer format for compatibility
+ * @param {Object} timocomOffer - The offer data from TIMOCOM
+ * @returns {Object} - Offer data in TransEU format
+ */
+export const mapTimocomOfferToTransEUFormat = (timocomOffer) => {
+  // Check if we're dealing with a single offer or an array from search results
+  const offer = timocomOffer.objectType === 'freightOffer' 
+    ? timocomOffer 
+    : timocomOffer.payload ? timocomOffer.payload[0] : null;
+  
+  if (!offer) return null;
+  
+  // Map TIMOCOM offer to TransEU format
+  return {
+    id: offer.id,
+    source: 'timocom',
+    createdAt: offer.creationDateTime,
+    updatedAt: offer.creationDateTime,
+    status: 'active',
+    
+    // Loading and unloading places
+    loadingPlace: offer.loadingPlaces?.find(place => place.loadingType === 'LOADING') ? {
+      address: {
+        city: offer.loadingPlaces.find(place => place.loadingType === 'LOADING').address.city,
+        country: offer.loadingPlaces.find(place => place.loadingType === 'LOADING').address.country,
+        postalCode: offer.loadingPlaces.find(place => place.loadingType === 'LOADING').address.postalCode || '',
+        geoCoordinate: offer.loadingPlaces.find(place => place.loadingType === 'LOADING').address.geoCoordinate || null
+      },
+      dateTimeSlot: offer.loadingPlaces.find(place => place.loadingType === 'LOADING').dateTimeSlot || null
+    } : null,
+    
+    unloadingPlace: offer.unloadingPlaces?.find(place => place.loadingType === 'UNLOADING') ? {
+      address: {
+        city: offer.unloadingPlaces.find(place => place.loadingType === 'UNLOADING').address.city,
+        country: offer.unloadingPlaces.find(place => place.loadingType === 'UNLOADING').address.country,
+        postalCode: offer.unloadingPlaces.find(place => place.loadingType === 'UNLOADING').address.postalCode || '',
+        geoCoordinate: offer.unloadingPlaces.find(place => place.loadingType === 'UNLOADING').address.geoCoordinate || null
+      },
+      dateTimeSlot: offer.unloadingPlaces.find(place => place.loadingType === 'UNLOADING').dateTimeSlot || null
+    } : null,
+    
+    // Vehicle requirements
+    vehicleRequirements: offer.vehicleRequirements ? {
+      bodyType: offer.vehicleRequirements.bodyType || [],
+      loadingEquipment: offer.vehicleRequirements.loadingEquipment || [],
+      equipment: offer.vehicleRequirements.equipment || []
+    } : null,
+    
+    // Cargo details
+    cargoDescription: offer.cargoDescription || '',
+    cargoWeight: offer.cargoWeight || null,
+    loadingMeters: offer.loadingMeters || null,
+    palletInfo: offer.palletInfo || null,
+    
+    // Price
+    price: offer.price ? {
+      value: offer.price.value,
+      currency: offer.price.currency
+    } : null,
+    
+    // Additional TransEU specific fields
+    distance: null, // To be calculated
+    profitability: null, // To be calculated
+    
+    // Original TIMOCOM data for reference
+    originalData: offer
+  };
+};
+
+/**
+ * Processes a collection of TIMOCOM offers and converts them to TransEU format
+ * @param {Object} timocomOffers - Response from TIMOCOM API with offers
+ * @returns {Array} - Processed offers in TransEU format
+ */
+export const processTimocomOffers = (timocomOffers) => {
+  if (!timocomOffers || !timocomOffers.payload) {
+    return [];
+  }
+  
+  return timocomOffers.payload.map(offer => mapTimocomOfferToTransEUFormat({
+    objectType: 'freightOffer',
+    ...offer
+  })).filter(Boolean);
+};
+
+export default timocomApiClient;

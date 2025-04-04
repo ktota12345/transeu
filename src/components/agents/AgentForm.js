@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { createAgent, updateAgent, fetchAgent, clearCurrentAgent } from '../../features/agents/agentsSlice';
-import { useEffect } from 'react';
+import { selectAllLogisticsBases, fetchLogisticsBases } from '../../features/company/logisticsBasesSlice';
 import {
     Box,
     Button,
@@ -42,9 +42,16 @@ import {
     SliderTrack,
     SliderFilledTrack,
     SliderThumb,
-    SliderMark
+    SliderMark,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
 } from '@chakra-ui/react';
-import { FiSliders, FiArrowLeft, FiSave } from 'react-icons/fi';
+import { FiArrowLeft, FiSave, FiSliders } from 'react-icons/fi';
 
 const checkFrequencyOptions = [
     { value: 'live', label: 'Na żywo (ciągłe monitorowanie)' },
@@ -134,27 +141,14 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
     const dispatch = useDispatch();
     const { id } = useParams();
     const { currentAgent, status } = useSelector(state => state.agents);
+    const logisticsBases = useSelector(selectAllLogisticsBases);
     const toast = useToast();
     const isSubmitting = status === 'loading';
     const isEditing = !!id;
 
-    useEffect(() => {
-        // Jeśli mamy ID, pobierz agenta do edycji
-        if (id) {
-            dispatch(fetchAgent(id));
-        }
-
-        // Cleanup przy odmontowaniu komponentu
-        return () => {
-            dispatch(clearCurrentAgent());
-        };
-    }, [dispatch, id]);
-
-    // Użyj danych z Redux store, jeśli edytujemy istniejącego agenta
-    const formDefaultValues = isEditing ? currentAgent : initialData;
-
-    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
-        defaultValues: formDefaultValues || {
+    // Pobierz dane i zainicjuj formularz
+    const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm({
+        defaultValues: {
             // 1. Informacje podstawowe
             name: '',
             description: '',
@@ -174,6 +168,8 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
             preferredRoutes: [],
             regionsToAvoid: [],
             vehicleBases: [],
+            selectedLogisticsBase: null,
+            customLogisticsPoint: null,
             maxOperatingRadius: 500,
             preferredCountries: [],
             unwantedCountries: [],
@@ -231,7 +227,7 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
             keywordTriggers: [],
             emotionDetectionLevel: 50, // 0-100 scale
             negotiationStagesRequiringHuman: [],
-            maxResponseTime: 15,
+            maxClientIdleTime: 15, // Maksymalny czas bez odpowiedzi klienta
             
             // 9. Harmonogram pracy agenta
             checkFrequency: 'hourly',
@@ -468,8 +464,27 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
         setValue('scheduleExceptions', exceptions.filter(e => e.date !== date));
     };
 
+    const handleSelectLogisticsBase = (baseId) => {
+        setValue('selectedLogisticsBase', baseId);
+        setValue('customLogisticsPoint', null);
+    };
+
+    const handleSelectCustomPoint = () => {
+        setValue('selectedLogisticsBase', null);
+        if (!watch('customLogisticsPoint')) {
+            setValue('customLogisticsPoint', { latitude: '', longitude: '', name: 'Punkt niestandardowy' });
+        }
+    };
+
+    const handleCustomPointChange = (field, value) => {
+        const currentPoint = watch('customLogisticsPoint') || { latitude: '', longitude: '', name: 'Punkt niestandardowy' };
+        setValue('customLogisticsPoint', { ...currentPoint, [field]: value });
+    };
+
     const onFormSubmit = (data) => {
+        console.log("Data being submitted:", data); 
         if (isEditing) {
+            console.log("Editing agent with data:", data); 
             dispatch(updateAgent({ id, agentData: data }))
                 .unwrap()
                 .then(() => {
@@ -492,6 +507,7 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                     });
                 });
         } else {
+            console.log("Creating agent with data:", data); 
             dispatch(createAgent(data))
                 .unwrap()
                 .then(() => {
@@ -515,6 +531,31 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                 });
         }
     };
+
+    // Efekt do pobierania danych agenta i baz logistycznych
+    useEffect(() => {
+        dispatch(fetchLogisticsBases());
+        if (id) {
+            dispatch(fetchAgent(id));
+        } else {
+            // Jeśli tworzymy nowego agenta, wartości domyślne z useForm
+            // powinny wystarczyć. Nie resetujemy tutaj dodatkowo.
+        }
+        // Cleanup przy odmontowaniu komponentu
+        return () => {
+            dispatch(clearCurrentAgent());
+        };
+    }, [dispatch, id]); 
+
+    // Efekt do resetowania formularza, gdy dane agenta (currentAgent) zostaną załadowane w trybie edycji
+    useEffect(() => {
+        if (isEditing && currentAgent) {
+            console.log("Resetting form with currentAgent:", currentAgent); 
+            // Upewnij się, że przekazujesz obiekt z polami pasującymi do formularza
+            // Możesz potrzebować transformacji jeśli struktura się różni
+            reset(currentAgent); 
+        }
+    }, [isEditing, currentAgent, reset]);
 
     return (
         <Box p={6} bg="gray.50">
@@ -741,73 +782,116 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                                             </NumberInputStepper>
                                         </NumberInput>
                                     </FormControl>
+
+                                    <FormControl>
+                                        <FormLabel fontWeight="medium">Preferowane kraje</FormLabel>
+                                        <SimpleGrid columns={[2, null, 4]} spacing={3}>
+                                            {countriesList.map((country) => (
+                                                <Tag
+                                                    key={country}
+                                                    size="md"
+                                                    variant={preferredCountries.includes(country) ? "solid" : "outline"}
+                                                    colorScheme="green"
+                                                    cursor="pointer"
+                                                    onClick={() => handleToggleCountry(country, 'preferredCountries')}
+                                                    mb={2}
+                                                    borderRadius="md"
+                                                    boxShadow="sm"
+                                                    p={2}
+                                                >
+                                                    <TagLabel>{country}</TagLabel>
+                                                </Tag>
+                                            ))}
+                                        </SimpleGrid>
+                                    </FormControl>
+
+                                    <FormControl>
+                                        <FormLabel fontWeight="medium">Kraje do unikania</FormLabel>
+                                        <SimpleGrid columns={[2, null, 4]} spacing={3}>
+                                            {countriesList.map((country) => (
+                                                <Tag
+                                                    key={country}
+                                                    size="md"
+                                                    variant={unwantedCountries.includes(country) ? "solid" : "outline"}
+                                                    colorScheme="red"
+                                                    cursor="pointer"
+                                                    onClick={() => handleToggleCountry(country, 'unwantedCountries')}
+                                                    mb={2}
+                                                    borderRadius="md"
+                                                    boxShadow="sm"
+                                                    p={2}
+                                                >
+                                                    <TagLabel>{country}</TagLabel>
+                                                </Tag>
+                                            ))}
+                                        </SimpleGrid>
+                                    </FormControl>
+
+                                    <FormControl mt={6}>
+                                        <FormLabel fontWeight="medium">Preferencje drogowe</FormLabel>
+                                        <SimpleGrid columns={[2, null, 4]} spacing={3}>
+                                            {roadPreferences.map((preference) => (
+                                                <Tag
+                                                    key={preference}
+                                                    size="md"
+                                                    variant={roadPreferencesSelected.includes(preference) ? "solid" : "outline"}
+                                                    colorScheme="blue"
+                                                    cursor="pointer"
+                                                    onClick={() => handleToggleRoadPreference(preference)}
+                                                    mb={2}
+                                                    borderRadius="md"
+                                                    boxShadow="sm"
+                                                    p={2}
+                                                >
+                                                    <TagLabel>{preference}</TagLabel>
+                                                </Tag>
+                                            ))}
+                                        </SimpleGrid>
+                                    </FormControl>
+
+                                    <FormControl mt={6}>
+                                        <FormLabel fontWeight="medium">Baza logistyczna (punkt startowy)</FormLabel>
+                                        <Select {...register('selectedLogisticsBase')} onChange={(e) => handleSelectLogisticsBase(e.target.value)}>
+                                            <option value="">Wybierz bazę logistyczną</option>
+                                            {logisticsBases && logisticsBases.length > 0 ? (
+                                                logisticsBases.map(base => (
+                                                    <option key={base.id} value={base.id}>
+                                                        {base.name}
+                                                    </option>
+                                                ))
+                                            ) : (
+                                                // Dodaj statyczne opcje, jeśli nie ma baz logistycznych
+                                                <>
+                                                    <option value="1">Baza Warszawa</option>
+                                                    <option value="2">Baza Poznań</option>
+                                                    <option value="3">Baza Kraków</option>
+                                                    <option value="4">Baza Test 1</option>
+                                                </>
+                                            )}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl mt={6}>
+                                        <FormLabel fontWeight="medium">Punkt niestandardowy</FormLabel>
+                                        <Button onClick={handleSelectCustomPoint}>Dodaj punkt niestandardowy</Button>
+                                        {watch('customLogisticsPoint') && (
+                                            <Box mt={4}>
+                                                <FormControl>
+                                                    <FormLabel>Szerokość geograficzna</FormLabel>
+                                                    <Input type="number" {...register('customLogisticsPoint.latitude')} />
+                                                </FormControl>
+                                                <FormControl>
+                                                    <FormLabel>Długość geograficzna</FormLabel>
+                                                    <Input type="number" {...register('customLogisticsPoint.longitude')} />
+                                                </FormControl>
+                                                <FormControl>
+                                                    <FormLabel>Nazwa punktu</FormLabel>
+                                                    <Input {...register('customLogisticsPoint.name')} />
+                                                </FormControl>
+                                            </Box>
+                                        )}
+                                    </FormControl>
                                 </SimpleGrid>
-
-                                <FormControl mt={6}>
-                                    <FormLabel fontWeight="medium">Preferowane kraje</FormLabel>
-                                    <SimpleGrid columns={[2, null, 4]} spacing={3}>
-                                        {countriesList.map((country) => (
-                                            <Tag
-                                                key={country}
-                                                size="md"
-                                                variant={preferredCountries.includes(country) ? "solid" : "outline"}
-                                                colorScheme="green"
-                                                cursor="pointer"
-                                                onClick={() => handleToggleCountry(country, 'preferredCountries')}
-                                                mb={2}
-                                                borderRadius="md"
-                                                boxShadow="sm"
-                                                p={2}
-                                            >
-                                                <TagLabel>{country}</TagLabel>
-                                            </Tag>
-                                        ))}
-                                    </SimpleGrid>
-                                </FormControl>
-
-                                <FormControl mt={6}>
-                                    <FormLabel fontWeight="medium">Niepożądane kraje</FormLabel>
-                                    <SimpleGrid columns={[2, null, 4]} spacing={3}>
-                                        {countriesList.map((country) => (
-                                            <Tag
-                                                key={country}
-                                                size="md"
-                                                variant={unwantedCountries.includes(country) ? "solid" : "outline"}
-                                                colorScheme="red"
-                                                cursor="pointer"
-                                                onClick={() => handleToggleCountry(country, 'unwantedCountries')}
-                                                mb={2}
-                                                borderRadius="md"
-                                                boxShadow="sm"
-                                                p={2}
-                                            >
-                                                <TagLabel>{country}</TagLabel>
-                                            </Tag>
-                                        ))}
-                                    </SimpleGrid>
-                                </FormControl>
-
-                                <FormControl mt={6}>
-                                    <FormLabel fontWeight="medium">Preferencje drogowe</FormLabel>
-                                    <SimpleGrid columns={[2, null, 4]} spacing={3}>
-                                        {roadPreferences.map((preference) => (
-                                            <Tag
-                                                key={preference}
-                                                size="md"
-                                                variant={roadPreferencesSelected.includes(preference) ? "solid" : "outline"}
-                                                colorScheme="blue"
-                                                cursor="pointer"
-                                                onClick={() => handleToggleRoadPreference(preference)}
-                                                mb={2}
-                                                borderRadius="md"
-                                                boxShadow="sm"
-                                                p={2}
-                                            >
-                                                <TagLabel>{preference}</TagLabel>
-                                            </Tag>
-                                        ))}
-                                    </SimpleGrid>
-                                </FormControl>
                             </CardBody>
                         </Card>
                     </Box>
@@ -1283,7 +1367,7 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                             <FormControl>
                                 <FormLabel>Przekroczenie czasu (minuty)</FormLabel>
                                 <NumberInput min={1} max={60} defaultValue={15}>
-                                    <NumberInputField {...register('maxResponseTime', { min: 1, max: 60 })} />
+                                    <NumberInputField {...register('maxClientIdleTime', { min: 1, max: 60 })} />
                                     <NumberInputStepper>
                                         <NumberIncrementStepper />
                                         <NumberDecrementStepper />
@@ -1488,19 +1572,21 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                         >
                             Anuluj
                         </Button>
-                        <Button 
-                            colorScheme="blue" 
-                            type="submit"
-                            isLoading={isSubmitting}
-                            loadingText="Zapisywanie..."
-                            rightIcon={<FiSave />}
-                            boxShadow="md"
-                        >
-                            Zapisz agenta
-                        </Button>
+                        <ButtonGroup>
+                            <Button 
+                                colorScheme="blue" 
+                                type="submit"
+                                isLoading={isSubmitting}
+                                loadingText="Zapisywanie..."
+                                leftIcon={<FiSave />}
+                                boxShadow="md"
+                            >
+                                {isEditing ? 'Zapisz zmiany' : 'Zapisz profil'}
+                            </Button>
+                        </ButtonGroup>
                     </Flex>
                 </VStack>
             </form>
         </Box>
     );
-};
+ };

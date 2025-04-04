@@ -15,7 +15,7 @@ import {
   useDisclosure,
   Collapse,
 } from '@chakra-ui/react';
-import { FiFilter, FiX, FiSearch, FiCalendar } from 'react-icons/fi';
+import { FiFilter, FiX, FiSearch } from 'react-icons/fi';
 import { setFilters, selectFilters } from '../../features/orders/ordersSlice';
 
 const OrdersFilter = () => {

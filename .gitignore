@@ -10,19 +10,28 @@
 /build
 
 # misc
-.DS_Store
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+
+# Render specific
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store

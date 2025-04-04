@@ -5,10 +5,12 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { AgentsList } from './components/agents/AgentsList';
 import { AgentForm } from './components/agents/AgentForm';
+import AgentHistory from './components/agents/AgentHistory';
 import Dashboard from './components/dashboard/Dashboard';
 import Layout from './components/layout/Layout';
 import OrdersList from './components/orders/OrdersList';
 import OrderCard from './components/orders/OrderCard';
+import Settings from './components/settings/Settings';
 import theme from './theme/theme';
 
 function App() {
@@ -22,8 +24,10 @@ function App() {
                             <Route path="/agents" element={<AgentsList />} />
                             <Route path="/agent/new" element={<AgentForm onSubmit={console.log} />} />
                             <Route path="/agent/:id" element={<AgentForm onSubmit={console.log} />} />
+                            <Route path="/agent/:id/history" element={<AgentHistory />} />
                             <Route path="/orders" element={<OrdersList />} />
                             <Route path="/order/:id" element={<OrderCard />} />
+                            <Route path="/settings" element={<Settings />} />
                         </Routes>
                     </Layout>
                 </Router>

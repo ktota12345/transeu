@@ -85,14 +85,17 @@ const agentsSlice = createSlice({
             // Fetch all agents
             .addCase(fetchAgents.pending, (state) => {
                 state.status = 'loading';
+                console.log('Fetching agents...');
             })
             .addCase(fetchAgents.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.agents = action.payload;
+                console.log('Agents fetched successfully:', action.payload);
             })
             .addCase(fetchAgents.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
+                console.error('Failed to fetch agents:', action.error.message);
             })
             
             // Fetch single agent

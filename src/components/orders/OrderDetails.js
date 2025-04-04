@@ -8,7 +8,6 @@ import {
   Flex,
   Icon,
   Badge,
-  Divider,
   Table,
   Thead,
   Tbody,
@@ -21,8 +20,6 @@ import {
   FiPackage, 
   FiTruck, 
   FiMapPin, 
-  FiCalendar, 
-  FiClock,
   FiInfo,
   FiFileText
 } from 'react-icons/fi';

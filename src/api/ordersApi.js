@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const API_URL = process.env.NODE_ENV === 'production' 
-  ? '/api' 
-  : 'http://localhost:3002/api';
+  ? '' 
+  : 'http://localhost:4002'; 
 
 // Pobieranie listy zleceń z możliwością filtrowania
 export const fetchOrders = async (filters = {}) => {
@@ -115,12 +115,12 @@ export const acceptOrder = async (orderId) => {
     };
     
     // Zapisz zmiany
-    const saveResponse = await axios.put(`${API_URL}/orders/${orderId}`, updatedOrder);
+    await axios.put(`${API_URL}/orders/${orderId}`, updatedOrder);
     
     // Dodaj wiadomość do konwersacji
     await addSystemMessage(orderId, 'Zlecenie zostało zaakceptowane.');
     
-    return saveResponse.data;
+    return updatedOrder;
   } catch (error) {
     console.error(`Error accepting order ${orderId}:`, error);
     throw error;
@@ -142,12 +142,12 @@ export const rejectOrder = async (orderId, reason) => {
     };
     
     // Zapisz zmiany
-    const saveResponse = await axios.put(`${API_URL}/orders/${orderId}`, updatedOrder);
+    await axios.put(`${API_URL}/orders/${orderId}`, updatedOrder);
     
     // Dodaj wiadomość do konwersacji
     await addSystemMessage(orderId, `Zlecenie zostało odrzucone. Powód: ${reason}`);
     
-    return saveResponse.data;
+    return updatedOrder;
   } catch (error) {
     console.error(`Error rejecting order ${orderId}:`, error);
     throw error;
@@ -170,12 +170,12 @@ export const transferToOperator = async (orderId, operatorId) => {
     };
     
     // Zapisz zmiany
-    const saveResponse = await axios.put(`${API_URL}/orders/${orderId}`, updatedOrder);
+    await axios.put(`${API_URL}/orders/${orderId}`, updatedOrder);
     
     // Dodaj wiadomość do konwersacji
     await addSystemMessage(orderId, `Zlecenie zostało przekazane do operatora.`);
     
-    return saveResponse.data;
+    return updatedOrder;
   } catch (error) {
     console.error(`Error transferring order to operator:`, error);
     throw error;
@@ -203,12 +203,12 @@ export const transferToAgent = async (orderId, agentId) => {
     };
     
     // Zapisz zmiany
-    const result = await axios.put(`${API_URL}/orders/${orderId}`, updatedOrder);
+    await axios.put(`${API_URL}/orders/${orderId}`, updatedOrder);
     
     // Dodaj wiadomość do konwersacji
     await addSystemMessage(orderId, `Zlecenie zostało przekazane do agenta automatyzacji ${agent.name}.`);
     
-    return result.data;
+    return updatedOrder;
   } catch (error) {
     console.error(`Error transferring order to agent:`, error);
     throw error;
@@ -239,7 +239,7 @@ export const sendMessage = async (conversationId, content, attachments = []) => 
     };
     
     // Zapisz zmiany
-    const saveResponse = await axios.put(`${API_URL}/conversations/${conversation.id}`, updatedConversation);
+    await axios.put(`${API_URL}/conversations/${conversation.id}`, updatedConversation);
     
     return newMessage;
   } catch (error) {

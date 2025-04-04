@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = process.env.NODE_ENV === 'production' 
   ? '/api' 
-  : 'http://localhost:3002/api';
+  : 'http://localhost:4002';
 
 // Pobieranie wszystkich agentów
 export const fetchAgents = async () => {
@@ -29,11 +29,14 @@ export const fetchAgent = async (id) => {
 // Dodawanie nowego agenta
 export const createAgent = async (agentData) => {
   try {
-    const response = await axios.post(`${API_URL}/agents`, {
+    // Ensure selectedLogisticsBase is a number if it exists
+    const dataToSend = {
       ...agentData,
+      selectedLogisticsBase: agentData.selectedLogisticsBase ? parseInt(agentData.selectedLogisticsBase, 10) : null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    });
+    };
+    const response = await axios.post(`${API_URL}/agents`, dataToSend);
     return response.data;
   } catch (error) {
     console.error('Error creating agent:', error);
@@ -44,10 +47,13 @@ export const createAgent = async (agentData) => {
 // Aktualizacja agenta
 export const updateAgent = async (id, agentData) => {
   try {
-    const response = await axios.put(`${API_URL}/agents/${id}`, {
-      ...agentData,
-      updatedAt: new Date().toISOString()
-    });
+    // Ensure selectedLogisticsBase is a number if it exists
+    const dataToSend = {
+        ...agentData,
+        selectedLogisticsBase: agentData.selectedLogisticsBase ? parseInt(agentData.selectedLogisticsBase, 10) : null,
+        updatedAt: new Date().toISOString()
+    };
+    const response = await axios.put(`${API_URL}/agents/${id}`, dataToSend);
     return response.data;
   } catch (error) {
     console.error(`Error updating agent with id ${id}:`, error);

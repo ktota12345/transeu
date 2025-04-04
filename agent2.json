@@ -1,0 +1,96 @@
+{
+  "name": "test",
+  "description": "",
+  "isActive": false,
+  "priority": 1,
+  "operator": "",
+  "tags": [],
+  "specialization": [],
+  "priorityClients": [],
+  "preferredCargoTypes": [],
+  "unwantedCargoTypes": [],
+  "additionalServices": [],
+  "preferredRoutes": [],
+  "regionsToAvoid": [],
+  "vehicleBases": [],
+  "selectedLogisticsBase": "4",
+  "customLogisticsPoint": null,
+  "maxOperatingRadius": 500,
+  "preferredCountries": [
+    "Niemcy"
+  ],
+  "unwantedCountries": [],
+  "roadPreferences": [],
+  "minRatePerKm": 1,
+  "targetRatePerKm": 1.5,
+  "minOrderValue": 500,
+  "preferredPaymentTerms": [],
+  "currencies": [
+    "PLN",
+    "EUR"
+  ],
+  "additionalFees": [],
+  "emptyKmCost": 0.8,
+  "minProfitMargin": 10,
+  "availabilityQueryParams": {},
+  "minAvailabilityBuffer": 1,
+  "preferredDays": [
+    "mon",
+    "tue",
+    "wed",
+    "thu",
+    "fri"
+  ],
+  "preferredHours": {
+    "start": "08:00",
+    "end": "18:00"
+  },
+  "maxExecutionTime": 48,
+  "timeBuffer": 2,
+  "availabilityUpdateFrequency": "hourly",
+  "checkPriority": "beforeAnalysis",
+  "trailerTypes": [],
+  "liftCapacityRange": {
+    "min": 0,
+    "max": 24
+  },
+  "specialEquipment": [],
+  "certificates": [],
+  "cargoParameters": {
+    "width": 0,
+    "height": 0,
+    "length": 0
+  },
+  "specialRequirements": "",
+  "negotiationAggressiveness": 3,
+  "maxCounterOffers": 3,
+  "minResponseTime": 1,
+  "maxResponseTime": 15,
+  "negotiationStrategiesSelected": [],
+  "negotiationInstructions": "",
+  "priceThreshold": 15,
+  "unusualClientRequirements": [],
+  "keywordTriggers": [],
+  "emotionDetectionLevel": 50,
+  "negotiationStagesRequiringHuman": [],
+  "maxClientIdleTime": 15,
+  "checkFrequency": "hourly",
+  "customCheckInterval": 60,
+  "workingHours": {
+    "start": "09:00",
+    "end": "17:00"
+  },
+  "workingDays": [
+    "mon",
+    "tue",
+    "wed",
+    "thu",
+    "fri"
+  ],
+  "scheduleExceptions": [],
+  "workIntensity": "balanced",
+  "maxConcurrentNegotiations": 1,
+  "isDraft": true,
+  "updatedAt": "2025-03-31T15:33:09.032Z",
+  "id": 2
+}

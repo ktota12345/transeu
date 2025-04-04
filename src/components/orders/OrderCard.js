@@ -32,7 +32,6 @@ import {
   FiCheck, 
   FiX, 
   FiMessageSquare, 
-  FiUser, 
   FiDollarSign, 
   FiClock,
   FiFileText,
@@ -80,7 +79,6 @@ const OrderCard = () => {
   
   const { 
     isOpen: isTransferModalOpen, 
-    onOpen: onTransferModalOpen, 
     onClose: onTransferModalClose 
   } = useDisclosure();
   

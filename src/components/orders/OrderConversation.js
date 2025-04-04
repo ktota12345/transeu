@@ -11,8 +11,6 @@ import {
   Avatar,
   Input,
   IconButton,
-  Divider,
-  Spinner,
   useToast,
   Badge,
   Tooltip,
@@ -21,7 +19,6 @@ import {
   FiMessageSquare, 
   FiSend, 
   FiPaperclip, 
-  FiUser, 
   FiRefreshCw,
   FiInfo
 } from 'react-icons/fi';

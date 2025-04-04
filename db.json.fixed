@@ -1,131 +1,67 @@
 {
-  "logisticsBases": [
-    {
-      "name": "test 1",
-      "address": {
-        "full": "Schadowstraße 82, 40212 Düsseldorf, Germany",
-        "city": "Düsseldorf",
-        "postalCode": "40212",
-        "country": "DE"
-      },
-      "coordinates": {
-        "lat": 51.228175064794776,
-        "lng": 6.786238864959864
-      },
-      "id": 4
-    }
-  ],
   "agents": [
     {
-      "name": "test",
+      "name": "1",
       "description": "",
-      "isActive": false,
-      "priority": 1,
+      "priority": "",
       "operator": "",
-      "tags": [],
-      "specialization": [],
-      "priorityClients": [],
-      "preferredCargoTypes": [],
-      "unwantedCargoTypes": [],
-      "additionalServices": [],
-      "preferredRoutes": [],
-      "regionsToAvoid": [],
-      "vehicleBases": [],
-      "selectedLogisticsBase": 4,
-      "selectedGermanDestinations": [
-        "Berlin"
-      ],
-      "customLogisticsPoint": null,
-      "maxOperatingRadius": 500,
-      "preferredCountries": [],
-      "unwantedCountries": [],
-      "roadPreferences": [],
-      "timocomSettings": {
-        "destinationCities": [],
-        "startSearchRadius": 50,
-        "destinationSearchRadius": 50,
-        "additionalParams": {
-          "lengthRange_m": {
-            "inclusiveMinimum": 0.1,
-            "inclusiveMaximum": 14
-          },
-          "weightRange_t": {
-            "inclusiveMinimum": 0.1,
-            "inclusiveMaximum": 24
-          }
-        }
-      },
-      "minRatePerKm": 1,
-      "targetRatePerKm": 1.5,
-      "minOrderValue": 500,
-      "preferredPaymentTerms": [],
-      "currencies": [
-        "PLN",
-        "EUR"
-      ],
-      "additionalFees": [],
-      "emptyKmCost": 0.8,
-      "minProfitMargin": 10,
-      "availabilityQueryParams": {},
-      "minAvailabilityBuffer": 1,
-      "preferredDays": [
-        "mon",
-        "tue",
-        "wed",
-        "thu",
-        "fri"
-      ],
+      "isActive": false,
+      "maxOperatingRadius": "",
+      "selectedLogisticsBase": "4",
+      "minRatePerKm": "",
+      "targetRatePerKm": "",
+      "minOrderValue": "",
+      "emptyKmCost": "",
+      "minProfitMargin": "",
+      "availabilityQueryParams": "",
+      "minAvailabilityBuffer": "1",
       "preferredHours": {
-        "start": "08:00",
-        "end": "18:00"
+        "start": "",
+        "end": ""
       },
-      "maxExecutionTime": 48,
-      "timeBuffer": 2,
-      "availabilityUpdateFrequency": "hourly",
+      "maxExecutionTime": "48",
+      "timeBuffer": "2",
+      "availabilityUpdateFrequency": "live",
       "checkPriority": "beforeAnalysis",
-      "trailerTypes": [],
       "liftCapacityRange": {
-        "min": 0,
-        "max": 24
+        "min": "",
+        "max": ""
       },
-      "specialEquipment": [],
-      "certificates": [],
       "cargoParameters": {
-        "width": 0,
-        "height": 0,
-        "length": 0
+        "width": "",
+        "height": "",
+        "length": ""
       },
       "specialRequirements": "",
-      "negotiationAggressiveness": 3,
-      "maxCounterOffers": 3,
-      "minResponseTime": 1,
-      "maxResponseTime": 15,
-      "negotiationStrategiesSelected": [],
+      "maxCounterOffers": "3",
+      "minResponseTime": "",
+      "maxResponseTime": "",
       "negotiationInstructions": "",
-      "priceThreshold": 15,
-      "unusualClientRequirements": [],
-      "keywordTriggers": [],
-      "emotionDetectionLevel": 50,
-      "negotiationStagesRequiringHuman": [],
-      "maxClientIdleTime": 15,
-      "checkFrequency": "hourly",
-      "customCheckInterval": 60,
+      "priceThreshold": "15",
+      "emotionDetectionLevel": "50",
+      "maxClientIdleTime": "15",
+      "checkFrequency": "live",
       "workingHours": {
-        "start": "09:00",
-        "end": "17:00"
+        "start": "",
+        "end": ""
       },
-      "workingDays": [
-        "mon",
-        "tue",
-        "wed",
-        "thu",
-        "fri"
-      ],
-      "scheduleExceptions": [],
-      "workIntensity": "balanced",
-      "maxConcurrentNegotiations": 1,
-      "isDraft": true,
-      "updatedAt": "2025-04-02T10:11:31.750Z",
+      "workIntensity": "accuracy",
+      "maxConcurrentNegotiations": "",
+      "customLogisticsPoint": null,
+      "timocomSettings": {
+        "startSearchRadius": 200,
+        "destinationCities": [
+          "Dresden",
+          "Berlin",
+          "Kiel",
+          "Saarbrücken",
+          "Bremen",
+          "Erfurt",
+          "Hannover"
+        ],
+        "destinationSearchRadius": 100
+      },
+      "updatedAt": "2025-04-01T13:31:45.127Z",
       "id": 2
     }
   ],
@@ -1113,574 +1049,330 @@
       "addedAt": "2025-03-17T15:10:00.000Z"
     }
   ],
-  "agentHistory": [
-    {
-      "id": "hist-1743755800786-kg8u0",
-      "agentId": 2,
-      "timestamp": "2025-04-04T08:36:40.786Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Problem: Constraints are violated.",
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743756059030-f49l5",
-      "agentId": 2,
-      "timestamp": "2025-04-04T08:40:59.030Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Problem: Invalid request payload",
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743756098799-as9a5",
-      "agentId": 2,
-      "timestamp": "2025-04-04T08:41:38.799Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Problem: Invalid request payload",
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743756623503-5g6v0",
-      "agentId": 2,
-      "timestamp": "2025-04-04T08:50:23.503Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Problem: Invalid request payload",
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743757222818-8hm6f",
-      "agentId": 2,
-      "timestamp": "2025-04-04T09:00:22.818Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Problem: Invalid request payload",
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743757360605-90hso",
-      "agentId": 2,
-      "timestamp": "2025-04-04T09:02:40.605Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Problem: Invalid request payload",
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743757418330-ssr25",
-      "agentId": 2,
-      "timestamp": "2025-04-04T09:03:38.330Z",
-      "type": "searchOffers",
-      "status": "success",
-      "details": "Found 0 offers.",
-      "offers": []
-    },
-    {
-      "id": "hist-1743757919638-zxtxg",
-      "agentId": 2,
-      "timestamp": "2025-04-04T09:11:59.638Z",
-      "type": "searchOffers",
-      "status": "success",
-      "details": "Found 0 offers.",
-      "offers": []
-    },
-    {
-      "id": "hist-1743764773544-uyvk5",
-      "agentId": 2,
-      "timestamp": "2025-04-04T11:06:13.544Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Nieoczekiwany format odpowiedzi lub brak pola ofert.",
-      "offers": [],
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743764799869-05g93",
-      "agentId": 2,
-      "timestamp": "2025-04-04T11:06:39.869Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Nieoczekiwany format odpowiedzi lub brak pola ofert.",
-      "offers": [],
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743764876347-titcz",
-      "agentId": 2,
-      "timestamp": "2025-04-04T11:07:56.347Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Nieoczekiwany format odpowiedzi lub brak pola ofert.",
-      "offers": [],
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743765034322-ql19o",
-      "agentId": 2,
-      "timestamp": "2025-04-04T11:10:34.322Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Nieoczekiwany format odpowiedzi lub brak pola ofert.",
-      "offers": [],
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743765087178-ckvwy",
-      "agentId": 2,
-      "timestamp": "2025-04-04T11:11:27.178Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Nieoczekiwany format odpowiedzi lub brak pola ofert.",
-      "offers": [],
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743765106145-208zo",
-      "agentId": 2,
-      "timestamp": "2025-04-04T11:11:46.145Z",
-      "type": "searchOffers",
-      "status": "error",
-      "details": "Failed to fetch offers from Timocom: Nieoczekiwany format odpowiedzi lub brak pola ofert.",
-      "offers": [],
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743765196974-njrug",
-      "agentId": 2,
-      "timestamp": "2025-04-04T11:13:16.974Z",
-      "type": "searchOffers",
-      "status": "success",
-      "details": "Found 0 offers.",
-      "offers": [],
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743765300671-xeh0b",
-      "agentId": 2,
-      "timestamp": "2025-04-04T11:15:00.671Z",
-      "type": "searchOffers",
-      "status": "success",
-      "details": "Found 0 offers.",
-      "offers": [],
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743765436306-tl1ug",
-      "agentId": 2,
-      "timestamp": "2025-04-04T11:17:16.306Z",
-      "type": "searchOffers",
-      "status": "success",
-      "details": "Found 3 offers.",
-      "offers": [
-        {
-          "objectType": "freightOffer",
-          "closedFreightExchangeSetting": null,
-          "contactPerson": null,
-          "creationDateTime": "2025-04-04T11:16:17Z",
-          "customer": null,
-          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/6lWny5rPQWO5bgEmxADEOA",
-          "excludedCustomers": [],
-          "id": "6lWny5rPQWO5bgEmxADEOA",
-          "internalRemark": null,
-          "logisticsDocumentTypes": [],
-          "publicRemark": null,
-          "trackable": false,
-          "vehicleProperties": {
-            "body": [
-              "CURTAIN_SIDER"
-            ],
-            "bodyProperty": [],
-            "equipment": [],
-            "loadSecuring": [],
-            "swapBody": [],
-            "type": [
-              "TRAILER"
-            ]
-          },
-          "acceptQuotes": true,
-          "additionalInformation": [
-            "LOADING_EQUIPMENT_EXCHANGE"
-          ],
-          "distance_km": 689,
-          "freightDescription": "general cargo",
-          "length_m": 13.6,
-          "loadingPlaces": [
-            {
-              "loadingType": "LOADING",
-              "address": {
-                "objectType": "address",
-                "city": "Gelsenkirchen",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 7.07739,
-                  "latitude": 51.52732
-                },
-                "geocoded": true,
-                "postalCode": "45881"
-              },
-              "startTime": "08:00",
-              "endTime": "16:00",
-              "earliestLoadingDate": "2025-04-07",
-              "latestLoadingDate": "2025-04-07"
-            },
-            {
-              "loadingType": "UNLOADING",
-              "address": {
-                "objectType": "address",
-                "city": "Gotha",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 10.70859,
-                  "latitude": 50.94984
-                },
-                "geocoded": true,
-                "postalCode": "99867"
-              },
-              "startTime": "08:00",
-              "endTime": "15:00",
-              "earliestLoadingDate": "2025-04-07",
-              "latestLoadingDate": "2025-04-08"
-            },
-            {
-              "loadingType": "UNLOADING",
-              "address": {
-                "objectType": "address",
-                "city": "Berlin (Bohnsdorf)",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 13.56057,
-                  "latitude": 52.40109
-                },
-                "geocoded": true,
-                "postalCode": "12526"
-              },
-              "startTime": null,
-              "endTime": null,
-              "earliestLoadingDate": "2025-04-08",
-              "latestLoadingDate": "2025-04-09"
-            }
-          ],
-          "paymentDueWithinDays": 45,
-          "price": null,
-          "weight_t": 10
+  "agentHistory": {
+    "1": [
+      {
+        "id": "entry_1",
+        "agentId": 1,
+        "timestamp": "2025-03-27T10:15:00.000Z",
+        "type": "search",
+        "searchParams": {
+          "agentConfig": {
+            "name": "Agent Transportowy Premium",
+            "selectedLogisticsBase": "WRO1"
+          }
         },
-        {
-          "objectType": "freightOffer",
-          "closedFreightExchangeSetting": null,
-          "contactPerson": null,
-          "creationDateTime": "2025-04-04T11:17:11Z",
-          "customer": null,
-          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/XvWvYf85TjWwuWrxZaALWw",
-          "excludedCustomers": [],
-          "id": "XvWvYf85TjWwuWrxZaALWw",
-          "internalRemark": null,
-          "logisticsDocumentTypes": [],
-          "publicRemark": "No Pallets Exchange | Order ID: 548370",
-          "trackable": false,
-          "vehicleProperties": {
-            "body": [
-              "CURTAIN_SIDER",
-              "MEGA",
-              "TAUTLINER"
-            ],
-            "bodyProperty": [],
-            "equipment": [
-              "PORTABLE_PUMP_TRUCK",
-              "TAIL_LIFT"
-            ],
-            "loadSecuring": [],
-            "swapBody": [],
-            "type": [
-              "VEHICLE_UP_TO_7_5_T",
-              "VEHICLE_UP_TO_12_T",
-              "TRAILER",
-              "WAGGON_AND_DRAG"
-            ]
-          },
-          "acceptQuotes": false,
-          "additionalInformation": [],
-          "distance_km": 588,
-          "freightDescription": "1x 500*240*230cm",
-          "length_m": 5,
-          "loadingPlaces": [
-            {
-              "loadingType": "LOADING",
+        "initialOffers": [
+          {
+            "id": "offer_1",
+            "loadingPlace": {
               "address": {
-                "objectType": "address",
-                "city": "Hürth",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 6.87966,
-                  "latitude": 50.8801
-                },
-                "geocoded": true,
-                "postalCode": "50354"
-              },
-              "startTime": "08:00",
-              "endTime": "11:00",
-              "earliestLoadingDate": "2025-04-09",
-              "latestLoadingDate": "2025-04-09"
+                "city": "Warszawa"
+              }
             },
-            {
-              "loadingType": "UNLOADING",
+            "unloadingPlace": {
               "address": {
-                "objectType": "address",
-                "city": "Berlin",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 13.56057,
-                  "latitude": 52.40109
-                },
-                "geocoded": true,
-                "postalCode": "12526"
-              },
-              "startTime": "08:00",
-              "endTime": "12:00",
-              "earliestLoadingDate": "2025-04-10",
-              "latestLoadingDate": "2025-04-10"
+                "city": "Berlin"
+              }
+            },
+            "price": {
+              "amount": 1200,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 520
             }
-          ],
-          "paymentDueWithinDays": 14,
-          "price": {
-            "amount": 450,
-            "currency": "EUR"
           },
-          "weight_t": 3
+          {
+            "id": "offer_2",
+            "loadingPlace": {
+              "address": {
+                "city": "Poznań"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Hamburg"
+              }
+            },
+            "price": {
+              "amount": 1350,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 650
+            }
+          },
+          {
+            "id": "offer_3",
+            "loadingPlace": {
+              "address": {
+                "city": "Wrocław"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Praga"
+              }
+            },
+            "price": {
+              "amount": 850,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 280
+            }
+          }
+        ],
+        "processedOffers": [
+          {
+            "id": "offer_1",
+            "loadingPlace": {
+              "address": {
+                "city": "Warszawa"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Berlin"
+              }
+            },
+            "price": {
+              "amount": 1200,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 520
+            },
+            "profitability": {
+              "score": 75,
+              "profit": 320.5,
+              "revenue": 1200,
+              "cost": 879.5
+            }
+          },
+          {
+            "id": "offer_2",
+            "loadingPlace": {
+              "address": {
+                "city": "Poznań"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Hamburg"
+              }
+            },
+            "price": {
+              "amount": 1350,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 650
+            },
+            "profitability": {
+              "score": 65,
+              "profit": 280.75,
+              "revenue": 1350,
+              "cost": 1069.25
+            }
+          },
+          {
+            "id": "offer_3",
+            "loadingPlace": {
+              "address": {
+                "city": "Wrocław"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Praga"
+              }
+            },
+            "price": {
+              "amount": 850,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 280
+            },
+            "profitability": {
+              "score": 82,
+              "profit": 310.2,
+              "revenue": 850,
+              "cost": 539.8
+            }
+          }
+        ],
+        "offersCount": 3,
+        "acceptedOffersCount": 2
+      },
+      {
+        "id": "entry_2",
+        "agentId": 1,
+        "timestamp": "2025-03-27T12:30:00.000Z",
+        "type": "search",
+        "searchParams": {
+          "agentConfig": {
+            "name": "Agent Transportowy Premium",
+            "selectedLogisticsBase": "POZ1"
+          }
         },
-        {
-          "objectType": "freightOffer",
-          "closedFreightExchangeSetting": null,
-          "contactPerson": null,
-          "creationDateTime": "2025-04-04T11:16:58Z",
-          "customer": null,
-          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/00vbplWgStGCFHqPaEDABg",
-          "excludedCustomers": [],
-          "id": "00vbplWgStGCFHqPaEDABg",
-          "internalRemark": null,
-          "logisticsDocumentTypes": [],
-          "publicRemark": "No Pallets Exchange | Order ID: 548370",
-          "trackable": false,
-          "vehicleProperties": {
-            "body": [
-              "CURTAIN_SIDER",
-              "MEGA",
-              "TAUTLINER"
-            ],
-            "bodyProperty": [],
-            "equipment": [
-              "PORTABLE_PUMP_TRUCK",
-              "TAIL_LIFT"
-            ],
-            "loadSecuring": [],
-            "swapBody": [],
-            "type": [
-              "VEHICLE_UP_TO_7_5_T",
-              "VEHICLE_UP_TO_12_T",
-              "TRAILER",
-              "WAGGON_AND_DRAG"
-            ]
-          },
-          "acceptQuotes": false,
-          "additionalInformation": [],
-          "distance_km": 588,
-          "freightDescription": "1x 500*240*230cm",
-          "length_m": 5,
-          "loadingPlaces": [
-            {
-              "loadingType": "LOADING",
+        "initialOffers": [
+          {
+            "id": "offer_4",
+            "loadingPlace": {
               "address": {
-                "objectType": "address",
-                "city": "Hürth",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 6.87966,
-                  "latitude": 50.8801
-                },
-                "geocoded": true,
-                "postalCode": "50354"
-              },
-              "startTime": "08:00",
-              "endTime": "11:00",
-              "earliestLoadingDate": "2025-04-09",
-              "latestLoadingDate": "2025-04-09"
+                "city": "Gdańsk"
+              }
             },
-            {
-              "loadingType": "UNLOADING",
+            "unloadingPlace": {
               "address": {
-                "objectType": "address",
-                "city": "Berlin",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 13.56057,
-                  "latitude": 52.40109
-                },
-                "geocoded": true,
-                "postalCode": "12526"
-              },
-              "startTime": "08:00",
-              "endTime": "12:00",
-              "earliestLoadingDate": "2025-04-10",
-              "latestLoadingDate": "2025-04-10"
+                "city": "Kopenhaga"
+              }
+            },
+            "price": {
+              "amount": 1800,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 780
             }
-          ],
-          "paymentDueWithinDays": 14,
-          "price": {
-            "amount": 450,
-            "currency": "EUR"
           },
-          "weight_t": 3
-        }
-      ],
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743767672400-yo4mq",
-      "agentId": 2,
-      "timestamp": "2025-04-04T11:54:32.400Z",
-      "type": "searchOffers",
-      "status": "success",
-      "details": "Found 0 offers.",
-      "offers": [],
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743767704602-2c149",
-      "agentId": 2,
-      "timestamp": "2025-04-04T11:55:04.602Z",
-      "type": "searchOffers",
-      "status": "success",
-      "details": "Found 1 offers.",
-      "offers": [
-        {
-          "objectType": "freightOffer",
-          "closedFreightExchangeSetting": null,
-          "contactPerson": null,
-          "creationDateTime": "2025-04-04T11:54:10Z",
-          "customer": null,
-          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/4hyiidLnTGSnZktnt3iS7w",
-          "excludedCustomers": [],
-          "id": "4hyiidLnTGSnZktnt3iS7w",
-          "internalRemark": null,
-          "logisticsDocumentTypes": [],
-          "publicRemark": null,
-          "trackable": false,
-          "vehicleProperties": {
-            "body": [
-              "CURTAIN_SIDER"
-            ],
-            "bodyProperty": [],
-            "equipment": [],
-            "loadSecuring": [],
-            "swapBody": [],
-            "type": [
-              "TRAILER",
-              "WAGGON_AND_DRAG"
-            ]
-          },
-          "acceptQuotes": true,
-          "additionalInformation": [
-            "LOADING_EQUIPMENT_EXCHANGE"
-          ],
-          "distance_km": 636,
-          "freightDescription": "27 Europaletten ",
-          "length_m": 13.6,
-          "loadingPlaces": [
-            {
-              "loadingType": "LOADING",
+          {
+            "id": "offer_5",
+            "loadingPlace": {
               "address": {
-                "objectType": "address",
-                "city": "Köln",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 7.04844,
-                  "latitude": 50.90519
-                },
-                "geocoded": true,
-                "postalCode": "51149"
-              },
-              "startTime": "09:00",
-              "endTime": "15:00",
-              "earliestLoadingDate": "2025-04-07",
-              "latestLoadingDate": "2025-04-07"
+                "city": "Szczecin"
+              }
             },
-            {
-              "loadingType": "LOADING",
+            "unloadingPlace": {
               "address": {
-                "objectType": "address",
-                "city": "Erftstadt",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 6.76506,
-                  "latitude": 50.80003
-                },
-                "geocoded": true,
-                "postalCode": "50374"
-              },
-              "startTime": "08:00",
-              "endTime": "15:00",
-              "earliestLoadingDate": "2025-04-07",
-              "latestLoadingDate": "2025-04-07"
+                "city": "Malmö"
+              }
             },
-            {
-              "loadingType": "UNLOADING",
-              "address": {
-                "objectType": "address",
-                "city": "Großbeeren",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 13.30603,
-                  "latitude": 52.35329
-                },
-                "geocoded": true,
-                "postalCode": "14979"
-              },
-              "startTime": "08:45",
-              "endTime": "08:45",
-              "earliestLoadingDate": "2025-04-08",
-              "latestLoadingDate": "2025-04-08"
+            "price": {
+              "amount": 1250,
+              "currency": "EUR"
             },
-            {
-              "loadingType": "UNLOADING",
-              "address": {
-                "objectType": "address",
-                "city": "Mittenwalde",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 13.53571,
-                  "latitude": 52.26578
-                },
-                "geocoded": true,
-                "postalCode": "15749"
-              },
-              "startTime": "06:00",
-              "endTime": "11:00",
-              "earliestLoadingDate": "2025-04-08",
-              "latestLoadingDate": "2025-04-08"
+            "distance": {
+              "value": 420
             }
-          ],
-          "paymentDueWithinDays": 30,
-          "price": {
-            "amount": 950,
-            "currency": "EUR"
+          }
+        ],
+        "processedOffers": [
+          {
+            "id": "offer_4",
+            "loadingPlace": {
+              "address": {
+                "city": "Gdańsk"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Kopenhaga"
+              }
+            },
+            "price": {
+              "amount": 1800,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 780
+            },
+            "profitability": {
+              "score": 58,
+              "profit": 290.5,
+              "revenue": 1800,
+              "cost": 1509.5
+            }
           },
-          "weight_t": 10
+          {
+            "id": "offer_5",
+            "loadingPlace": {
+              "address": {
+                "city": "Szczecin"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Malmö"
+              }
+            },
+            "price": {
+              "amount": 1250,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 420
+            },
+            "profitability": {
+              "score": 78,
+              "profit": 420.3,
+              "revenue": 1250,
+              "cost": 829.7
+            }
+          }
+        ],
+        "offersCount": 2,
+        "acceptedOffersCount": 1
+      },
+      {
+        "id": "entry_3",
+        "agentId": 1,
+        "timestamp": "2025-03-27T13:45:00.000Z",
+        "type": "action",
+        "offer": {
+          "id": "offer_1",
+          "loadingPlace": {
+            "address": {
+              "city": "Warszawa"
+            }
+          },
+          "unloadingPlace": {
+            "address": {
+              "city": "Berlin"
+            }
+          },
+          "price": {
+            "amount": 1200,
+            "currency": "EUR"
+          }
+        },
+        "action": "accept",
+        "actionDetails": {
+          "reason": "Wysoka rentowność, dobra cena za kilometr"
         }
-      ],
-      "errorDetails": null
-    },
-    {
-      "id": "hist-1743768350112-hzaco",
-      "agentId": 2,
-      "timestamp": "2025-04-04T12:05:50.112Z",
-      "type": "searchOffers",
-      "status": "success",
-      "details": "Found 0 offers.",
-      "offers": [],
-      "errorDetails": null
-    }
-  ],
+      },
+      {
+        "id": "entry_4",
+        "agentId": 1,
+        "timestamp": "2025-03-27T13:50:00.000Z",
+        "type": "action",
+        "offer": {
+          "id": "offer_2",
+          "loadingPlace": {
+            "address": {
+              "city": "Poznań"
+            }
+          },
+          "unloadingPlace": {
+            "address": {
+              "city": "Hamburg"
+            }
+          },
+          "price": {
+            "amount": 1350,
+            "currency": "EUR"
+          }
+        },
+        "action": "reject",
+        "actionDetails": {
+          "reason": "Niska rentowność, zbyt wysokie koszty"
+        }
+      }
+    ]
+  },
   "settings": {},
   "timocomSettings": {
     "username": "Janta",
@@ -1690,6 +1382,17 @@
     "apiKey": "timocom-api-key-123",
     "refreshToken": "timocom-refresh-token-456"
   },
+  "logisticsBases": [
+    {
+      "name": "test 1",
+      "address": "7FXX+G5 Kassel, Germany",
+      "coordinates": {
+        "lat": 51.2988440996896,
+        "lng": 9.4979880965343
+      },
+      "id": 4
+    }
+  ],
   "timocom-offers": [
     {
       "id": "timocom-freight-1",
@@ -1732,15 +1435,9 @@
         }
       ],
       "vehicleRequirements": {
-        "bodyType": [
-          "TILT"
-        ],
-        "loadingEquipment": [
-          "SIDE_LOADING"
-        ],
-        "equipment": [
-          "GPS_TRACKING"
-        ]
+        "bodyType": ["TILT"],
+        "loadingEquipment": ["SIDE_LOADING"],
+        "equipment": ["GPS_TRACKING"]
       },
       "cargoDescription": "Pallets with electronic equipment",
       "cargoWeight": {
@@ -1798,15 +1495,9 @@
         }
       ],
       "vehicleRequirements": {
-        "bodyType": [
-          "BOX"
-        ],
-        "loadingEquipment": [
-          "TAIL_LIFT"
-        ],
-        "equipment": [
-          "TEMPERATURE_RECORDER"
-        ]
+        "bodyType": ["BOX"],
+        "loadingEquipment": ["TAIL_LIFT"],
+        "equipment": ["TEMPERATURE_RECORDER"]
       },
       "cargoDescription": "Refrigerated food products",
       "cargoWeight": {
