@@ -1,346 +1,151 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Heading,
-  Button,
-  Text,
-  Flex,
-  Badge,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Divider,
-  SimpleGrid,
-  Progress,
-  Stat,
-  StatLabel,
-  StatNumber,
-  Icon,
-  HStack,
-  Link
-} from '@chakra-ui/react';
-import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import { FiTruck, FiCheck, FiExternalLink } from 'react-icons/fi';
+import React from 'react';
+import { Box, Flex, Text, Badge, Link, Icon, Tooltip, VStack, Heading, Alert, AlertIcon, Stat, StatLabel, StatNumber, HStack, Wrap, Tag } from '@chakra-ui/react';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { FiTruck, FiExternalLink } from 'react-icons/fi';
 
-// Komponent do wyświetlania pojedynczej oferty
-const OfferItem = ({ offer, isProfitabilityScored = false }) => {
+const formatDate = (dateStr) => {
+  if (!dateStr) return '?';
+  return new Date(dateStr).toLocaleDateString('pl-PL');
+};
+
+const formatExplicitRange = (earliestDate, latestDate, startTime, endTime) => {
+  const startD = formatDate(earliestDate);
+  const endD = formatDate(latestDate);
+  const startFull = startTime ? `${startD} ${startTime}` : startD;
+  const endFull = endTime ? `${endD} ${endTime}` : endD;
+  if (startD === '?' && endD === '?') return null;
+  if (startD === '?') return `do ${endFull}`;
+  if (endD === '?') return `od ${startFull}`;
+  return `${startFull} - ${endFull}`;
+};
+
+const OfferItem = React.memo(({ offer }) => {
+  const loadingPlace = offer.loadingPlaces?.find(p => p.loadingType === 'LOADING');
+  const unloadingPlace = offer.loadingPlaces?.find(p => p.loadingType === 'UNLOADING');
+
+  const earliestLoadDate = loadingPlace?.earliestLoadingDate;
+  const latestLoadDate = loadingPlace?.latestLoadingDate;
+  const loadStartTime = loadingPlace?.startTime;
+  const loadEndTime = loadingPlace?.endTime;
+
+  const earliestUnloadDate = unloadingPlace?.earliestLoadingDate;
+  const latestUnloadDate = unloadingPlace?.latestLoadingDate;
+  const unloadStartTime = unloadingPlace?.startTime;
+  const unloadEndTime = unloadingPlace?.endTime;
+
+  const loadCity = loadingPlace?.address?.city || 'N/A';
+  const unloadCity = unloadingPlace?.address?.city || 'N/A';
+
+  const loadRangeFormatted = formatExplicitRange(earliestLoadDate, latestLoadDate, loadStartTime, loadEndTime);
+  const unloadRangeFormatted = formatExplicitRange(earliestUnloadDate, latestUnloadDate, unloadStartTime, unloadEndTime);
+
+  // Obliczanie stawki za km w oryginalnej walucie
+  let ratePerKm = null;
+  if (offer.price && typeof offer.price.amount === 'number' && typeof offer.distance_km === 'number' && offer.distance_km > 0) {
+      ratePerKm = (offer.price.amount / offer.distance_km).toFixed(2);
+  }
+
+  // Obliczanie stawki za km w PLN
+  let ratePlnPerKm = null;
+  const exchangeRateEurToPln = 4.3;
+  if (ratePerKm !== null) {
+      if (offer.price.currency === 'EUR') {
+          ratePlnPerKm = (parseFloat(ratePerKm) * exchangeRateEurToPln).toFixed(2);
+      } else if (offer.price.currency === 'PLN') {
+          ratePlnPerKm = ratePerKm; // Już jest w PLN
+      }
+      // Można dodać obsługę innych walut, jeśli potrzeba
+  }
+
   return (
     <Box p={4} borderWidth="1px" borderRadius="md" mb={3} position="relative">
-      <Flex justify="space-between" align="center">
-        <Box>
-          <Heading size="sm">{offer.id}</Heading>
-          <Text fontSize="sm" mt={1}>
-            {offer.loadingPlace?.address?.city || 
-             (offer.loadingPlaces && offer.loadingPlaces.length > 0 ? offer.loadingPlaces[0].address?.city : 'N/A')} 
-            → 
-            {offer.unloadingPlace?.address?.city || 
-             (offer.loadingPlaces && offer.loadingPlaces.length > 1 ? 
-              offer.loadingPlaces.find(p => p.loadingType === 'UNLOADING')?.address?.city : 'N/A')}
+      <Flex justify="space-between" align="flex-start">
+        <Box flex="1" mr={4}>
+          <Text fontWeight="bold" mb={1}>{loadCity} → {unloadCity}</Text>
+          <Text fontSize="sm" color="gray.600" mb={1}>
+            {offer.freightDescription || 'Brak opisu'} ({offer.weight_t ? `${offer.weight_t}t` : 'N/A'}, {offer.length_m ? `${offer.length_m}m` : 'N/A'})
           </Text>
-        </Box>
-        <Box>
-          <Text fontWeight="bold">
-            {offer.price?.amount ? `${offer.price.amount} ${offer.price.currency || 'EUR'}` : 'Cena: N/A'}
+          <Text fontSize="sm" color="gray.600">
+            Dystans: {offer.distance_km || 'N/A'} km
           </Text>
-          <Text fontSize="sm">{offer.distance_km || offer.distance?.value || 'N/A'} km</Text>
-        </Box>
-      </Flex>
-      
-      {offer.freightDescription && (
-        <Text fontSize="sm" mt={2}>
-          <strong>Opis:</strong> {offer.freightDescription}
-        </Text>
-      )}
-      
-      {offer.deeplink && (
-        <Link href={offer.deeplink} isExternal mt={2} display="inline-flex" alignItems="center" fontSize="sm" color="blue.500">
-          Zobacz w Timocom <Icon as={FiExternalLink} ml={1} />
-        </Link>
-      )}
-      
-      {isProfitabilityScored && offer.profitability && (
-        <Box mt={3}>
-          <Text fontSize="sm" fontWeight="bold" mb={1}>
-            Profitability Score: {offer.profitability.score}/100
-          </Text>
-          <Progress 
-            value={offer.profitability.score} 
-            colorScheme={offer.profitability.score >= 70 ? "green" : offer.profitability.score >= 50 ? "yellow" : "red"}
-            size="sm"
-            borderRadius="md"
-          />
-          
-          <SimpleGrid columns={3} spacing={2} mt={2}>
-            <Stat size="sm">
-              <StatLabel fontSize="xs">Zysk</StatLabel>
-              <StatNumber fontSize="sm">{offer.profitability.profit?.toFixed(2) || 0} PLN</StatNumber>
-            </Stat>
-            <Stat size="sm">
-              <StatLabel fontSize="xs">Przychód</StatLabel>
-              <StatNumber fontSize="sm">{offer.profitability.revenue?.toFixed(2) || 0} PLN</StatNumber>
-            </Stat>
-            <Stat size="sm">
-              <StatLabel fontSize="xs">Koszty</StatLabel>
-              <StatNumber fontSize="sm">{offer.profitability.cost?.toFixed(2) || 0} PLN</StatNumber>
-            </Stat>
-          </SimpleGrid>
-        </Box>
-      )}
-      
-      {isProfitabilityScored && (
-        <Badge 
-          position="absolute" 
-          top={2} 
-          right={2}
-          colorScheme={offer.profitability && offer.profitability.score >= 70 ? "green" : "red"}
-        >
-          {offer.profitability && offer.profitability.score >= 70 ? "Akceptowalna" : "Odrzucona"}
-        </Badge>
-      )}
-    </Box>
-  );
-};
-
-// Komponent do wyświetlania ofert Timocom
-const TimocomSearchEntry = ({ entry, expandedItems, toggleItem }) => {
-  return (
-    <AccordionItem key={entry.id} mb={4} border="1px solid" borderColor="gray.200" borderRadius="md">
-      <h2>
-        <AccordionButton p={4} _expanded={{ bg: 'blue.50' }}>
-          <Box flex="1" textAlign="left">
-            <Flex justify="space-between" align="center">
-              <Heading size="sm">
-                Wyszukiwanie Timocom z {new Date(entry.timestamp).toLocaleString()}
-              </Heading>
-              <HStack spacing={4}>
-                <Badge colorScheme={entry.status === 'success' ? 'green' : 'red'}>
-                  {entry.status === 'success' ? 'Sukces' : 'Błąd'}
-                </Badge>
-                <Badge colorScheme="blue">
-                  <Icon as={FiTruck} mr={1} />
-                  {entry.offers?.length || 0} ofert
-                </Badge>
-              </HStack>
-            </Flex>
-          </Box>
-          <AccordionIcon />
-        </AccordionButton>
-      </h2>
-      <AccordionPanel pb={4}>
-        <Box mb={4}>
-          <Heading size="xs" mb={2}>Szczegóły</Heading>
-          <Text fontSize="sm">{entry.details}</Text>
-          {entry.errorDetails && (
-            <Text color="red.500" fontSize="sm" mt={2}>{entry.errorDetails}</Text>
+          {loadRangeFormatted && (
+            <Text fontSize="xs" color="gray.500" mt={1}>Załadunek: {loadRangeFormatted}</Text>
+          )}
+          {unloadRangeFormatted && (
+            <Text fontSize="xs" color="gray.500" mt={1}>Rozładunek: {unloadRangeFormatted}</Text>
           )}
         </Box>
-        
-        {entry.offers && entry.offers.length > 0 && (
-          <>
-            <Divider my={4} />
-            
-            <Box>
-              <Flex justify="space-between" align="center" mb={3}>
-                <Heading size="xs">Znalezione oferty ({entry.offers.length})</Heading>
-                <Button 
-                  size="xs" 
-                  rightIcon={expandedItems[`${entry.id}-offers`] ? <ChevronDownIcon /> : <ChevronUpIcon />}
-                  onClick={() => toggleItem(`${entry.id}-offers`)}
-                >
-                  {expandedItems[`${entry.id}-offers`] ? 'Zwiń' : 'Rozwiń'}
-                </Button>
-              </Flex>
-              
-              {expandedItems[`${entry.id}-offers`] && (
-                <Box maxHeight="300px" overflowY="auto" mb={4}>
-                  {entry.offers.map(offer => (
-                    <OfferItem key={offer.id} offer={offer} />
-                  ))}
-                </Box>
-              )}
-            </Box>
-          </>
-        )}
-      </AccordionPanel>
-    </AccordionItem>
-  );
-};
 
-// Komponent do wyświetlania historii agenta
-const AgentHistorySearch = ({ history, filter = 'all' }) => {
-  const [expandedItems, setExpandedItems] = useState({});
-  
-  console.log('AgentHistorySearch - otrzymana historia:', history);
-  console.log('AgentHistorySearch - aktywny filtr:', filter);
-  
-  if (!history || history.length === 0) {
-    return (
-      <Box p={5} textAlign="center">
-        <Text>Brak historii wyszukiwań dla tego agenta.</Text>
-      </Box>
-    );
-  }
-  
-  // Filtrujemy historię zgodnie z parametrem filter
-  const filteredHistory = history.filter(entry => {
-    console.log('Sprawdzam wpis historii:', entry);
-    if (filter === 'all') return true;
-    if (filter === 'search') return entry.type === 'searchOffers';
-    if (filter === 'order') return entry.type === 'order';
-    if (filter === 'system') return entry.type === 'system';
-    return true;
-  });
-  
-  console.log('AgentHistorySearch - przefiltrowana historia:', filteredHistory);
-  
-  if (filteredHistory.length === 0) {
-    return (
-      <Box p={5} textAlign="center">
-        <Text>Brak wpisów historii dla wybranego filtra.</Text>
-      </Box>
-    );
-  }
-  
-  const toggleItem = (id) => {
-    setExpandedItems(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  };
-  
-  return (
-    <Box>
-      <Accordion allowMultiple>
-        {filteredHistory.map((entry) => {
-          // Sprawdzamy typ wpisu historii
-          if (entry.type === 'searchOffers') {
-            // Renderujemy wpis historii wyszukiwania Timocom
-            return (
-              <TimocomSearchEntry 
-                key={entry.id} 
-                entry={entry} 
-                expandedItems={expandedItems} 
-                toggleItem={toggleItem} 
-              />
-            );
-          } else {
-            // Renderujemy standardowy wpis historii (stara implementacja)
-            return (
-              <AccordionItem key={entry.id} mb={4} border="1px solid" borderColor="gray.200" borderRadius="md">
-                <h2>
-                  <AccordionButton p={4} _expanded={{ bg: 'blue.50' }}>
-                    <Box flex="1" textAlign="left">
-                      <Flex justify="space-between" align="center">
-                        <Heading size="sm">
-                          {entry.type === 'order' ? 'Zlecenie' : 'Wpis'} z {new Date(entry.timestamp).toLocaleString()}
-                        </Heading>
-                        <HStack spacing={4}>
-                          {entry.initialOffers && (
-                            <Badge colorScheme="blue">
-                              <Icon as={FiTruck} mr={1} />
-                              {entry.initialOffers.length} ofert
-                            </Badge>
-                          )}
-                          {entry.acceptedOffersCount !== undefined && (
-                            <Badge colorScheme="green">
-                              <Icon as={FiCheck} mr={1} />
-                              {entry.acceptedOffersCount} zaakceptowanych
-                            </Badge>
-                          )}
-                        </HStack>
-                      </Flex>
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  {/* Stara implementacja dla innych typów wpisów */}
-                  {entry.searchParams && (
-                    <Box mb={4}>
-                      <Heading size="xs" mb={2}>Parametry wyszukiwania</Heading>
-                      <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-                        <Box p={2} bg="gray.50" borderRadius="md">
-                          <Text fontSize="xs" fontWeight="bold">Agent</Text>
-                          <Text fontSize="sm">{entry.searchParams?.agentConfig?.name || 'N/A'}</Text>
-                        </Box>
-                        {entry.searchParams?.agentConfig?.selectedLogisticsBase && (
-                          <Box p={2} bg="gray.50" borderRadius="md">
-                            <Text fontSize="xs" fontWeight="bold">Baza logistyczna</Text>
-                            <Text fontSize="sm">ID: {entry.searchParams.agentConfig.selectedLogisticsBase}</Text>
-                          </Box>
-                        )}
-                        {entry.searchParams?.agentConfig?.customLogisticsPoint && (
-                          <Box p={2} bg="gray.50" borderRadius="md">
-                            <Text fontSize="xs" fontWeight="bold">Punkt niestandardowy</Text>
-                            <Text fontSize="sm">{entry.searchParams.agentConfig.customLogisticsPoint.name || 'Punkt niestandardowy'}</Text>
-                          </Box>
-                        )}
-                      </SimpleGrid>
-                    </Box>
-                  )}
-                  
-                  {entry.initialOffers && entry.initialOffers.length > 0 && (
-                    <>
-                      <Divider my={4} />
-                      
-                      <Box>
-                        <Flex justify="space-between" align="center" mb={3}>
-                          <Heading size="xs">Oferty przed oceną rentowności</Heading>
-                          <Button 
-                            size="xs" 
-                            rightIcon={expandedItems[`${entry.id}-initial`] ? <ChevronDownIcon /> : <ChevronUpIcon />}
-                            onClick={() => toggleItem(`${entry.id}-initial`)}
-                          >
-                            {expandedItems[`${entry.id}-initial`] ? 'Zwiń' : 'Rozwiń'}
-                          </Button>
-                        </Flex>
-                        
-                        {expandedItems[`${entry.id}-initial`] && (
-                          <Box maxHeight="300px" overflowY="auto" mb={4}>
-                            {entry.initialOffers.map(offer => (
-                              <OfferItem key={offer.id} offer={offer} />
-                            ))}
-                          </Box>
-                        )}
-                      </Box>
-                    </>
-                  )}
-                  
-                  {entry.processedOffers && entry.processedOffers.length > 0 && (
-                    <>
-                      <Divider my={4} />
-                      
-                      <Box>
-                        <Flex justify="space-between" align="center" mb={3}>
-                          <Heading size="xs">Oferty po ocenie rentowności</Heading>
-                          <Button 
-                            size="xs" 
-                            rightIcon={expandedItems[`${entry.id}-processed`] ? <ChevronDownIcon /> : <ChevronUpIcon />}
-                            onClick={() => toggleItem(`${entry.id}-processed`)}
-                          >
-                            {expandedItems[`${entry.id}-processed`] ? 'Zwiń' : 'Rozwiń'}
-                          </Button>
-                        </Flex>
-                        
-                        {expandedItems[`${entry.id}-processed`] && (
-                          <Box maxHeight="300px" overflowY="auto">
-                            {entry.processedOffers.map(offer => (
-                              <OfferItem key={offer.id} offer={offer} isProfitabilityScored={true} />
-                            ))}
-                          </Box>
-                        )}
-                      </Box>
-                    </>
-                  )}
-                </AccordionPanel>
-              </AccordionItem>
-            );
-          }
-        })}
-      </Accordion>
+        <Box textAlign="right">
+          {ratePerKm !== null ? (
+            <Text fontWeight="bold" fontSize="lg" color="gray.800">
+              {ratePerKm} {offer.price.currency}/km
+            </Text>
+          ) : (
+            <Text fontSize="sm" color="gray.500">Brak stawki</Text>
+          )}
+          {/* Dodatkowe wyświetlanie stawki w PLN */}
+          {ratePlnPerKm !== null && (
+            <Text fontSize="sm" color="gray.600">
+              (~ {ratePlnPerKm} PLN/km)
+            </Text>
+          )}
+          {(offer.price && typeof offer.price.amount === 'number') ? (
+            <Text fontSize="sm" color="gray.500">{offer.price.amount} {offer.price.currency}</Text>
+          ) : (
+            <Text fontSize="sm" color="gray.500">Brak ceny</Text>
+          )}
+          {offer.deeplink && (
+            <Link href={offer.deeplink} isExternal mt={2} d="block" fontSize="xs">
+              Zobacz w Timocom <ExternalLinkIcon mx="2px" />
+            </Link>
+          )}
+        </Box>
+      </Flex>
     </Box>
+  );
+});
+
+const AgentHistorySearch = ({ offers }) => {
+  if (!offers || offers.length === 0) {
+    return (
+      <Alert status="info">
+        <AlertIcon />
+        Brak ofert do wyświetlenia. Użyj przycisku "Szukaj Ofert", aby pobrać nowe dane.
+      </Alert>
+    );
+  }
+
+  // Sortowanie ofert malejąco według stawki PLN/km
+  const sortedOffers = [...offers].sort((a, b) => {
+    const exchangeRateEurToPln = 4.3;
+    // Funkcja pomocnicza do obliczania stawki PLN dla sortowania
+    const getPlnRate = (offer) => {
+        if (offer.price && typeof offer.price.amount === 'number' && typeof offer.distance_km === 'number' && offer.distance_km > 0) {
+            const rate = offer.price.amount / offer.distance_km;
+            if (offer.price.currency === 'EUR') {
+                return rate * exchangeRateEurToPln;
+            } else if (offer.price.currency === 'PLN') {
+                return rate;
+            }
+        }
+        return -Infinity; // Oferty bez ceny lub w innej walucie na koniec
+    };
+
+    const rateAPln = getPlnRate(a);
+    const rateBPln = getPlnRate(b);
+
+    return rateBPln - rateAPln; // Malejąco
+  });
+
+  return (
+    <VStack spacing={4} align="stretch">
+      <Heading size="md">Znalezione Oferty ({offers.length})</Heading>
+      {/* Mapowanie POSORTOWANEJ tablicy offers */}
+      {sortedOffers.map((offer) => (
+        <OfferItem key={offer.id} offer={offer} />
+      ))}
+    </VStack>
   );
 };
 

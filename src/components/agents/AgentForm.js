@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { createAgent, updateAgent, fetchAgent, clearCurrentAgent } from '../../features/agents/agentsSlice';
 import { selectAllLogisticsBases, fetchLogisticsBases } from '../../features/company/logisticsBasesSlice';
+import { germanStateCities } from '../../utils/germanCities';
 import {
     Box,
     Button,
@@ -170,10 +171,8 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
             vehicleBases: [],
             selectedLogisticsBase: null,
             customLogisticsPoint: null,
-            maxOperatingRadius: 500,
-            preferredCountries: [],
-            unwantedCountries: [],
-            roadPreferences: [],
+            destinationCity: null, // Nowe pole dla miasta docelowego
+            searchRadius: 30, // Nowe pole dla promienia poszukiwań
             
             // 4. Parametry finansowe
             minRatePerKm: 1.0,
@@ -553,7 +552,11 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
             console.log("Resetting form with currentAgent:", currentAgent); 
             // Upewnij się, że przekazujesz obiekt z polami pasującymi do formularza
             // Możesz potrzebować transformacji jeśli struktura się różni
-            reset(currentAgent); 
+            reset({
+                ...currentAgent,
+                destinationCity: currentAgent.destinationCity || null,
+                searchRadius: currentAgent.searchRadius || 30,
+            }); 
         }
     }, [isEditing, currentAgent, reset]);
 
@@ -773,83 +776,6 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                             <CardBody>
                                 <SimpleGrid columns={[1, null, 2]} spacing={6}>
                                     <FormControl>
-                                        <FormLabel fontWeight="medium">Maksymalny promień operacyjny (km)</FormLabel>
-                                        <NumberInput min={0} max={2000}>
-                                            <NumberInputField {...register('maxOperatingRadius')} />
-                                            <NumberInputStepper>
-                                                <NumberIncrementStepper />
-                                                <NumberDecrementStepper />
-                                            </NumberInputStepper>
-                                        </NumberInput>
-                                    </FormControl>
-
-                                    <FormControl>
-                                        <FormLabel fontWeight="medium">Preferowane kraje</FormLabel>
-                                        <SimpleGrid columns={[2, null, 4]} spacing={3}>
-                                            {countriesList.map((country) => (
-                                                <Tag
-                                                    key={country}
-                                                    size="md"
-                                                    variant={preferredCountries.includes(country) ? "solid" : "outline"}
-                                                    colorScheme="green"
-                                                    cursor="pointer"
-                                                    onClick={() => handleToggleCountry(country, 'preferredCountries')}
-                                                    mb={2}
-                                                    borderRadius="md"
-                                                    boxShadow="sm"
-                                                    p={2}
-                                                >
-                                                    <TagLabel>{country}</TagLabel>
-                                                </Tag>
-                                            ))}
-                                        </SimpleGrid>
-                                    </FormControl>
-
-                                    <FormControl>
-                                        <FormLabel fontWeight="medium">Kraje do unikania</FormLabel>
-                                        <SimpleGrid columns={[2, null, 4]} spacing={3}>
-                                            {countriesList.map((country) => (
-                                                <Tag
-                                                    key={country}
-                                                    size="md"
-                                                    variant={unwantedCountries.includes(country) ? "solid" : "outline"}
-                                                    colorScheme="red"
-                                                    cursor="pointer"
-                                                    onClick={() => handleToggleCountry(country, 'unwantedCountries')}
-                                                    mb={2}
-                                                    borderRadius="md"
-                                                    boxShadow="sm"
-                                                    p={2}
-                                                >
-                                                    <TagLabel>{country}</TagLabel>
-                                                </Tag>
-                                            ))}
-                                        </SimpleGrid>
-                                    </FormControl>
-
-                                    <FormControl mt={6}>
-                                        <FormLabel fontWeight="medium">Preferencje drogowe</FormLabel>
-                                        <SimpleGrid columns={[2, null, 4]} spacing={3}>
-                                            {roadPreferences.map((preference) => (
-                                                <Tag
-                                                    key={preference}
-                                                    size="md"
-                                                    variant={roadPreferencesSelected.includes(preference) ? "solid" : "outline"}
-                                                    colorScheme="blue"
-                                                    cursor="pointer"
-                                                    onClick={() => handleToggleRoadPreference(preference)}
-                                                    mb={2}
-                                                    borderRadius="md"
-                                                    boxShadow="sm"
-                                                    p={2}
-                                                >
-                                                    <TagLabel>{preference}</TagLabel>
-                                                </Tag>
-                                            ))}
-                                        </SimpleGrid>
-                                    </FormControl>
-
-                                    <FormControl mt={6}>
                                         <FormLabel fontWeight="medium">Baza logistyczna (punkt startowy)</FormLabel>
                                         <Select {...register('selectedLogisticsBase')} onChange={(e) => handleSelectLogisticsBase(e.target.value)}>
                                             <option value="">Wybierz bazę logistyczną</option>
@@ -869,6 +795,63 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                                                 </>
                                             )}
                                         </Select>
+                                    </FormControl>
+
+                                    <FormControl>
+                                        <FormLabel fontWeight="medium">Miasto docelowe (Niemcy)</FormLabel>
+                                        <Select {...register('destinationCity')}>
+                                            <option value="">Wybierz miasto docelowe</option>
+                                            {germanStateCities.map(city => (
+                                                <option key={city.name} value={city.name}>
+                                                    {city.name}
+                                                </option>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl>
+                                        <FormLabel fontWeight="medium">Promień poszukiwań ofert (km)</FormLabel>
+                                        <Flex>
+                                            <NumberInput 
+                                                min={0} 
+                                                max={150} 
+                                                value={watch('searchRadius')} 
+                                                onChange={(valueString) => setValue('searchRadius', parseInt(valueString))}
+                                                flex="1"
+                                                mr={4}
+                                            >
+                                                <NumberInputField />
+                                                <NumberInputStepper>
+                                                    <NumberIncrementStepper />
+                                                    <NumberDecrementStepper />
+                                                </NumberInputStepper>
+                                            </NumberInput>
+                                        </Flex>
+                                        <Slider
+                                            min={0}
+                                            max={150}
+                                            step={5}
+                                            value={watch('searchRadius')}
+                                            onChange={(val) => setValue('searchRadius', val)}
+                                            mt={2}
+                                        >
+                                            <SliderTrack>
+                                                <SliderFilledTrack />
+                                            </SliderTrack>
+                                            <SliderThumb boxSize={6} />
+                                            <SliderMark
+                                                value={watch('searchRadius')}
+                                                textAlign='center'
+                                                bg='blue.500'
+                                                color='white'
+                                                mt='-10'
+                                                ml='-5'
+                                                w='12'
+                                                borderRadius="md"
+                                            >
+                                                {watch('searchRadius')} km
+                                            </SliderMark>
+                                        </Slider>
                                     </FormControl>
 
                                     <FormControl mt={6}>

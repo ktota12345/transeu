@@ -6,6 +6,7 @@ import { store } from './store/store';
 import { AgentsList } from './components/agents/AgentsList';
 import { AgentForm } from './components/agents/AgentForm';
 import AgentHistory from './components/agents/AgentHistory';
+import AgentHistoryPage from './pages/AgentHistoryPage';
 import Dashboard from './components/dashboard/Dashboard';
 import Layout from './components/layout/Layout';
 import OrdersList from './components/orders/OrdersList';
@@ -24,7 +25,7 @@ function App() {
                             <Route path="/agents" element={<AgentsList />} />
                             <Route path="/agent/new" element={<AgentForm onSubmit={console.log} />} />
                             <Route path="/agent/:id" element={<AgentForm onSubmit={console.log} />} />
-                            <Route path="/agent/:id/history" element={<AgentHistory />} />
+                            <Route path="/agent/:id/history" element={<AgentHistoryPage />} />
                             <Route path="/orders" element={<OrdersList />} />
                             <Route path="/order/:id" element={<OrderCard />} />
                             <Route path="/settings" element={<Settings />} />

@@ -25,7 +25,20 @@ import {
   MenuItem,
 } from '@chakra-ui/react';
 import { FiEye, FiMoreVertical, FiCheck, FiX, FiUser } from 'react-icons/fi';
-import { fetchOrders, selectOrders, selectOrdersStatus, selectOrdersError, selectFilters, selectPagination, setPagination } from '../../features/orders/ordersSlice';
+import { 
+  sendMessage, 
+  fetchOrder, 
+  selectConversationStatus, 
+  selectConversationError,
+  selectProfitableOrders, 
+  selectOrders, 
+  selectOrdersStatus, 
+  selectOrdersError, 
+  selectFilters, 
+  selectPagination, 
+  setPagination, 
+  fetchOrders 
+} from '../../features/orders/ordersSlice';
 import OrdersFilter from './OrdersFilter';
 import OrdersPagination from './OrdersPagination';
 import OrdersToolbar from './OrdersToolbar';
@@ -76,7 +89,7 @@ const OrdersList = () => {
   const navigate = useNavigate();
   const toast = useToast();
   
-  // Pobierz dane ze store
+  // Pobierz dane ze store - przywrócono selectOrders
   const orders = useSelector(selectOrders);
   const status = useSelector(selectOrdersStatus);
   const error = useSelector(selectOrdersError);

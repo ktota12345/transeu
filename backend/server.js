@@ -205,86 +205,192 @@ app.post('/api/agents/:id/search-offers', async (req, res) => {
       firstResult: 0, // Zaczynamy od początku
       maxResults: 30, // Prosimy o max 30 wyników
     };
+
+    // Dynamiczne ustawianie zakresu dat: dzisiaj + 5 dni
+    const today = new Date();
+    const futureDate = new Date();
+    futureDate.setDate(today.getDate() + 5);
+
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Miesiące są 0-indeksowane
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    searchParams.earliestLoadingDate = formatDate(today);
+    searchParams.latestLoadingDate = formatDate(futureDate);
+
     console.log(`Backend: Constructed Timocom search params for agent ${agentId}:`, JSON.stringify(searchParams, null, 2));
 
-    // 7. Wywołaj funkcję wyszukującą oferty
-    const timocomApiResponse = await timocomApi.fetchExternalTimocomOffers(searchParams);
+    // 7. Wywołaj API Timocom
+    console.log("Backend: Calling Timocom API...");
+    const timocomResponse = await timocomApi.fetchExternalTimocomOffers(searchParams);
+    console.log("Backend: Timocom API response received.");
+    // Dodajmy log, aby zobaczyć strukturę odpowiedzi
+    // console.log("Backend: Raw Timocom API response structure:", JSON.stringify(timocomResponse, null, 2)); 
 
-    // DODATKOWE LOGOWANIE STRUKTURY ODPOWIEDZI
-    console.log('Backend: Raw timocomApiResponse structure:', JSON.stringify(timocomApiResponse, null, 2));
+    // Poprawione odczytywanie ofert - zakładamy strukturę z .data.payload
+    const receivedOffers = timocomResponse?.data?.payload || []; 
+    console.log(`Backend: Extracted ${receivedOffers.length} offers from Timocom response payload.`);
 
-    // 8. Przetwórz odpowiedź, stwórz wpis historii, zapisz i odpowiedz
-    if (timocomApiResponse.success && timocomApiResponse.data && Array.isArray(timocomApiResponse.data.payload)) {
-      // Odpowiedź udana, przetwarzamy payload
-      const offersFound = timocomApiResponse.data.payload;
-      const offersCount = offersFound.length; 
-      console.log(`Backend: Agent ${agentId} - Found ${offersCount} offers from Timocom.`);
+    // 8. Filtruj oferty (opcjonalnie, ale zalecane, by zapisywać tylko sensowne dane)
+    const filteredOffers = receivedOffers.filter(offer =>
+      offer.price && typeof offer.price.amount === 'number' &&
+      typeof offer.distance_km === 'number' && offer.distance_km > 0
+    );
+    console.log(`Backend: Filtered down to ${filteredOffers.length} offers with price and distance.`);
 
-      const agentHistoryEntry = {
-        id: `hist-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-        agentId: agentId,
-        timestamp: new Date().toISOString(),
-        type: 'searchOffers',
-        status: 'success',
-        details: `Found ${offersCount} offers.`,
-        offers: offersFound, // Zapisujemy poprawnie tablicę ofert z payload
-        errorDetails: null
-      };
-
-      // Zapisz wpis do historii
-      if (!Array.isArray(dbData.agentHistory)) { dbData.agentHistory = []; }
-      dbData.agentHistory.push(agentHistoryEntry);
-      await writeDb(dbData);
-      console.log(`Backend: Saved successful search results to agent ${agentId} history.`);
-
-      // Zwróć sukces do frontendu (Z TEGO BLOKU)
-      res.json({ success: true, message: agentHistoryEntry.details, offersCount: offersCount, offers: agentHistoryEntry.offers });
-    } else {
-      // Odpowiedź nieudana lub nieoczekiwana struktura
-      const offersCount = 0; 
-      const errorMessage = timocomApiResponse.error || 'Unknown error or unexpected response structure from Timocom API.';
-      console.error(`Backend: Failed to fetch or process offers from Timocom for agent ${agentId}. Error: ${errorMessage}`);
+    // 9. Zapisz przefiltrowane oferty do historii w db.json
+    try {
+      let historyEntryIndex = dbData.agentHistory.findIndex(entry => entry.agentId === agentId);
       
-      // Zapisz szczegóły błędu, jeśli są dostępne
-      const errorDetails = timocomApiResponse.details || null;
-      if (errorDetails) {
-        console.error('Backend: Detailed error information:', JSON.stringify(errorDetails, null, 2));
+      if (historyEntryIndex !== -1) {
+        // Aktualizuj istniejący wpis
+        dbData.agentHistory[historyEntryIndex].offers = filteredOffers;
+        dbData.agentHistory[historyEntryIndex].lastUpdated = new Date().toISOString();
+        console.log(`Backend: Updated history for agent ${agentId}.`);
+      } else {
+        // Dodaj nowy wpis
+        dbData.agentHistory.push({
+          agentId: agentId,
+          offers: filteredOffers,
+          lastUpdated: new Date().toISOString()
+        });
+        console.log(`Backend: Created new history entry for agent ${agentId}.`);
       }
+      
+      await writeDb(dbData); // Zapisz zmiany w pliku db.json
+      console.log("Backend: Successfully wrote updated history to db.json");
+    } catch (dbError) {
+      console.error("Backend: Error saving agent history to db.json:", dbError);
+      // Zdecydować, czy błąd zapisu powinien zatrzymać proces - na razie tylko logujemy
+      // Można rozważyć zwrócenie błędu 500, ale wtedy frontend nie dostanie wyników
+    }
 
-      const agentHistoryEntry = {
-        id: `hist-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-        agentId: agentId,
-        timestamp: new Date().toISOString(),
-        type: 'searchOffers',
-        status: 'error',
-        details: `Failed to fetch offers from Timocom: ${errorMessage}`,
-        offers: [],
-        errorDetails: errorDetails
-      };
+    // 10. Zwróć przefiltrowane oferty do frontendu
+    res.json({ success: true, offers: filteredOffers });
 
-      // Zapisz wpis do historii
-      if (!Array.isArray(dbData.agentHistory)) { dbData.agentHistory = []; }
-      dbData.agentHistory.push(agentHistoryEntry);
-      await writeDb(dbData);
-      console.log(`Backend: Saved failed search attempt to agent ${agentId} history.`);
+  } catch (error) {
+    console.error(`Backend: Error in /api/agents/${agentId}/search-offers:`, error);
+    const statusCode = error.response?.status || 500;
+    const message = error.message || 'Internal Server Error during agent offer search';
+    const details = error.response?.data;
+    res.status(statusCode).json({ success: false, error: message, details: details });
+  }
+});
 
-      // Zwróć błąd do frontendu (Z TEGO BLOKU)
-      res.json({ 
-        success: false, 
-        error: errorMessage,
-        message: agentHistoryEntry.details, 
-        offersCount: offersCount, 
-        offers: agentHistoryEntry.offers,
-        errorDetails: errorDetails
-      });
+// --- NOWY ENDPOINT: Pobieranie ostatnich zapisanych ofert --- 
+app.get('/api/agents/:id/latest-offers', async (req, res) => {
+  const agentId = parseInt(req.params.id, 10);
+  console.log(`Backend: Received GET /api/agents/${agentId}/latest-offers request`);
+
+  if (isNaN(agentId)) {
+    return res.status(400).json({ success: false, error: 'Invalid agent ID.' });
+  }
+
+  try {
+    const dbData = await readDb();
+    const historyEntry = dbData.agentHistory.find(entry => entry.agentId === agentId);
+
+    if (historyEntry && historyEntry.offers) {
+      console.log(`Backend: Found ${historyEntry.offers.length} saved offers for agent ${agentId}.`);
+      res.json({ success: true, offers: historyEntry.offers });
+    } else {
+      console.log(`Backend: No saved offers found for agent ${agentId}.`);
+      res.json({ success: true, offers: [] }); // Zwróć pustą tablicę, jeśli brak historii
     }
   } catch (error) {
-    // Błąd wewnętrzny serwera (np. odczyt/zapis pliku, błąd agenta/bazy)
-    console.error(`Backend: Internal server error OR error saving history in /api/agents/${agentId}/search-offers:`, error);
-    if (!res.headersSent) {
-       res.status(500).json({ success: false, error: error.message || 'Internal server error occurred during history save or processing.' });
-    }
+    console.error(`Backend: Error in /api/agents/${agentId}/latest-offers:`, error);
+    res.status(500).json({ success: false, error: 'Internal Server Error fetching latest offers.' });
   }
+});
+
+// Endpoint do czyszczenia historii dla agenta
+app.delete('/api/agents/:id/history', async (req, res) => {
+  const agentId = parseInt(req.params.id, 10);
+  console.log(`Backend: Received DELETE /api/agents/${agentId}/history request`);
+
+  if (isNaN(agentId)) {
+    return res.status(400).json({ success: false, error: 'Invalid agent ID.' });
+  }
+
+  try {
+    // 1. Odczytaj bazę danych
+    const dbData = await readDb();
+
+    // 2. Sprawdź, czy agent istnieje (opcjonalne, ale dobra praktyka)
+    const agentExists = dbData.agents.some(a => a.id === agentId);
+    if (!agentExists) {
+      // Można zdecydować, czy zwracać błąd, czy po prostu nic nie robić
+      console.warn(`Backend: Agent with ID ${agentId} not found while trying to clear history. Proceeding anyway.`);
+    }
+
+    // 3. Odfiltruj historię, zachowując tylko wpisy dla INNYCH agentów
+    const originalHistoryCount = dbData.agentHistory.length;
+    dbData.agentHistory = dbData.agentHistory.filter(entry => entry.agentId !== agentId);
+    const removedCount = originalHistoryCount - dbData.agentHistory.length;
+
+    // 4. Zapisz zmodyfikowaną bazę danych
+    await writeDb(dbData);
+    console.log(`Backend: Cleared ${removedCount} history entries for agent ID ${agentId}.`);
+
+    // 5. Zwróć sukces
+    res.json({ success: true, message: `Successfully cleared ${removedCount} history entries for agent ID ${agentId}.` });
+
+  } catch (error) {
+    console.error(`Backend: Error clearing history for agent ID ${agentId}:`, error);
+    res.status(500).json({ success: false, error: error.message || 'Internal server error occurred while clearing history.' });
+  }
+});
+
+// Endpoint do pobierania OSTATNIEGO wyniku wyszukiwania dla agenta
+app.get('/api/agents/:id/latest-search', async (req, res) => {
+  const agentId = parseInt(req.params.id);
+  console.log(`Backend: Received GET /api/agents/${agentId}/latest-search`);
+
+  if (isNaN(agentId)) {
+    return res.status(400).json({ success: false, error: 'Invalid agent ID.' });
+  }
+
+  try {
+    const dbData = await readDb();
+    // Sprawdźmy, czy agent w ogóle istnieje (dobra praktyka)
+    const agentExists = dbData.agents.some(a => a.id === agentId);
+    if (!agentExists) {
+      console.log(`Backend: Agent with ID ${agentId} not found when fetching latest search.`);
+      return res.status(404).json({ message: 'Agent not found' });
+    }
+
+    // Filtruj CAŁĄ historię (dbData.agentHistory), aby znaleźć wpisy dla danego agenta
+    const agentSpecificHistory = (dbData.agentHistory || [])
+      .filter(entry => entry.agentId === agentId && entry.type === 'searchOffers') // Upewnijmy się, że to wynik wyszukiwania
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sortuj malejąco po dacie
+
+    if (agentSpecificHistory.length > 0) {
+        const latestSearch = agentSpecificHistory[0]; // Pierwszy element po sortowaniu jest najnowszy
+        console.log(`Backend: Found latest search for agent ${agentId} from ${latestSearch.timestamp || 'N/A'}`);
+        // Upewnijmy się, że zwracamy obiekt z polem 'offers'
+        res.json({
+          success: true,
+          timestamp: latestSearch.timestamp,
+          details: latestSearch.details,
+          offers: latestSearch.offers || [] // Zwracamy oferty lub pustą tablicę, jeśli ich brakuje
+        });
+    } else {
+        console.log(`Backend: No search history found for agent ${agentId} in dbData.agentHistory.`);
+        res.json({ success: true, offers: [], message: 'No search history found' }); // Zwróć pustą listę ofert i success: true
+    }
+
+  } catch (error) {
+    console.error(`Backend: Error fetching latest search for agent ${agentId}:`, error);
+    res.status(500).json({ success: false, message: 'Error fetching agent data or search history' });
+  }
+});
+
+// Endpoint do zapisywania stanu agenta (bez zmian)
+app.post('/api/agents/:id/save', async (req, res) => {
+  // Kod endpointu pozostaje bez zmian
 });
 
 // Uruchomienie serwera
