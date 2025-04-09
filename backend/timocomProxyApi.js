@@ -268,10 +268,9 @@ const testExternalTimocomConnection = async () => {
     }
 };
 
-// Eksportuj funkcje, które będą używane przez server.js
+// Eksportuj funkcje ORAZ klienta API, które będą używane przez server.js
 module.exports = {
     testExternalTimocomConnection,
     fetchExternalTimocomOffers,
-    // buildSearchParams, // Eksportuj, jeśli server.js ma go używać bezpośrednio
-    // fetchExternalTimocomOfferDetails // Dodaj, jeśli zaimplementujesz endpoint
+    timocomApiClient // Dodano eksport instancji klienta
 };

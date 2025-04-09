@@ -2,7 +2,7 @@
 require('dotenv').config(); // Ładuje zmienne środowiskowe z pliku .env
 const express = require('express');
 const cors = require('cors');
-const timocomApi = require('./timocomProxyApi'); // Zaimportujemy logikę TIMOCOM
+const timocomProxyApi = require('./timocomProxyApi'); // Zaimportujemy logikę TIMOCOM
 const fs = require('fs').promises; // Dodano moduł fs.promises
 const path = require('path'); // Dodano moduł path
 
@@ -53,7 +53,7 @@ app.use(express.json()); // Pozwól na parsowanie JSON w ciele żądania
 app.post('/test-connection', async (req, res) => {
   console.log('Backend: Received /test-connection request');
   try {
-    const result = await timocomApi.testExternalTimocomConnection();
+    const result = await timocomProxyApi.testExternalTimocomConnection();
     console.log('Backend: Sending /test-connection response:', result);
     res.json(result);
   } catch (error) {
@@ -74,7 +74,7 @@ app.post('/search-offers', async (req, res) => {
     if (!searchParams) {
       return res.status(400).json({ success: false, error: 'Missing searchParams in request body' });
     }
-    const result = await timocomApi.fetchExternalTimocomOffers(searchParams);
+    const result = await timocomProxyApi.fetchExternalTimocomOffers(searchParams);
     console.log('Backend: Sending /search-offers response:', result);
     res.json(result);
   } catch (error) {
@@ -91,7 +91,7 @@ app.post('/search-offers', async (req, res) => {
 //   console.log(`Backend: Received /offer-details/${req.params.offerId} request`);
 //   try {
 //     const { offerId } = req.params;
-//     const result = await timocomApi.fetchExternalTimocomOfferDetails(offerId);
+//     const result = await timocomProxyApi.fetchExternalTimocomOfferDetails(offerId);
 //     console.log('Backend: Sending /offer-details response:', result);
 //     res.json(result);
 //   } catch (error) {
@@ -225,7 +225,7 @@ app.post('/api/agents/:id/search-offers', async (req, res) => {
 
     // 7. Wywołaj API Timocom
     console.log("Backend: Calling Timocom API...");
-    const timocomResponse = await timocomApi.fetchExternalTimocomOffers(searchParams);
+    const timocomResponse = await timocomProxyApi.fetchExternalTimocomOffers(searchParams);
     console.log("Backend: Timocom API response received.");
     // Dodajmy log, aby zobaczyć strukturę odpowiedzi
     // console.log("Backend: Raw Timocom API response structure:", JSON.stringify(timocomResponse, null, 2)); 
@@ -391,6 +391,98 @@ app.get('/api/agents/:id/latest-search', async (req, res) => {
 // Endpoint do zapisywania stanu agenta (bez zmian)
 app.post('/api/agents/:id/save', async (req, res) => {
   // Kod endpointu pozostaje bez zmian
+});
+
+// --- NOWY ENDPOINT: Wyszukiwanie sekwencji (oferta powrotna) ---
+const sequenceApi = require('./sequenceApi'); // Importujemy nową logikę API
+
+app.post('/api/sequences/find', async (req, res) => {
+  console.log("Backend: Received POST /api/sequences/find with body:", req.body);
+  const { initialOffer, homeBase } = req.body; // Oczekujemy oferty początkowej i danych bazy domowej
+
+  if (!initialOffer || !homeBase) {
+    return res.status(400).json({ success: false, message: 'Brak wymaganych danych: initialOffer lub homeBase.' });
+  }
+  // Podstawowa walidacja danych wejściowych
+  if (!initialOffer.deliveryAddress?.city || !initialOffer.deliveryAddress?.country || 
+      !homeBase.address?.city || !homeBase.address?.country) {
+     return res.status(400).json({ success: false, message: 'Niekompletne dane adresowe w initialOffer lub homeBase.' });
+  }
+  if (!initialOffer.loadingDate?.latest) {
+      return res.status(400).json({ success: false, message: 'Brak daty rozładunku (latest loadingDate) w ofercie początkowej.' });
+  }
+
+  try {
+    // 1. Przygotuj parametry wyszukiwania dla oferty powrotnej
+    //    Start: Cel oferty początkowej
+    //    Cel: Baza domowa
+    //    Daty: Po dacie rozładunku oferty początkowej
+    const returnSearchParams = {
+      originCity: { // Miejsce startu oferty powrotnej = cel oferty początkowej
+        name: initialOffer.deliveryAddress.city,
+        country: initialOffer.deliveryAddress.country,
+        postalCode: initialOffer.deliveryAddress.postalCode, // Może być null/undefined
+      },
+      destinationCity: { // Miejsce docelowe oferty powrotnej = baza domowa
+        name: homeBase.address.city,
+        country: homeBase.address.country,
+        postalCode: homeBase.address.postalCode, 
+      },
+      searchRadius: 30, // Promień wokół miejsca startu oferty powrotnej (można dostosować)
+      // Daty zostaną ustawione dynamicznie poniżej
+      earliestLoadingDate: null, // Usuniemy te pola, bo sequenceApi oczekuje nazw z DateTime
+      latestLoadingDate: null,
+    };
+
+    // --- NOWA LOGIKA USTALANIA DAT --- 
+    try {
+        const now = new Date();
+        const fourHoursAgo = new Date(now.getTime() - (4 * 60 * 60 * 1000));
+
+        // Format ISO 8601 wymagany przez sequenceApi.js
+        const lowerBound = fourHoursAgo.toISOString();
+        const upperBound = now.toISOString(); 
+
+        // Przypisz do obiektu parametrów pod właściwymi nazwami
+        returnSearchParams.exclusiveLeftLowerBoundDateTime = lowerBound;
+        returnSearchParams.inclusiveRightUpperBoundDateTime = upperBound;
+
+        console.log(`Sequence Search: Dates set dynamically from ${lowerBound} (4h ago) to ${upperBound} (now)`);
+
+    } catch (dateError) {
+        console.error("Sequence Search Error: Could not calculate dynamic dates:", dateError);
+        return res.status(500).json({ success: false, message: 'Błąd podczas obliczania dynamicznych dat dla wyszukiwania sekwencji.' });
+    }
+    // --- KONIEC NOWEJ LOGIKI USTALANIA DAT ---
+
+    // Usuwamy stare pola, jeśli jeszcze istnieją (na wszelki wypadek)
+    delete returnSearchParams.earliestLoadingDate;
+    delete returnSearchParams.latestLoadingDate;
+
+    // 2. Wywołaj funkcję z sequenceApi do wyszukania ofert powrotnych
+    console.log("Attempting to fetch return offers with params:", JSON.stringify(returnSearchParams, null, 2));
+    const returnOffersData = await sequenceApi.fetchSequenceReturnOffers(returnSearchParams, timocomProxyApi.timocomApiClient);
+
+    console.log("Received return offers data from sequenceApi:", returnOffersData); // Dodaj logowanie wyniku
+
+    // 3. Przetwórz i zwróć wyniki
+    // (Zakładając, że returnOffersData zawiera pole 'payload' z listą ofert)
+    res.json({ success: true, offers: returnOffersData?.payload || [] });
+
+  } catch (error) {
+    console.error('Backend: Error during sequence finding:', error.message);
+    // Zwróć bardziej szczegółowy błąd, jeśli pochodzi z Timocom API (przez sequenceApi)
+    if (error.response?.data) {
+        console.error('Backend: Timocom API Error details (sequence finding):', JSON.stringify(error.response.data, null, 2));
+        return res.status(error.response.status || 500).json({ 
+            success: false, 
+            message: 'Błąd podczas komunikacji z API Timocom (wyszukiwanie sekwencji).',
+            details: error.response.data 
+        });
+    } 
+    // Inny błąd (np. przetwarzania dat, brak parametrów)
+    res.status(500).json({ success: false, message: 'Wewnętrzny błąd serwera podczas wyszukiwania sekwencji.' });
+  }
 });
 
 // Uruchomienie serwera

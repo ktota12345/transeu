@@ -83,11 +83,11 @@ export const AgentsList = () => {
     const toast = useToast();
 
     useEffect(() => {
-        if (status === 'idle') {
-            console.log('Dispatching fetchAgents from AgentsList');
-            dispatch(fetchAgents());
-        }
-    }, [status, dispatch]);
+        // Zawsze próbuj pobrać agentów przy montowaniu komponentu.
+        // Logika w Redux (createAsyncThunk) powinna zapobiegać zbędnym zapytaniom,
+        // jeśli dane są już ładowane lub zostały niedawno pobrane.
+        dispatch(fetchAgents());
+    }, [dispatch]);
 
     const handleAddNew = () => {
         navigate('/agent/new');
