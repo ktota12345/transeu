@@ -152,8 +152,8 @@ app.post('/api/agents/:id/search-offers', async (req, res) => {
 
     // Pobierz aktualną datę 
     const now = new Date();
-    // Określ zakres czasowy dla wyszukiwania - ostatnie 6 godzin
-    const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000); // 6 godzin wstecz
+    // Określ zakres czasowy dla wyszukiwania - ostatnie 24 godziny
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 godziny wstecz
 
     // 6. Skonstruuj parametry wyszukiwania dla Timocom API
     const searchParams = {
@@ -187,8 +187,8 @@ app.post('/api/agents/:id/search-offers', async (req, res) => {
         }
       },
       // --- Parametry daty ---
-      // Parametry czasowe dla wyszukiwania ofert z ostatnich 6 godzin
-      exclusiveLeftLowerBoundDateTime: sixHoursAgo.toISOString(), // Dolna granica (wyłączna) - 6 godzin temu
+      // Parametry czasowe dla wyszukiwania ofert z ostatnich 24 godzin
+      exclusiveLeftLowerBoundDateTime: twentyFourHoursAgo.toISOString(), // Dolna granica (wyłączna) - 24 godziny temu
       inclusiveRightUpperBoundDateTime: now.toISOString(), // Górna granica (włączna) - teraz
       // --- Parametry dat załadunku ---
       loadingDate: {
@@ -437,17 +437,17 @@ app.post('/api/sequences/find', async (req, res) => {
     // --- NOWA LOGIKA USTALANIA DAT --- 
     try {
         const now = new Date();
-        const fourHoursAgo = new Date(now.getTime() - (4 * 60 * 60 * 1000));
+        const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
         // Format ISO 8601 wymagany przez sequenceApi.js
-        const lowerBound = fourHoursAgo.toISOString();
+        const lowerBound = twentyFourHoursAgo.toISOString();
         const upperBound = now.toISOString(); 
 
         // Przypisz do obiektu parametrów pod właściwymi nazwami
         returnSearchParams.exclusiveLeftLowerBoundDateTime = lowerBound;
         returnSearchParams.inclusiveRightUpperBoundDateTime = upperBound;
 
-        console.log(`Sequence Search: Dates set dynamically from ${lowerBound} (4h ago) to ${upperBound} (now)`);
+        console.log(`Sequence Search: Dates set dynamically from ${lowerBound} (24h ago) to ${upperBound} (now)`);
 
     } catch (dateError) {
         console.error("Sequence Search Error: Could not calculate dynamic dates:", dateError);
