@@ -11,6 +11,7 @@ import Dashboard from './components/dashboard/Dashboard';
 import Layout from './components/layout/Layout';
 import OrdersList from './components/orders/OrdersList';
 import OrderCard from './components/orders/OrderCard';
+import Schedule from './components/schedule/Schedule';
 import Settings from './components/settings/Settings';
 import theme from './theme/theme';
 
@@ -28,6 +29,7 @@ function App() {
                             <Route path="/agent/:id/history" element={<AgentHistoryPage />} />
                             <Route path="/orders" element={<OrdersList />} />
                             <Route path="/order/:id" element={<OrderCard />} />
+                            <Route path="/schedule" element={<Schedule />} />
                             <Route path="/settings" element={<Settings />} />
                         </Routes>
                     </Layout>
