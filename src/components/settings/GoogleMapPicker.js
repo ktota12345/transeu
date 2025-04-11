@@ -1,10 +1,28 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { Box, Button, Input, InputGroup, InputRightElement, Text, HStack, VStack } from '@chakra-ui/react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { 
+  Box, 
+  Button, 
+  Input, 
+  InputGroup, 
+  InputRightElement, 
+  Text, 
+  HStack, 
+  VStack, 
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  useToast,
+  FormControl
+} from '@chakra-ui/react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { FiSearch } from 'react-icons/fi';
 
 // Klucz API Google Maps - pobierany z zmiennych środowiskowych
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+
+// Sprawdzenie czy klucz API istnieje
+const hasApiKey = !!GOOGLE_MAPS_API_KEY;
 
 const containerStyle = {
   width: '100%',
@@ -41,13 +59,38 @@ const GoogleMapPicker = ({ initialPosition, onPositionSelected }) => {
   const [center, setCenter] = useState(initialPosition || defaultCenter);
   const [markerPosition, setMarkerPosition] = useState(initialPosition || defaultCenter);
   const [selectedAddress, setSelectedAddress] = useState('');
+  const [loadError, setLoadError] = useState(null);
+  const [manualCoordinates, setManualCoordinates] = useState({
+    lat: initialPosition?.lat || defaultCenter.lat,
+    lng: initialPosition?.lng || defaultCenter.lng
+  });
   
   const mapRef = useRef(null);
+  const toast = useToast();
   
+  // Sprawdzenie czy klucz API istnieje i wyświetlenie ostrzeżenia jeśli nie
+  useEffect(() => {
+    if (!hasApiKey) {
+      setLoadError('Brak klucza API Google Maps. Mapa nie zostanie załadowana.');
+      toast({
+        title: 'Brak klucza API',
+        description: 'Klucz API Google Maps nie jest skonfigurowany. Funkcje mapy są ograniczone.',
+        status: 'warning',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+  }, [toast]);
+  
+  // Ładowanie Google Maps API tylko jeśli klucz API istnieje
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries: ['places']
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY || '',  // Pusty string jeśli brak klucza
+    libraries: ['places'],
+    onError: (error) => {
+      console.error('Błąd ładowania Google Maps API:', error);
+      setLoadError(`Błąd ładowania Google Maps API: ${error.message}`);
+    }
   });
   
   const onMapLoad = useCallback((map) => {
@@ -122,24 +165,109 @@ const GoogleMapPicker = ({ initialPosition, onPositionSelected }) => {
     }
   };
   
+  // Obsługa ręcznego wprowadzania współrzędnych
+  const handleManualCoordinateChange = (e) => {
+    const { name, value } = e.target;
+    setManualCoordinates(prev => ({
+      ...prev,
+      [name]: parseFloat(value) || 0
+    }));
+  };
+
+  const applyManualCoordinates = () => {
+    const newPosition = {
+      lat: manualCoordinates.lat,
+      lng: manualCoordinates.lng
+    };
+    
+    setMarkerPosition(newPosition);
+    setCenter(newPosition);
+    
+    // Wywołanie funkcji zwrotnej z nowymi danymi
+    onPositionSelected({
+      coordinates: newPosition,
+      address: {
+        full: `Współrzędne: ${newPosition.lat.toFixed(6)}, ${newPosition.lng.toFixed(6)}`,
+        city: '',
+        postalCode: '',
+        country: ''
+      }
+    });
+    
+    toast({
+      title: 'Zastosowano współrzędne',
+      description: `Ustawiono pozycję na: ${newPosition.lat.toFixed(6)}, ${newPosition.lng.toFixed(6)}`,
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
   return (
     <VStack spacing={4} align="stretch">
+      {loadError && (
+        <Alert status="warning" borderRadius="md">
+          <AlertIcon />
+          <AlertTitle mr={2}>Uwaga!</AlertTitle>
+          <AlertDescription>{loadError}</AlertDescription>
+        </Alert>
+      )}
+      
       <InputGroup>
         <Input
           placeholder="Wyszukaj adres..."
           value={searchAddress}
           onChange={(e) => setSearchAddress(e.target.value)}
           onKeyDown={handleKeyDown}
+          isDisabled={!isLoaded || !!loadError}
         />
         <InputRightElement>
-          <Button size="sm" onClick={handleSearch}>
+          <Button 
+            size="sm" 
+            onClick={handleSearch}
+            isDisabled={!isLoaded || !!loadError}
+          >
             <FiSearch />
           </Button>
         </InputRightElement>
       </InputGroup>
       
+      {/* Formularz ręcznego wprowadzania współrzędnych */}
+      <Box p={3} borderWidth="1px" borderRadius="md" bg="gray.50">
+        <Text fontWeight="medium" mb={2}>Ręczne wprowadzanie współrzędnych:</Text>
+        <HStack spacing={4} mb={2}>
+          <FormControl>
+            <InputGroup size="sm">
+              <Input
+                name="lat"
+                placeholder="Szerokość (np. 52.229676)"
+                value={manualCoordinates.lat}
+                onChange={handleManualCoordinateChange}
+                type="number"
+                step="0.000001"
+              />
+            </InputGroup>
+          </FormControl>
+          <FormControl>
+            <InputGroup size="sm">
+              <Input
+                name="lng"
+                placeholder="Długość (np. 21.012229)"
+                value={manualCoordinates.lng}
+                onChange={handleManualCoordinateChange}
+                type="number"
+                step="0.000001"
+              />
+            </InputGroup>
+          </FormControl>
+        </HStack>
+        <Button size="sm" colorScheme="blue" onClick={applyManualCoordinates}>
+          Zastosuj współrzędne
+        </Button>
+      </Box>
+      
       <Box borderRadius="md" overflow="hidden" borderWidth="1px">
-        {isLoaded ? (
+        {isLoaded && !loadError ? (
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={center}
@@ -150,8 +278,12 @@ const GoogleMapPicker = ({ initialPosition, onPositionSelected }) => {
             <Marker position={markerPosition} />
           </GoogleMap>
         ) : (
-          <Box height="400px" display="flex" alignItems="center" justifyContent="center">
-            <Text>Ładowanie mapy...</Text>
+          <Box height="400px" display="flex" alignItems="center" justifyContent="center" bg="gray.100">
+            {loadError ? (
+              <Text color="red.500">Nie można załadować mapy. Użyj ręcznego wprowadzania współrzędnych.</Text>
+            ) : (
+              <Text>Ładowanie mapy...</Text>
+            )}
           </Box>
         )}
       </Box>

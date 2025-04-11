@@ -9,3 +9,15 @@ services:
         value: production
       - key: PORT
         value: 10000
+      - key: REACT_APP_API_URL
+        value: /api
+      - key: REACT_APP_GOOGLE_MAPS_API_KEY
+        value: YOUR_GOOGLE_MAPS_API_KEY  # UWAGA: Musisz zastąpić to prawdziwym kluczem Google Maps API w panelu Render.com
+      - key: TIMOCOM_USERNAME
+        value: Janta
+      - key: TIMOCOM_PASSWORD
+        value: 1tae17kpS5m4NaMYhSvYdw
+      - key: REACT_APP_TIMOCOM_USERNAME
+        value: Janta
+      - key: REACT_APP_TIMOCOM_PASSWORD
+        value: 1tae17kpS5m4NaMYhSvYdw

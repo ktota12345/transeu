@@ -33,11 +33,14 @@ export const fetchTimocomSettings = async () => {
     
     return settings;
   } catch (error) {
-    console.error('Error fetching TIMOCOM settings:', error.name); // Logowanie tylko nazwy błędu
-    // Zwracamy null lub pusty obiekt, aby komponent mógł obsłużyć brak danych
-    // lub rzucamy błąd, jeśli preferujemy obsługę w komponencie przez .catch()
-    // throw error; 
-    return null; // Zwracamy null, aby wskazać błąd
+    console.error('Error fetching TIMOCOM settings:', error.name, error.message); // Logowanie nazwy i komunikatu błędu
+    // Zwracamy domyślny obiekt ustawień, aby uniknąć błędów w komponencie
+    return {
+      username: process.env.REACT_APP_TIMOCOM_USERNAME || '',
+      password: process.env.REACT_APP_TIMOCOM_PASSWORD || '',
+      enabled: false,
+      lastUpdated: new Date().toISOString()
+    };
   }
 };
 
@@ -80,8 +83,8 @@ export const saveTimocomSettings = async (settings) => {
     // Używamy PUT, ponieważ /timocomSettings jest pojedynczym zasobem (obiektem), a nie kolekcją
     const response = await axios.put(TIMOCOM_SETTINGS_URL, settingsToSave);
     
-    // Informowanie o potrzebie zaktualizowania zmiennych środowiskowych
-    alert('Dane uwierzytelniające zostały zapisane. Ze względów bezpieczeństwa, przeniej je do zmiennych środowiskowych w pliku .env.');
+    // Usunięto alert, który mógł powodować problemy w środowisku produkcyjnym
+    console.log('Dane uwierzytelniające zostały zapisane. Ze względów bezpieczeństwa, przenieś je do zmiennych środowiskowych.');
     
     return response.data;
   } catch (error) {
@@ -95,7 +98,7 @@ export const testTimocomConnection = async (credentials) => {
     try {
       // Uwaga: Ten endpoint `/test-timocom` musiałby istnieć na Twoim prawdziwym backendzie.
       // json-server go nie obsłuży automatycznie.
-      // Dla celów demonstracyjnych symulujemy sukces lub błąd.
+      // Dla celów demonstracyjnych zawsze zwracamy sukces
       console.log("Testing TIMOCOM connection with:", credentials.username);
       
       // Symulacja wywołania API

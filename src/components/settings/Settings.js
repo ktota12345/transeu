@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import {
   Box,
   Container,
@@ -10,13 +10,79 @@ import {
   Tab,
   TabPanel,
   Divider,
-  useColorModeValue
+  useColorModeValue,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Spinner
 } from '@chakra-ui/react';
 import TimocomApiSettings from './TimocomApiSettings';
 import LogisticsBaseSettings from './LogisticsBaseSettings';
 
+// Komponent do obsługi błędów w podkomponentach
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Caught error in ErrorBoundary:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <Alert status="error" variant="subtle" flexDirection="column" alignItems="center" justifyContent="center" textAlign="center" height="200px">
+          <AlertIcon boxSize="40px" mr={0} />
+          <AlertTitle mt={4} mb={1} fontSize="lg">
+            Wystąpił błąd w komponencie
+          </AlertTitle>
+          <AlertDescription maxWidth="sm">
+            {this.state.error?.message || "Nieznany błąd. Spróbuj odświeżyć stronę."}
+          </AlertDescription>
+        </Alert>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Komponent opakowania dla podkomponentów z obsługą ładowania
+const SafeComponent = ({ children }) => {
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<Box textAlign="center" py={10}><Spinner size="xl" /></Box>}>
+        {children}
+      </Suspense>
+    </ErrorBoundary>
+  );
+};
+
 const Settings = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  // Upewnij się, że komponent jest montowany tylko po stronie klienta
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+  
+  if (!isLoaded) {
+    return (
+      <Container maxW="container.xl" py={5}>
+        <Box textAlign="center" py={10}>
+          <Spinner size="xl" />
+          <Text mt={4}>Ładowanie ustawień...</Text>
+        </Box>
+      </Container>
+    );
+  }
   
   return (
     <Container maxW="container.xl" py={5}>
@@ -47,11 +113,15 @@ const Settings = () => {
           </TabPanel>
           
           <TabPanel>
-            <LogisticsBaseSettings />
+            <SafeComponent>
+              <LogisticsBaseSettings />
+            </SafeComponent>
           </TabPanel>
           
           <TabPanel>
-            <TimocomApiSettings />
+            <SafeComponent>
+              <TimocomApiSettings />
+            </SafeComponent>
           </TabPanel>
           
           <TabPanel>
