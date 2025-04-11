@@ -100,9 +100,16 @@ const logisticsBasesSlice = createSlice({
 });
 
 // Selektory
-export const selectAllLogisticsBases = state => state.logisticsBases.bases;
-export const selectLogisticsBaseById = (state, baseId) => 
-  state.logisticsBases.bases.find(base => base.id === baseId);
+export const selectAllLogisticsBases = state => {
+  // Upewnij się, że zwracamy tablicę, nawet jeśli state.logisticsBases.bases jest undefined lub null
+  const bases = state.logisticsBases?.bases;
+  return Array.isArray(bases) ? bases : [];
+};
+
+export const selectLogisticsBaseById = (state, baseId) => {
+  const bases = selectAllLogisticsBases(state);
+  return bases.find(base => base.id === baseId);
+};
 export const selectLogisticsBasesStatus = state => state.logisticsBases.status;
 export const selectLogisticsBasesError = state => state.logisticsBases.error;
 

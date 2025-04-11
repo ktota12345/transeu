@@ -7,10 +7,16 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4002';
 export const fetchLogisticsBases = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/logisticsBases`);
+    // Upewnij się, że zwracamy tablicę
+    if (!Array.isArray(response.data)) {
+      console.warn('Otrzymane dane nie są tablicą:', response.data);
+      return [];
+    }
     return response.data;
   } catch (error) {
     console.error('Błąd podczas pobierania baz logistycznych:', error);
-    throw error;
+    // Zwracamy pustą tablicę zamiast rzucania błędu
+    return [];
   }
 };
 

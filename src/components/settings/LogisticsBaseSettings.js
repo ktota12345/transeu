@@ -279,6 +279,13 @@ const LogisticsBaseSettings = () => {
         <Text>Wystąpił błąd podczas ładowania baz logistycznych: {error}</Text>
       </Alert>
     );
+  } else if (!Array.isArray(bases)) {
+    content = (
+      <Alert status="error" borderRadius="md">
+        <AlertIcon />
+        <Text>Błąd: Otrzymane dane baz logistycznych nie są tablicą. Spróbuj odświeżyć stronę.</Text>
+      </Alert>
+    );
   } else if (bases.length === 0) {
     content = (
       <Box 
@@ -314,7 +321,7 @@ const LogisticsBaseSettings = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {bases.map((base) => (
+            {Array.isArray(bases) && bases.map((base) => (
               <Tr key={base.id}>
                 <Td fontWeight="medium">{base.name}</Td>
                 <Td>{base.address.full}</Td>
