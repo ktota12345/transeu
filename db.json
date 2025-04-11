@@ -1128,11 +1128,11 @@
           "objectType": "freightOffer",
           "closedFreightExchangeSetting": null,
           "contactPerson": null,
-          "creationDateTime": "2025-04-09T08:08:00Z",
+          "creationDateTime": "2025-04-11T06:38:35Z",
           "customer": null,
-          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/IA4e7hgYQNGDYZ50ohNeUw",
+          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/sWKV13FLTOucbGRVSMtfWQ",
           "excludedCustomers": [],
-          "id": "IA4e7hgYQNGDYZ50ohNeUw",
+          "id": "sWKV13FLTOucbGRVSMtfWQ",
           "internalRemark": null,
           "logisticsDocumentTypes": [],
           "publicRemark": null,
@@ -1140,43 +1140,43 @@
           "vehicleProperties": {
             "body": [
               "CURTAIN_SIDER",
-              "TAUTLINER"
+              "TAUTLINER",
+              "BOX",
+              "REFRIGERATOR",
+              "THERMO"
             ],
             "bodyProperty": [],
             "equipment": [],
             "loadSecuring": [],
             "swapBody": [],
             "type": [
-              "VEHICLE_UP_TO_7_5_T",
               "TRAILER",
-              "VEHICLE_UP_TO_12_T"
+              "WAGGON_AND_DRAG"
             ]
           },
-          "acceptQuotes": false,
-          "additionalInformation": [
-            "CRANE_LOADING_UNLOADING"
-          ],
-          "distance_km": 563,
-          "freightDescription": "1 long element",
-          "length_m": 8.2,
+          "acceptQuotes": true,
+          "additionalInformation": [],
+          "distance_km": 529,
+          "freightDescription": "33 EU PAl change or bring to PArtner",
+          "length_m": 13.6,
           "loadingPlaces": [
             {
               "loadingType": "LOADING",
               "address": {
                 "objectType": "address",
-                "city": "Dormagen",
+                "city": "Essen",
                 "country": "DE",
                 "geoCoordinate": {
-                  "longitude": 6.7752,
-                  "latitude": 51.113
+                  "longitude": 7.01109,
+                  "latitude": 51.45183
                 },
                 "geocoded": true,
-                "postalCode": "41542"
+                "postalCode": "45127"
               },
-              "startTime": "09:00",
-              "endTime": "14:00",
-              "earliestLoadingDate": "2025-04-10",
-              "latestLoadingDate": "2025-04-10"
+              "startTime": "02:00",
+              "endTime": "16:00",
+              "earliestLoadingDate": "2025-04-12",
+              "latestLoadingDate": "2025-04-12"
             },
             {
               "loadingType": "UNLOADING",
@@ -1185,37 +1185,153 @@
                 "city": "Berlin",
                 "country": "DE",
                 "geoCoordinate": {
-                  "longitude": 13.3215,
-                  "latitude": 52.5305
+                  "longitude": 13.37691,
+                  "latitude": 52.51605
                 },
                 "geocoded": true,
-                "postalCode": "10553"
+                "postalCode": "10117"
               },
-              "startTime": "07:00",
-              "endTime": "15:00",
-              "earliestLoadingDate": "2025-04-11",
-              "latestLoadingDate": "2025-04-11"
+              "startTime": "06:00",
+              "endTime": "14:00",
+              "earliestLoadingDate": "2025-04-14",
+              "latestLoadingDate": "2025-04-14"
             }
           ],
-          "paymentDueWithinDays": 45,
+          "paymentDueWithinDays": 30,
           "price": {
-            "amount": 600,
+            "amount": 900,
             "currency": "EUR"
           },
-          "weight_t": 2.8
+          "weight_t": 22.5
         },
         {
           "objectType": "freightOffer",
           "closedFreightExchangeSetting": null,
           "contactPerson": null,
-          "creationDateTime": "2025-04-09T07:31:06Z",
+          "creationDateTime": "2025-04-11T06:38:26Z",
           "customer": null,
-          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/tf3X7LqzTJ6GRqx9APb4JQ",
+          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/xE1uZpgSR8acQFUCa4CxNA",
           "excludedCustomers": [],
-          "id": "tf3X7LqzTJ6GRqx9APb4JQ",
+          "id": "xE1uZpgSR8acQFUCa4CxNA",
           "internalRemark": null,
           "logisticsDocumentTypes": [],
           "publicRemark": null,
+          "trackable": false,
+          "vehicleProperties": {
+            "body": [
+              "CURTAIN_SIDER",
+              "TAUTLINER",
+              "BOX",
+              "REFRIGERATOR",
+              "THERMO"
+            ],
+            "bodyProperty": [],
+            "equipment": [],
+            "loadSecuring": [],
+            "swapBody": [],
+            "type": [
+              "TRAILER",
+              "WAGGON_AND_DRAG"
+            ]
+          },
+          "acceptQuotes": true,
+          "additionalInformation": [],
+          "distance_km": 577,
+          "freightDescription": "Pal bring to Partner ",
+          "length_m": 13.6,
+          "loadingPlaces": [
+            {
+              "loadingType": "LOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Essen",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 7.01109,
+                  "latitude": 51.45183
+                },
+                "geocoded": true,
+                "postalCode": "45127"
+              },
+              "startTime": "02:00",
+              "endTime": "10:00",
+              "earliestLoadingDate": "2025-04-12",
+              "latestLoadingDate": "2025-04-12"
+            },
+            {
+              "loadingType": "UNLOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Bielefeld",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 8.53232,
+                  "latitude": 52.01548
+                },
+                "geocoded": true,
+                "postalCode": "33604"
+              },
+              "startTime": "06:00",
+              "endTime": "14:30",
+              "earliestLoadingDate": "2025-04-12",
+              "latestLoadingDate": "2025-04-12"
+            },
+            {
+              "loadingType": "UNLOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Mittenwalde",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 13.53571,
+                  "latitude": 52.26578
+                },
+                "geocoded": true,
+                "postalCode": "15749"
+              },
+              "startTime": "06:00",
+              "endTime": "14:00",
+              "earliestLoadingDate": "2025-04-14",
+              "latestLoadingDate": "2025-04-14"
+            },
+            {
+              "loadingType": "UNLOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Berlin",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 13.37691,
+                  "latitude": 52.51605
+                },
+                "geocoded": true,
+                "postalCode": "10117"
+              },
+              "startTime": "06:00",
+              "endTime": "14:00",
+              "earliestLoadingDate": "2025-04-14",
+              "latestLoadingDate": "2025-04-14"
+            }
+          ],
+          "paymentDueWithinDays": 30,
+          "price": {
+            "amount": 950,
+            "currency": "EUR"
+          },
+          "weight_t": 22.5
+        },
+        {
+          "objectType": "freightOffer",
+          "closedFreightExchangeSetting": null,
+          "contactPerson": null,
+          "creationDateTime": "2025-04-11T07:45:01Z",
+          "customer": null,
+          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/A76FJOgRQOqXfqjHfTqDqg",
+          "excludedCustomers": [],
+          "id": "A76FJOgRQOqXfqjHfTqDqg",
+          "internalRemark": null,
+          "logisticsDocumentTypes": [],
+          "publicRemark": "Kein Tausch / no change",
           "trackable": false,
           "vehicleProperties": {
             "body": [
@@ -1232,72 +1348,492 @@
             ]
           },
           "acceptQuotes": false,
-          "additionalInformation": [
-            "LOADING_EQUIPMENT_EXCHANGE"
-          ],
-          "distance_km": 590,
-          "freightDescription": "17 Chep",
-          "length_m": 7.6,
+          "additionalInformation": [],
+          "distance_km": 557,
+          "freightDescription": "///",
+          "length_m": 13.6,
           "loadingPlaces": [
             {
               "loadingType": "LOADING",
               "address": {
                 "objectType": "address",
-                "city": "Troisdorf",
+                "city": "Köln",
                 "country": "DE",
                 "geoCoordinate": {
-                  "longitude": 7.15299,
-                  "latitude": 50.81355
+                  "longitude": 6.95755,
+                  "latitude": 51.00142
                 },
                 "geocoded": true,
-                "postalCode": "53840"
+                "postalCode": "50735"
               },
-              "startTime": "07:00",
-              "endTime": "15:00",
-              "earliestLoadingDate": "2025-04-10",
-              "latestLoadingDate": "2025-04-10"
+              "startTime": "11:00",
+              "endTime": "14:00",
+              "earliestLoadingDate": "2025-04-14",
+              "latestLoadingDate": "2025-04-14"
             },
             {
               "loadingType": "UNLOADING",
               "address": {
                 "objectType": "address",
-                "city": "Berlin (Britz)",
+                "city": "Berlin",
                 "country": "DE",
                 "geoCoordinate": {
-                  "longitude": 13.43622,
-                  "latitude": 52.44874
+                  "longitude": 13.28844,
+                  "latitude": 52.52038
                 },
                 "geocoded": true,
-                "postalCode": "12347"
+                "postalCode": "14059"
               },
-              "startTime": "05:00",
-              "endTime": "05:30",
-              "earliestLoadingDate": "2025-04-11",
-              "latestLoadingDate": "2025-04-11"
+              "startTime": "09:00",
+              "endTime": "14:00",
+              "earliestLoadingDate": "2025-04-15",
+              "latestLoadingDate": "2025-04-15"
             }
           ],
           "paymentDueWithinDays": 30,
           "price": {
-            "amount": 700,
+            "amount": 800,
             "currency": "EUR"
           },
-          "weight_t": 13.2
+          "weight_t": 6.3
         },
         {
           "objectType": "freightOffer",
           "closedFreightExchangeSetting": null,
           "contactPerson": null,
-          "creationDateTime": "2025-04-09T07:01:58Z",
+          "creationDateTime": "2025-04-11T07:40:11Z",
           "customer": null,
-          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/mtDgsFW-RQOgiNtD8kFjBA",
+          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/b2V-0LdXRHuIsMtm_ZU_YQ",
           "excludedCustomers": [],
-          "id": "mtDgsFW-RQOgiNtD8kFjBA",
+          "id": "b2V-0LdXRHuIsMtm_ZU_YQ",
           "internalRemark": null,
           "logisticsDocumentTypes": [],
           "publicRemark": null,
           "trackable": false,
           "vehicleProperties": {
             "body": [
+              "CURTAIN_SIDER",
+              "MEGA",
+              "TAUTLINER"
+            ],
+            "bodyProperty": [],
+            "equipment": [],
+            "loadSecuring": [
+              "LASHING_STRAPS",
+              "ANTI_SLIP_MATS"
+            ],
+            "swapBody": [],
+            "type": [
+              "TRAILER"
+            ]
+          },
+          "acceptQuotes": false,
+          "additionalInformation": [
+            "SIDE_LOADING"
+          ],
+          "distance_km": 529,
+          "freightDescription": "kein Tausch",
+          "length_m": 13.6,
+          "loadingPlaces": [
+            {
+              "loadingType": "LOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Sprockhövel",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 7.24889,
+                  "latitude": 51.36865
+                },
+                "geocoded": true,
+                "postalCode": "45549"
+              },
+              "startTime": "08:00",
+              "endTime": "14:00",
+              "earliestLoadingDate": "2025-04-14",
+              "latestLoadingDate": "2025-04-14"
+            },
+            {
+              "loadingType": "UNLOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Berlin (Johannisthal)",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 13.50273,
+                  "latitude": 52.4433
+                },
+                "geocoded": true,
+                "postalCode": "12487"
+              },
+              "startTime": "09:00",
+              "endTime": "09:00",
+              "earliestLoadingDate": "2025-04-15",
+              "latestLoadingDate": "2025-04-15"
+            }
+          ],
+          "paymentDueWithinDays": 45,
+          "price": {
+            "amount": 800,
+            "currency": "EUR"
+          },
+          "weight_t": 15
+        },
+        {
+          "objectType": "freightOffer",
+          "closedFreightExchangeSetting": null,
+          "contactPerson": null,
+          "creationDateTime": "2025-04-11T07:28:47Z",
+          "customer": null,
+          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/B3j4N1tlTK-6Keudse0SMg",
+          "excludedCustomers": [],
+          "id": "B3j4N1tlTK-6Keudse0SMg",
+          "internalRemark": null,
+          "logisticsDocumentTypes": [],
+          "publicRemark": "24 EU Tausch",
+          "trackable": false,
+          "vehicleProperties": {
+            "body": [
+              "CURTAIN_SIDER",
+              "BOX",
+              "REFRIGERATOR",
+              "THERMO"
+            ],
+            "bodyProperty": [],
+            "equipment": [],
+            "loadSecuring": [],
+            "swapBody": [],
+            "type": [
+              "TRAILER"
+            ]
+          },
+          "acceptQuotes": true,
+          "additionalInformation": [
+            "LOADING_EQUIPMENT_EXCHANGE"
+          ],
+          "distance_km": 518,
+          "freightDescription": "Gewürze",
+          "length_m": 13.2,
+          "loadingPlaces": [
+            {
+              "loadingType": "LOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Bochum (Langendreer)",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 7.32533,
+                  "latitude": 51.47373
+                },
+                "geocoded": true,
+                "postalCode": "44892"
+              },
+              "startTime": "08:00",
+              "endTime": "15:00",
+              "earliestLoadingDate": "2025-04-14",
+              "latestLoadingDate": "2025-04-14"
+            },
+            {
+              "loadingType": "UNLOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Berlin",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 13.32028,
+                  "latitude": 52.57507
+                },
+                "geocoded": true,
+                "postalCode": "13403"
+              },
+              "startTime": "07:00",
+              "endTime": "13:00",
+              "earliestLoadingDate": "2025-04-15",
+              "latestLoadingDate": "2025-04-15"
+            },
+            {
+              "loadingType": "UNLOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Berlin (Moabit)",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 13.34006,
+                  "latitude": 52.52571
+                },
+                "geocoded": true,
+                "postalCode": "10551"
+              },
+              "startTime": "09:00",
+              "endTime": "13:00",
+              "earliestLoadingDate": "2025-04-15",
+              "latestLoadingDate": "2025-04-15"
+            }
+          ],
+          "paymentDueWithinDays": 30,
+          "price": {
+            "amount": 1050,
+            "currency": "EUR"
+          },
+          "weight_t": 20
+        },
+        {
+          "objectType": "freightOffer",
+          "closedFreightExchangeSetting": null,
+          "contactPerson": null,
+          "creationDateTime": "2025-04-11T06:51:02Z",
+          "customer": null,
+          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/wNNIJPtSTmSuLolQ4xRg7Q",
+          "excludedCustomers": [],
+          "id": "wNNIJPtSTmSuLolQ4xRg7Q",
+          "internalRemark": null,
+          "logisticsDocumentTypes": [],
+          "publicRemark": null,
+          "trackable": false,
+          "vehicleProperties": {
+            "body": [
+              "CURTAIN_SIDER"
+            ],
+            "bodyProperty": [],
+            "equipment": [],
+            "loadSecuring": [],
+            "swapBody": [],
+            "type": [
+              "TRAILER",
+              "WAGGON_AND_DRAG"
+            ]
+          },
+          "acceptQuotes": false,
+          "additionalInformation": [
+            "LOADING_EQUIPMENT_EXCHANGE"
+          ],
+          "distance_km": 572,
+          "freightDescription": "10 EP Baustoffe  tausch ",
+          "length_m": 6,
+          "loadingPlaces": [
+            {
+              "loadingType": "LOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Neuss (Morgensternsheide)",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 6.65316,
+                  "latitude": 51.20862
+                },
+                "geocoded": true,
+                "postalCode": "41462"
+              },
+              "startTime": "08:00",
+              "endTime": "16:00",
+              "earliestLoadingDate": "2025-04-14",
+              "latestLoadingDate": "2025-04-14"
+            },
+            {
+              "loadingType": "UNLOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Berlin (Tempelhof)",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 13.38564,
+                  "latitude": 52.46076
+                },
+                "geocoded": true,
+                "postalCode": "12099"
+              },
+              "startTime": "07:00",
+              "endTime": "09:00",
+              "earliestLoadingDate": "2025-04-15",
+              "latestLoadingDate": "2025-04-15"
+            }
+          ],
+          "paymentDueWithinDays": 45,
+          "price": {
+            "amount": 550,
+            "currency": "EUR"
+          },
+          "weight_t": 10
+        },
+        {
+          "objectType": "freightOffer",
+          "closedFreightExchangeSetting": null,
+          "contactPerson": null,
+          "creationDateTime": "2025-04-11T06:01:27Z",
+          "customer": null,
+          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/8pt277OrTeST_46yBc3esg",
+          "excludedCustomers": [],
+          "id": "8pt277OrTeST_46yBc3esg",
+          "internalRemark": null,
+          "logisticsDocumentTypes": [],
+          "publicRemark": "KEIN TAUSCH/ NO CHANGE",
+          "trackable": false,
+          "vehicleProperties": {
+            "body": [
+              "CURTAIN_SIDER",
+              "JUMBO",
+              "MEGA",
+              "TAUTLINER"
+            ],
+            "bodyProperty": [
+              "CODE_XL"
+            ],
+            "equipment": [],
+            "loadSecuring": [],
+            "swapBody": [],
+            "type": [
+              "TRAILER",
+              "WAGGON_AND_DRAG"
+            ]
+          },
+          "acceptQuotes": false,
+          "additionalInformation": [],
+          "distance_km": 561,
+          "freightDescription": "einfache Ware ",
+          "length_m": 13.6,
+          "loadingPlaces": [
+            {
+              "loadingType": "LOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Dorsten",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 6.9658,
+                  "latitude": 51.65906
+                },
+                "geocoded": true,
+                "postalCode": "46282"
+              },
+              "startTime": "00:30",
+              "endTime": "23:30",
+              "earliestLoadingDate": "2025-04-14",
+              "latestLoadingDate": "2025-04-14"
+            },
+            {
+              "loadingType": "UNLOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Berlin (Französisch Buchholz)",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 13.43368,
+                  "latitude": 52.60823
+                },
+                "geocoded": true,
+                "postalCode": "13127"
+              },
+              "startTime": "06:00",
+              "endTime": "14:00",
+              "earliestLoadingDate": "2025-04-15",
+              "latestLoadingDate": "2025-04-15"
+            }
+          ],
+          "paymentDueWithinDays": null,
+          "price": {
+            "amount": 800,
+            "currency": "EUR"
+          },
+          "weight_t": 24.5
+        },
+        {
+          "objectType": "freightOffer",
+          "closedFreightExchangeSetting": null,
+          "contactPerson": null,
+          "creationDateTime": "2025-04-10T14:10:30Z",
+          "customer": null,
+          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/wMIoXDI-Tw2P0NtTYLSWJQ",
+          "excludedCustomers": [],
+          "id": "wMIoXDI-Tw2P0NtTYLSWJQ",
+          "internalRemark": null,
+          "logisticsDocumentTypes": [],
+          "publicRemark": "Aktueller Code XL",
+          "trackable": false,
+          "vehicleProperties": {
+            "body": [
+              "CURTAIN_SIDER"
+            ],
+            "bodyProperty": [
+              "CODE_XL"
+            ],
+            "equipment": [],
+            "loadSecuring": [],
+            "swapBody": [],
+            "type": [
+              "TRAILER",
+              "WAGGON_AND_DRAG"
+            ]
+          },
+          "acceptQuotes": false,
+          "additionalInformation": [],
+          "distance_km": 561,
+          "freightDescription": "---",
+          "length_m": 13.6,
+          "loadingPlaces": [
+            {
+              "loadingType": "LOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Dorsten",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 6.9658,
+                  "latitude": 51.65906
+                },
+                "geocoded": true,
+                "postalCode": "46282"
+              },
+              "startTime": "06:00",
+              "endTime": "20:00",
+              "earliestLoadingDate": "2025-04-14",
+              "latestLoadingDate": "2025-04-14"
+            },
+            {
+              "loadingType": "UNLOADING",
+              "address": {
+                "objectType": "address",
+                "city": "Berlin (Französisch Buchholz)",
+                "country": "DE",
+                "geoCoordinate": {
+                  "longitude": 13.43368,
+                  "latitude": 52.60823
+                },
+                "geocoded": true,
+                "postalCode": "13127"
+              },
+              "startTime": null,
+              "endTime": null,
+              "earliestLoadingDate": "2025-04-15",
+              "latestLoadingDate": "2025-04-15"
+            }
+          ],
+          "paymentDueWithinDays": null,
+          "price": {
+            "amount": 800,
+            "currency": "EUR"
+          },
+          "weight_t": 24.3
+        },
+        {
+          "objectType": "freightOffer",
+          "closedFreightExchangeSetting": null,
+          "contactPerson": null,
+          "creationDateTime": "2025-04-11T05:16:36Z",
+          "customer": null,
+          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/0NlXg06kTZSBgBkjkf9DZQ",
+          "excludedCustomers": [],
+          "id": "0NlXg06kTZSBgBkjkf9DZQ",
+          "internalRemark": null,
+          "logisticsDocumentTypes": [],
+          "publicRemark": "7 Pal exchange / FIX Termin ",
+          "trackable": false,
+          "vehicleProperties": {
+            "body": [
+              "CURTAIN_SIDER",
+              "JUMBO",
+              "MEGA",
+              "TAUTLINER",
+              "BOX",
               "REFRIGERATOR"
             ],
             "bodyProperty": [],
@@ -1310,210 +1846,60 @@
             ]
           },
           "acceptQuotes": true,
-          "additionalInformation": [],
-          "distance_km": 590,
-          "freightDescription": "Pal",
-          "length_m": 13.6,
+          "additionalInformation": [
+            "LOADING_EQUIPMENT_EXCHANGE"
+          ],
+          "distance_km": 533,
+          "freightDescription": "Kohlenanzünder",
+          "length_m": 2.8,
           "loadingPlaces": [
             {
               "loadingType": "LOADING",
               "address": {
                 "objectType": "address",
-                "city": "Nettetal",
+                "city": "Recklinghausen (Stuckenbusch)",
                 "country": "DE",
                 "geoCoordinate": {
-                  "longitude": 6.27737,
-                  "latitude": 51.30624
+                  "longitude": 7.17347,
+                  "latitude": 51.59124
                 },
                 "geocoded": true,
-                "postalCode": "41334"
+                "postalCode": "45659"
               },
               "startTime": "08:00",
-              "endTime": "16:00",
-              "earliestLoadingDate": "2025-04-10",
-              "latestLoadingDate": "2025-04-10"
+              "endTime": "14:30",
+              "earliestLoadingDate": "2025-04-15",
+              "latestLoadingDate": "2025-04-15"
             },
             {
               "loadingType": "UNLOADING",
               "address": {
                 "objectType": "address",
-                "city": "Berlin",
+                "city": "Berlin (Französisch Buchholz)",
                 "country": "DE",
                 "geoCoordinate": {
-                  "longitude": 13.37691,
-                  "latitude": 52.51605
+                  "longitude": 13.43368,
+                  "latitude": 52.60823
                 },
                 "geocoded": true,
-                "postalCode": "10117"
+                "postalCode": "13127"
               },
-              "startTime": "08:00",
-              "endTime": "12:00",
-              "earliestLoadingDate": "2025-04-11",
-              "latestLoadingDate": "2025-04-11"
+              "startTime": "09:30",
+              "endTime": "09:30",
+              "earliestLoadingDate": "2025-04-16",
+              "latestLoadingDate": "2025-04-16"
             }
           ],
-          "paymentDueWithinDays": null,
+          "paymentDueWithinDays": 30,
           "price": {
-            "amount": 950,
+            "amount": 430,
             "currency": "EUR"
           },
-          "weight_t": 20
-        },
-        {
-          "objectType": "freightOffer",
-          "closedFreightExchangeSetting": null,
-          "contactPerson": null,
-          "creationDateTime": "2025-04-09T07:01:30Z",
-          "customer": null,
-          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/06aur766QTKWBpIvcO1KBQ",
-          "excludedCustomers": [],
-          "id": "06aur766QTKWBpIvcO1KBQ",
-          "internalRemark": null,
-          "logisticsDocumentTypes": [],
-          "publicRemark": null,
-          "trackable": false,
-          "vehicleProperties": {
-            "body": [
-              "REFRIGERATOR"
-            ],
-            "bodyProperty": [],
-            "equipment": [],
-            "loadSecuring": [],
-            "swapBody": [],
-            "type": [
-              "TRAILER",
-              "WAGGON_AND_DRAG"
-            ]
-          },
-          "acceptQuotes": true,
-          "additionalInformation": [],
-          "distance_km": 568,
-          "freightDescription": "Pal",
-          "length_m": 13.6,
-          "loadingPlaces": [
-            {
-              "loadingType": "LOADING",
-              "address": {
-                "objectType": "address",
-                "city": "Xanten",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 6.45507,
-                  "latitude": 51.66224
-                },
-                "geocoded": true,
-                "postalCode": "46509"
-              },
-              "startTime": "08:00",
-              "endTime": "16:00",
-              "earliestLoadingDate": "2025-04-10",
-              "latestLoadingDate": "2025-04-10"
-            },
-            {
-              "loadingType": "UNLOADING",
-              "address": {
-                "objectType": "address",
-                "city": "Berlin",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 13.37691,
-                  "latitude": 52.51605
-                },
-                "geocoded": true,
-                "postalCode": "10117"
-              },
-              "startTime": "08:00",
-              "endTime": "12:00",
-              "earliestLoadingDate": "2025-04-11",
-              "latestLoadingDate": "2025-04-11"
-            }
-          ],
-          "paymentDueWithinDays": null,
-          "price": {
-            "amount": 950,
-            "currency": "EUR"
-          },
-          "weight_t": 20
-        },
-        {
-          "objectType": "freightOffer",
-          "closedFreightExchangeSetting": null,
-          "contactPerson": null,
-          "creationDateTime": "2025-04-09T07:01:04Z",
-          "customer": null,
-          "deeplink": "https://my.timocom.com/app/tccargo/freights/search/view/YzqGvuTLSEKZltlz5eotAg",
-          "excludedCustomers": [],
-          "id": "YzqGvuTLSEKZltlz5eotAg",
-          "internalRemark": null,
-          "logisticsDocumentTypes": [],
-          "publicRemark": null,
-          "trackable": false,
-          "vehicleProperties": {
-            "body": [
-              "REFRIGERATOR"
-            ],
-            "bodyProperty": [],
-            "equipment": [],
-            "loadSecuring": [],
-            "swapBody": [],
-            "type": [
-              "TRAILER",
-              "WAGGON_AND_DRAG"
-            ]
-          },
-          "acceptQuotes": true,
-          "additionalInformation": [],
-          "distance_km": 597,
-          "freightDescription": "Pal",
-          "length_m": 13.6,
-          "loadingPlaces": [
-            {
-              "loadingType": "LOADING",
-              "address": {
-                "objectType": "address",
-                "city": "Well",
-                "country": "NL",
-                "geoCoordinate": {
-                  "longitude": 6.0954,
-                  "latitude": 51.55645
-                },
-                "geocoded": true,
-                "postalCode": "5855 CB"
-              },
-              "startTime": "08:00",
-              "endTime": "16:00",
-              "earliestLoadingDate": "2025-04-10",
-              "latestLoadingDate": "2025-04-10"
-            },
-            {
-              "loadingType": "UNLOADING",
-              "address": {
-                "objectType": "address",
-                "city": "Berlin",
-                "country": "DE",
-                "geoCoordinate": {
-                  "longitude": 13.37691,
-                  "latitude": 52.51605
-                },
-                "geocoded": true,
-                "postalCode": "10117"
-              },
-              "startTime": "08:00",
-              "endTime": "12:00",
-              "earliestLoadingDate": "2025-04-11",
-              "latestLoadingDate": "2025-04-11"
-            }
-          ],
-          "paymentDueWithinDays": null,
-          "price": {
-            "amount": 950,
-            "currency": "EUR"
-          },
-          "weight_t": 20
+          "weight_t": 4.5
         }
       ],
       "errorDetails": null,
-      "lastUpdated": "2025-04-09T08:18:54.708Z"
+      "lastUpdated": "2025-04-11T08:02:24.679Z"
     },
     {
       "id": "hist-1744109413818-a11cf",
@@ -6170,12 +6556,12 @@
   ],
   "settings": {},
   "timocomSettings": {
-    "username": "Janta",
+    "username": "[USE_ENV_TIMOCOM_USERNAME]",
     "enabled": true,
     "lastUpdated": "2025-03-31T10:29:00.308Z",
-    "password": "mC9jfYKPQf-DSt9VO4Gyyw",
-    "apiKey": "timocom-api-key-123",
-    "refreshToken": "timocom-refresh-token-456"
+    "password": "[USE_ENV_TIMOCOM_PASSWORD]",
+    "apiKey": "[USE_ENV_TIMOCOM_API_KEY]",
+    "refreshToken": "[USE_ENV_TIMOCOM_REFRESH_TOKEN]"
   },
   "timocom-offers": [
     {

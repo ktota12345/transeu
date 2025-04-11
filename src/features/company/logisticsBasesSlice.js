@@ -61,7 +61,8 @@ const logisticsBasesSlice = createSlice({
   initialState: {
     bases: [],
     status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-    error: null
+    error: null,
+    lastFetched: null // Dodajemy informację o czasie ostatniego pobrania danych
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -73,6 +74,8 @@ const logisticsBasesSlice = createSlice({
       .addCase(fetchLogisticsBases.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.bases = action.payload;
+        state.lastFetched = new Date().toISOString();
+        console.log('Pobrano bazy logistyczne:', action.payload);
       })
       .addCase(fetchLogisticsBases.rejected, (state, action) => {
         state.status = 'failed';
@@ -81,7 +84,16 @@ const logisticsBasesSlice = createSlice({
       
       // Obsługa addLogisticsBase
       .addCase(addLogisticsBase.fulfilled, (state, action) => {
-        state.bases.push(action.payload);
+        // Sprawdź, czy baza o takim ID już istnieje
+        const existingIndex = state.bases.findIndex(base => base.id === action.payload.id);
+        if (existingIndex !== -1) {
+          // Jeśli istnieje, zaktualizuj ją
+          state.bases[existingIndex] = action.payload;
+        } else {
+          // Jeśli nie istnieje, dodaj nową
+          state.bases.push(action.payload);
+        }
+        console.log('Dodano/zaktualizowano bazę logistyczną:', action.payload);
       })
       
       // Obsługa updateLogisticsBase

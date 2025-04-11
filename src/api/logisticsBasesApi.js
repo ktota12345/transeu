@@ -50,17 +50,18 @@ export const addLogisticsBase = async (baseData) => {
 };
 
 // Aktualizacja istniejącej bazy logistycznej
-export const updateLogisticsBase = async (baseId, baseData) => {
+export const updateLogisticsBase = async (baseData) => {
   try {
+    const baseId = baseData.id;
     console.log('Aktualizacja bazy logistycznej:', baseId, baseData);
     const response = await axios.put(`${API_BASE_URL}/logisticsBases/${baseId}`, baseData);
     console.log('Odpowiedź API po aktualizacji:', response.data);
     return response.data;
   } catch (error) {
-    console.error(`Błąd podczas aktualizacji bazy logistycznej o ID ${baseId}:`, error);
+    console.error(`Błąd podczas aktualizacji bazy logistycznej o ID ${baseData.id}:`, error);
     // Zamiast rzucać błąd, zwracamy oryginalne dane
     // To pozwoli na kontynuowanie pracy aplikacji nawet jeśli backend nie działa
-    return { ...baseData, id: baseId };
+    return baseData;
   }
 };
 

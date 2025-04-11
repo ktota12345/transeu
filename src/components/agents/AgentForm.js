@@ -146,6 +146,12 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
     const toast = useToast();
     const isSubmitting = status === 'loading';
     const isEditing = !!id;
+    
+    // Pobieranie baz logistycznych przy montowaniu komponentu
+    useEffect(() => {
+        console.log('Pobieranie baz logistycznych w komponencie AgentForm');
+        dispatch(fetchLogisticsBases());
+    }, [dispatch]);
 
     // Pobierz dane i zainicjuj formularz
     const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm({

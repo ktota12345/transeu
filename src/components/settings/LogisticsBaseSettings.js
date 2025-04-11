@@ -71,12 +71,13 @@ const LogisticsBaseSettings = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   
-  // Pobieranie baz logistycznych przy pierwszym renderowaniu
+  // Pobieranie baz logistycznych przy każdym renderowaniu komponentu
   useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchLogisticsBases());
-    }
-  }, [status, dispatch]);
+    console.log('Pobieranie baz logistycznych, aktualny status:', status);
+    console.log('Aktualne bazy:', bases);
+    // Zawsze pobieraj dane przy montowaniu komponentu
+    dispatch(fetchLogisticsBases());
+  }, [dispatch]); // Usunięto status z zależności, aby zawsze pobierało dane
   
   // Obsługa formularza
   const handleInputChange = (e) => {

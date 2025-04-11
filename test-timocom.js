@@ -1,8 +1,8 @@
 const axios = require('axios');
 
-// Dane uwierzytelniające z kolekcji Postman
-const username = 'Janta';
-const password = 'mC9jfYKPQf-DSt9VO4Gyyw';
+// Dane uwierzytelniające z zmiennych środowiskowych
+const username = process.env.TIMOCOM_USERNAME || '';
+const password = process.env.TIMOCOM_PASSWORD || '';
 
 // Funkcja testująca połączenie z API TIMOCOM
 async function testTimocomConnection() {

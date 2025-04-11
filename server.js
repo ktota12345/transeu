@@ -19,6 +19,13 @@ const saveDb = () => {
   fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8');
 };
 
+// Inicjalizacja tablicy baz logistycznych, jeśli nie istnieje
+if (!db.logisticsBases) {
+  db.logisticsBases = [];
+  saveDb();
+  console.log('Zainicjalizowano pustą tablicę baz logistycznych');
+}
+
 // Dodanie przykładowej historii agenta
 if (!db.agentHistory) {
   db.agentHistory = {

@@ -84,7 +84,8 @@ const buildSearchParams = (agentConfig = {}, logisticsBase = null, destinationCi
   const searchParams = {
     firstResult: 0,
     maxResults: 20, // Można to uczynić konfigurowalnym
-    inclusiveRightUpperBoundDateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // Stały zakres 7 dni
+    exclusiveLeftLowerBoundDateTime: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 24 godziny wstecz
+    inclusiveRightUpperBoundDateTime: new Date(Date.now()).toISOString() // Czas bieżący
   };
 
   // --- Lokalizacja Startowa (Baza Logistyczna) ---
