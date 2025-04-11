@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// JSON Server API configuration
-const TIMOCOM_API_URL = 'http://localhost:4002'; 
+// Zmienna środowiskowa dla API TimoCom, z domyślnym fallbackiem
+const TIMOCOM_API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4002'; 
 const FREIGHT_OFFERS_ENDPOINT = '/timocom-offers';
 const FREIGHT_OFFER_DETAILS_ENDPOINT = '/timocom-offers'; 
 const TEST_ENDPOINT = '/timocom-offers'; // W przypadku JSON Servera testujemy przez pobranie ofert

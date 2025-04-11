@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Bazowy URL dla API
-const API_BASE_URL = 'http://localhost:4002';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4002';
 
 // Pobieranie wszystkich baz logistycznych
 export const fetchLogisticsBases = async () => {
