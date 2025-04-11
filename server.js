@@ -16,7 +16,12 @@ if (!db.logisticsBases) {
 
 // Funkcja do zapisywania zmian w db.json
 const saveDb = () => {
-  fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8');
+  try {
+    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8');
+    console.log('Baza danych zapisana pomyślnie w pliku db.json'); // Log success
+  } catch (error) {
+    console.error('Błąd podczas zapisywania bazy danych:', error); // Log error
+  }
 };
 
 // Inicjalizacja tablicy baz logistycznych, jeśli nie istnieje
@@ -710,6 +715,7 @@ app.post('/api/logisticsBases', (req, res) => {
   };
   
   db.logisticsBases.push(newBase);
+  console.log('Próba zapisu bazy danych po dodaniu bazy...'); // Log before save
   saveDb();
   
   res.status(201).json(newBase);
@@ -730,6 +736,7 @@ app.put('/api/logisticsBases/:id', (req, res) => {
     };
     
     db.logisticsBases[baseIndex] = updatedBase;
+    console.log('Próba zapisu bazy danych po aktualizacji bazy...'); // Log before save
     saveDb();
     
     res.json(updatedBase);
@@ -747,6 +754,7 @@ app.delete('/api/logisticsBases/:id', (req, res) => {
   
   if (baseIndex !== -1) {
     db.logisticsBases.splice(baseIndex, 1);
+    console.log('Próba zapisu bazy danych po usunięciu bazy...'); // Log before save
     saveDb();
     
     res.status(204).send();
