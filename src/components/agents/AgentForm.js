@@ -792,13 +792,7 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                                                     </option>
                                                 ))
                                             ) : (
-                                                // Dodaj statyczne opcje, jeśli nie ma baz logistycznych
-                                                <>
-                                                    <option value="1">Baza Warszawa</option>
-                                                    <option value="2">Baza Poznań</option>
-                                                    <option value="3">Baza Kraków</option>
-                                                    <option value="4">Baza Test 1</option>
-                                                </>
+                                                null
                                             )}
                                         </Select>
                                     </FormControl>
