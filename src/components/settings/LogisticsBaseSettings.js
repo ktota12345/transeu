@@ -216,7 +216,7 @@ const LogisticsBaseSettings = () => {
     
     if (currentBase) {
       // Aktualizacja istniejącej bazy
-      dispatch(updateLogisticsBase({ ...baseData, id: currentBase.id }))
+      dispatch(updateLogisticsBase({ id: currentBase.id, ...baseData }))
         .unwrap()
         .then(() => {
           toast({
@@ -227,6 +227,7 @@ const LogisticsBaseSettings = () => {
             isClosable: true,
           });
           onClose();
+          dispatch(fetchLogisticsBases()); // Odśwież listę po aktualizacji
         })
         .catch((err) => {
           toast({
@@ -241,7 +242,7 @@ const LogisticsBaseSettings = () => {
       // Dodanie nowej bazy
       dispatch(addLogisticsBase(baseData))
         .unwrap()
-        .then(() => {
+        .then((addedBase) => {
           toast({
             title: 'Baza dodana',
             description: 'Nowa baza logistyczna została pomyślnie dodana',
@@ -250,6 +251,7 @@ const LogisticsBaseSettings = () => {
             isClosable: true,
           });
           onClose();
+          dispatch(fetchLogisticsBases()); // Odśwież listę po dodaniu
         })
         .catch((err) => {
           toast({
