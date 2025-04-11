@@ -9,6 +9,11 @@ const PORT = process.env.PORT || 3002;
 const dbPath = path.join(__dirname, 'db.json');
 let db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
 
+// Inicjalizacja kolekcji baz logistycznych, jeśli nie istnieje
+if (!db.logisticsBases) {
+  db.logisticsBases = [];
+}
+
 // Funkcja do zapisywania zmian w db.json
 const saveDb = () => {
   fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8');
@@ -664,6 +669,85 @@ app.get('*', (req, res) => {
 });
 
 // Uruchomienie serwera
+// Endpointy dla baz logistycznych
+// GET /api/logisticsBases - pobranie wszystkich baz logistycznych
+app.get('/api/logisticsBases', (req, res) => {
+  console.log('Pobieranie baz logistycznych');
+  res.json(db.logisticsBases || []);
+});
+
+// GET /api/logisticsBases/:id - pobranie konkretnej bazy logistycznej
+app.get('/api/logisticsBases/:id', (req, res) => {
+  const baseId = parseInt(req.params.id);
+  const base = db.logisticsBases.find(b => b.id === baseId);
+  
+  if (base) {
+    res.json(base);
+  } else {
+    res.status(404).json({ error: 'Baza logistyczna nie znaleziona' });
+  }
+});
+
+// POST /api/logisticsBases - dodanie nowej bazy logistycznej
+app.post('/api/logisticsBases', (req, res) => {
+  console.log('Dodawanie nowej bazy logistycznej:', req.body);
+  
+  // Generowanie nowego ID
+  const newId = db.logisticsBases.length > 0 
+    ? Math.max(...db.logisticsBases.map(b => b.id)) + 1 
+    : 1;
+  
+  const newBase = {
+    ...req.body,
+    id: newId
+  };
+  
+  db.logisticsBases.push(newBase);
+  saveDb();
+  
+  res.status(201).json(newBase);
+});
+
+// PUT /api/logisticsBases/:id - aktualizacja istniejącej bazy logistycznej
+app.put('/api/logisticsBases/:id', (req, res) => {
+  const baseId = parseInt(req.params.id);
+  const baseIndex = db.logisticsBases.findIndex(b => b.id === baseId);
+  
+  console.log(`Aktualizacja bazy logistycznej o ID ${baseId}, znaleziono na indeksie:`, baseIndex);
+  
+  if (baseIndex !== -1) {
+    // Aktualizacja danych z zachowaniem ID
+    const updatedBase = {
+      ...req.body,
+      id: baseId
+    };
+    
+    db.logisticsBases[baseIndex] = updatedBase;
+    saveDb();
+    
+    res.json(updatedBase);
+  } else {
+    res.status(404).json({ error: 'Baza logistyczna nie znaleziona' });
+  }
+});
+
+// DELETE /api/logisticsBases/:id - usunięcie bazy logistycznej
+app.delete('/api/logisticsBases/:id', (req, res) => {
+  const baseId = parseInt(req.params.id);
+  const baseIndex = db.logisticsBases.findIndex(b => b.id === baseId);
+  
+  console.log(`Usuwanie bazy logistycznej o ID ${baseId}, znaleziono na indeksie:`, baseIndex);
+  
+  if (baseIndex !== -1) {
+    db.logisticsBases.splice(baseIndex, 1);
+    saveDb();
+    
+    res.status(204).send();
+  } else {
+    res.status(404).json({ error: 'Baza logistyczna nie znaleziona' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Serwer działa na porcie ${PORT}`);
   console.log(`API dostępne pod adresem: http://localhost:${PORT}/api`);
