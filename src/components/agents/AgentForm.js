@@ -3,7 +3,11 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { createAgent, updateAgent, fetchAgent, clearCurrentAgent } from '../../features/agents/agentsSlice';
-import { selectAllLogisticsBases, fetchLogisticsBases } from '../../features/company/logisticsBasesSlice';
+import { 
+    selectAllLogisticsBases, 
+    fetchLogisticsBases, 
+    selectLogisticsBasesStatus 
+} from '../../features/company/logisticsBasesSlice';
 import { germanStateCities } from '../../utils/germanCities';
 import {
     Box,
@@ -141,12 +145,16 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { id } = useParams();
-    const { currentAgent, status } = useSelector(state => state.agents);
+    const { currentAgent, status: agentStatus } = useSelector(state => state.agents); 
     const logisticsBases = useSelector(selectAllLogisticsBases);
+    const logisticsBasesStatus = useSelector(selectLogisticsBasesStatus); 
     const toast = useToast();
-    const isSubmitting = status === 'loading';
+    const isSubmitting = agentStatus === 'loading'; 
     const isEditing = !!id;
-    
+
+    console.log('AgentForm - Logistics Bases:', logisticsBases);
+    console.log('AgentForm - Logistics Bases Status:', logisticsBasesStatus);
+
     // Pobieranie baz logistycznych przy montowaniu komponentu
     useEffect(() => {
         console.log('Pobieranie baz logistycznych w komponencie AgentForm');
