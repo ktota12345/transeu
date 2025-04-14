@@ -7,9 +7,35 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4002';
 export const fetchLogisticsBases = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/logisticsBases`);
+    
+    // Dodaj szczegółowe logowanie
+    console.log('Odpowiedź z API /logisticsBases:', response);
+    console.log('Dane otrzymane z API (response.data):', response.data);
+    console.log('Typ danych response.data:', typeof response.data);
+    
     // Upewnij się, że zwracamy tablicę
     if (!Array.isArray(response.data)) {
       console.warn('Otrzymane dane nie są tablicą:', response.data);
+      
+      // Sprawdź, czy dane są obiektem i czy zawierają tablicę pod jakimś kluczem
+      if (typeof response.data === 'object' && response.data !== null) {
+        console.log('Klucze w obiekcie response.data:', Object.keys(response.data));
+        
+        // Sprawdź, czy istnieje klucz 'logisticsBases' lub podobny
+        if (response.data.logisticsBases && Array.isArray(response.data.logisticsBases)) {
+          console.log('Znaleziono tablicę pod kluczem logisticsBases:', response.data.logisticsBases);
+          return response.data.logisticsBases;
+        }
+        
+        // Sprawdź, czy którykolwiek z kluczy zawiera tablicę
+        for (const key in response.data) {
+          if (Array.isArray(response.data[key])) {
+            console.log(`Znaleziono tablicę pod kluczem ${key}:`, response.data[key]);
+            return response.data[key];
+          }
+        }
+      }
+      
       return [];
     }
     return response.data;
