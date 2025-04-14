@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4002'; // Upewnij się, że port jest zgodny z resztą aplikacji
 
 // Endpoint dla ustawień TIMOCOM - zmieniono na zasób najwyższego poziomu
-const TIMOCOM_SETTINGS_URL = `${API_URL}/timocomSettings`; 
+const TIMOCOM_SETTINGS_URL = `${API_URL}/api/timocomSettings`; 
 
 // Pobierz ustawienia TIMOCOM
 export const fetchTimocomSettings = async () => {

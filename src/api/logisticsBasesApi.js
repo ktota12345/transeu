@@ -6,7 +6,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4002';
 // Pobieranie wszystkich baz logistycznych
 export const fetchLogisticsBases = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/logisticsBases`);
+    const response = await axios.get(`${API_BASE_URL}/api/logisticsBases`);
     
     // Dodaj szczegółowe logowanie
     console.log('Odpowiedź z API /logisticsBases:', response);
@@ -49,7 +49,7 @@ export const fetchLogisticsBases = async () => {
 // Pobieranie pojedynczej bazy logistycznej
 export const fetchLogisticsBaseById = async (baseId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/logisticsBases/${baseId}`);
+    const response = await axios.get(`${API_BASE_URL}/api/logisticsBases/${baseId}`);
     return response.data;
   } catch (error) {
     console.error(`Błąd podczas pobierania bazy logistycznej o ID ${baseId}:`, error);
@@ -61,8 +61,8 @@ export const fetchLogisticsBaseById = async (baseId) => {
 export const addLogisticsBase = async (baseData) => {
   try {
     console.log('Wysyłanie danych do API:', baseData);
-    console.log('URL API:', `${API_BASE_URL}/logisticsBases`);
-    const response = await axios.post(`${API_BASE_URL}/logisticsBases`, baseData);
+    console.log('URL API:', `${API_BASE_URL}/api/logisticsBases`);
+    const response = await axios.post(`${API_BASE_URL}/api/logisticsBases`, baseData);
     console.log('Odpowiedź API:', response.data);
     return response.data;
   } catch (error) {
@@ -80,7 +80,7 @@ export const updateLogisticsBase = async (baseData) => {
   try {
     const baseId = baseData.id;
     console.log('Aktualizacja bazy logistycznej:', baseId, baseData);
-    const response = await axios.put(`${API_BASE_URL}/logisticsBases/${baseId}`, baseData);
+    const response = await axios.put(`${API_BASE_URL}/api/logisticsBases/${baseId}`, baseData);
     console.log('Odpowiedź API po aktualizacji:', response.data);
     return response.data;
   } catch (error) {
@@ -95,7 +95,7 @@ export const updateLogisticsBase = async (baseData) => {
 export const deleteLogisticsBase = async (baseId) => {
   try {
     console.log('Usuwanie bazy logistycznej:', baseId);
-    await axios.delete(`${API_BASE_URL}/logisticsBases/${baseId}`);
+    await axios.delete(`${API_BASE_URL}/api/logisticsBases/${baseId}`);
     return baseId;
   } catch (error) {
     console.error(`Błąd podczas usuwania bazy logistycznej o ID ${baseId}:`, error);
