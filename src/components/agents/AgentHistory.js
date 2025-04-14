@@ -34,7 +34,7 @@ import { fetchAgent } from '../../features/agents/agentsSlice';
 import { fetchLogisticsBases, selectAllLogisticsBases } from '../../features/company/logisticsBasesSlice';
 import AgentHistorySearch from './AgentHistorySearch';
 import axios from 'axios';
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const AgentHistory = () => {
   const { id } = useParams();
@@ -237,10 +237,10 @@ const AgentHistory = () => {
         throw new Error(response.data.error || 'Nie udało się wyszukać ofert.');
       }
     } catch (error) {
-      console.error('[AgentHistory] Error searching offers:', error);
+      console.error('[AgentHistory] Error searching offers:', error.response ? JSON.stringify(error.response.data) : error.message);
       toast({
         title: 'Błąd wyszukiwania.',
-        description: error.response?.data?.error || error.message || 'Wystąpił błąd podczas wyszukiwania ofert.',
+        description: error.response?.data?.message || error.response?.data?.error || error.message || 'Wystąpił błąd podczas wyszukiwania ofert.',
         status: 'error',
         duration: 9000,
         isClosable: true,
