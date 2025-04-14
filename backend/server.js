@@ -485,6 +485,151 @@ app.post('/api/sequences/find', async (req, res) => {
   }
 });
 
+// --- API dla baz logistycznych ---
+
+// Pobieranie wszystkich baz logistycznych
+app.get('/api/logisticsBases', async (req, res) => {
+  console.log('Backend: Received GET /api/logisticsBases request');
+  try {
+    const dbData = await readDb();
+    res.json(dbData.logisticsBases || []);
+  } catch (error) {
+    console.error('Backend: Error fetching logistics bases:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch logistics bases' });
+  }
+});
+
+// Pobieranie pojedynczej bazy logistycznej
+app.get('/api/logisticsBases/:id', async (req, res) => {
+  const baseId = parseInt(req.params.id, 10);
+  console.log(`Backend: Received GET /api/logisticsBases/${baseId} request`);
+  
+  if (isNaN(baseId)) {
+    return res.status(400).json({ success: false, error: 'Invalid logistics base ID' });
+  }
+  
+  try {
+    const dbData = await readDb();
+    const base = dbData.logisticsBases.find(b => b.id === baseId);
+    
+    if (!base) {
+      return res.status(404).json({ success: false, error: `Logistics base with ID ${baseId} not found` });
+    }
+    
+    res.json(base);
+  } catch (error) {
+    console.error(`Backend: Error fetching logistics base ${baseId}:`, error);
+    res.status(500).json({ success: false, error: 'Failed to fetch logistics base' });
+  }
+});
+
+// Dodawanie nowej bazy logistycznej
+app.post('/api/logisticsBases', async (req, res) => {
+  console.log('Backend: Received POST /api/logisticsBases request with body:', req.body);
+  
+  if (!req.body.name || !req.body.address || !req.body.coordinates) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Missing required fields (name, address, coordinates)' 
+    });
+  }
+  
+  try {
+    const dbData = await readDb();
+    
+    // Generuj nowe ID (znajdź najwyższe istniejące ID i dodaj 1)
+    const newId = dbData.logisticsBases.length > 0
+      ? Math.max(...dbData.logisticsBases.map(b => b.id)) + 1
+      : 1;
+    
+    const newBase = {
+      id: newId,
+      ...req.body,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    dbData.logisticsBases.push(newBase);
+    await writeDb(dbData);
+    
+    res.status(201).json(newBase);
+  } catch (error) {
+    console.error('Backend: Error adding logistics base:', error);
+    res.status(500).json({ success: false, error: 'Failed to add logistics base' });
+  }
+});
+
+// Aktualizacja istniejącej bazy logistycznej
+app.put('/api/logisticsBases/:id', async (req, res) => {
+  const baseId = parseInt(req.params.id, 10);
+  console.log(`Backend: Received PUT /api/logisticsBases/${baseId} request with body:`, req.body);
+  
+  if (isNaN(baseId)) {
+    return res.status(400).json({ success: false, error: 'Invalid logistics base ID' });
+  }
+  
+  if (!req.body.name || !req.body.address || !req.body.coordinates) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Missing required fields (name, address, coordinates)' 
+    });
+  }
+  
+  try {
+    const dbData = await readDb();
+    const baseIndex = dbData.logisticsBases.findIndex(b => b.id === baseId);
+    
+    if (baseIndex === -1) {
+      return res.status(404).json({ success: false, error: `Logistics base with ID ${baseId} not found` });
+    }
+    
+    // Aktualizuj bazę, zachowując oryginalne ID i datę utworzenia
+    const updatedBase = {
+      ...dbData.logisticsBases[baseIndex],
+      ...req.body,
+      id: baseId, // Upewnij się, że ID się nie zmieni
+      updatedAt: new Date().toISOString()
+    };
+    
+    dbData.logisticsBases[baseIndex] = updatedBase;
+    await writeDb(dbData);
+    
+    res.json(updatedBase);
+  } catch (error) {
+    console.error(`Backend: Error updating logistics base ${baseId}:`, error);
+    res.status(500).json({ success: false, error: 'Failed to update logistics base' });
+  }
+});
+
+// Usuwanie bazy logistycznej
+app.delete('/api/logisticsBases/:id', async (req, res) => {
+  const baseId = parseInt(req.params.id, 10);
+  console.log(`Backend: Received DELETE /api/logisticsBases/${baseId} request`);
+  
+  if (isNaN(baseId)) {
+    return res.status(400).json({ success: false, error: 'Invalid logistics base ID' });
+  }
+  
+  try {
+    const dbData = await readDb();
+    const baseIndex = dbData.logisticsBases.findIndex(b => b.id === baseId);
+    
+    if (baseIndex === -1) {
+      return res.status(404).json({ success: false, error: `Logistics base with ID ${baseId} not found` });
+    }
+    
+    // Usuń bazę z tablicy
+    const deletedBase = dbData.logisticsBases[baseIndex];
+    dbData.logisticsBases.splice(baseIndex, 1);
+    await writeDb(dbData);
+    
+    res.json({ success: true, deletedBase });
+  } catch (error) {
+    console.error(`Backend: Error deleting logistics base ${baseId}:`, error);
+    res.status(500).json({ success: false, error: 'Failed to delete logistics base' });
+  }
+});
+
 // Uruchomienie serwera
 app.listen(PORT, () => {
   console.log(`Backend proxy server listening on port ${PORT}`);
