@@ -22,12 +22,13 @@ async function readDb() {
     if (!jsonData.logisticsBases) jsonData.logisticsBases = [];
     if (!jsonData.agentHistory) jsonData.agentHistory = []; // Dodano inicjalizację historii
     if (!jsonData.orders) jsonData.orders = [];
+    if (!jsonData.timocomSettings) jsonData.timocomSettings = {}; // Dodano inicjalizację ustawień TIMOCOM
     return jsonData;
   } catch (error) {
     // Jeśli plik nie istnieje lub jest pusty/niepoprawny JSON, zwróć domyślną strukturę
     if (error.code === 'ENOENT' || error instanceof SyntaxError) {
       console.warn(`Warning: ${dbPath} not found or invalid. Returning default structure.`);
-      return { agents: [], logisticsBases: [], agentHistory: [], orders: [] };
+      return { agents: [], logisticsBases: [], agentHistory: [], orders: [], timocomSettings: {} };
     }
     console.error('Error reading db.json:', error);
     throw new Error('Could not read database file.'); // Rzuć błąd dalej
@@ -627,6 +628,45 @@ app.delete('/api/logisticsBases/:id', async (req, res) => {
   } catch (error) {
     console.error(`Backend: Error deleting logistics base ${baseId}:`, error);
     res.status(500).json({ success: false, error: 'Failed to delete logistics base' });
+  }
+});
+
+// --- API dla ustawień TIMOCOM ---
+
+// Pobieranie ustawień TIMOCOM
+app.get('/api/timocomSettings', async (req, res) => {
+  console.log('Backend: Received GET /api/timocomSettings request');
+  try {
+    const dbData = await readDb();
+    // Zwróć obiekt timocomSettings lub pusty obiekt, jeśli nie istnieje
+    const settings = dbData.timocomSettings || {}; 
+    console.log('Backend: Returning timocomSettings:', settings);
+    res.json(settings);
+  } catch (error) {
+    console.error('Backend: Error fetching timocom settings:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch timocom settings' });
+  }
+});
+
+// Aktualizacja ustawień TIMOCOM (używamy PUT, bo to pojedynczy zasób)
+app.put('/api/timocomSettings', async (req, res) => {
+  console.log('Backend: Received PUT /api/timocomSettings request with body:', req.body);
+  
+  try {
+    const dbData = await readDb();
+    // Aktualizuj lub utwórz obiekt timocomSettings
+    // Dodajemy lastUpdated po stronie backendu dla pewności
+    dbData.timocomSettings = { 
+      ...req.body, 
+      lastUpdated: new Date().toISOString() 
+    };
+    
+    await writeDb(dbData);
+    console.log('Backend: Successfully updated timocomSettings:', dbData.timocomSettings);
+    res.json(dbData.timocomSettings);
+  } catch (error) {
+    console.error('Backend: Error updating timocom settings:', error);
+    res.status(500).json({ success: false, error: 'Failed to update timocom settings' });
   }
 });
 
