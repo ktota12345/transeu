@@ -27,7 +27,7 @@ function App() {
                             <Route path="/agents" element={<AgentsList />} />
                             <Route path="/agent/new" element={<AgentForm onSubmit={console.log} />} />
                             <Route path="/agent/:id" element={<AgentForm onSubmit={console.log} />} />
-                            <Route path="/agents/:id/history" element={<AgentHistoryPage />} />
+                            <Route path="/agent/:id/history" element={<AgentHistoryPage />} />
                             <Route path="/orders" element={<OrdersList />} />
                             <Route path="/orders/:id" element={<OrderCard />} />
                             <Route path="/order/:id" element={<OrderCard />} />

@@ -96,7 +96,7 @@ const OfferItem = React.memo(({ offer }) => {
             <Text fontSize="sm" color="gray.500">Brak ceny</Text>
           )}
           {offer.deeplink && (
-            <Link href={offer.deeplink} isExternal mt={2} d="block" fontSize="xs">
+            <Link href={offer.deeplink} isExternal mt={2} display="block" fontSize="xs">
               Zobacz w Timocom <ExternalLinkIcon mx="2px" />
             </Link>
           )}

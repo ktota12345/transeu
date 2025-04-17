@@ -70,15 +70,15 @@ const Sidebar = () => {
                 <NavItem icon={FiUsers} to="/agents">
                     Agenci
                 </NavItem>
-                <NavItem icon={FiTruck} to="/orders">
+                {/* <NavItem icon={FiTruck} to="/orders">
                     Zlecenia
-                </NavItem>
+                </NavItem> */}
                 <NavItem icon={FiCalendar} to="/schedule">
                     Harmonogram
                 </NavItem>
-                <NavItem icon={FiBarChart2} to="/reports">
+                {/* <NavItem icon={FiBarChart2} to="/reports">
                     Raporty
-                </NavItem>
+                </NavItem> */}
                 <Divider my={2} />
                 <NavItem icon={FiSettings} to="/settings">
                     Ustawienia
