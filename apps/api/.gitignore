@@ -2,7 +2,8 @@
 /dist
 /node_modules
 /build
-
+# Prisma
+/prisma/migrations/migration_lock.toml
 # Logs
 logs
 *.log

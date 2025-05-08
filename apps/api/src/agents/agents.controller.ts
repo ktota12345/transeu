@@ -1,12 +1,12 @@
-import {Controller, Get, Param} from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { AgentsService } from './agents.service';
 
 @Controller('agents')
 export class AgentsController {
-    @Get()
-    index() {
-        return [
-            {"id": 1, "name": "Agent Transportowy Premium", "description": "Agent specjalizujący się w transporcie międzynarodowym z pełnym zakresem usług", "isActive": true, "createdAt": "2025-03-18T14:30:00.000Z", "updatedAt": "2025-03-18T14:30:00.000Z", "specializations": ["Transport międzynarodowy", "Transport chłodniczy", "Transport ADR"], "priorityClients": ["Nestle", "Unilever", "P&G"], "cargoTypes": ["Palety", "Chłodnia", "ADR"], "additionalServices": ["Ubezpieczenie cargo", "Śledzenie GPS", "Raportowanie"]}
-        ];
-    }
+    constructor(private readonly agentsService: AgentsService) {}
 
+    @Get()
+    async index() {
+        return this.agentsService.findAll();
+    }
 }
