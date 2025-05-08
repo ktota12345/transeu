@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3002;
+const cors = require('cors');
 
 // Dane z db.json
 const dbPath = path.join(__dirname, 'db.json');
@@ -15,7 +16,7 @@ console.log('Identyfikatory zleceń:', db.orders.map(o => o.id));
 const saveDb = () => {
   fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8');
 };
-
+app.use(cors());
 // Middleware do obsługi JSON
 app.use(express.json());
 
