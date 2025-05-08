@@ -1,61 +1,43 @@
-# TransEU Agent
 
-Aplikacja do zarządzania zleceniami transportowymi.
+Transeu Agent – Development Setup
+=================================
 
-## Instalacja
+Opis:
+-----
+Projekt frontendowy (React) do zarządzania agentami i zleceniami, z backendem opartym o NestJS oraz tymczasowy serwer Express jako mock API. Docelowo backend będzie korzystał z bazy PostgreSQL i Prisma ORM.
 
-```bash
-npm install
-```
+Struktura:
+----------
+- `apps/app` – frontend React (Create React App)
+- `apps/api` – backend NestJS (port domyślny: 3001)
+- `server.js` – tymczasowy serwer Express z routingiem REST pod `/api/*`
+- `db.json` – plik z danymi mockowymi dla serwera Express
 
-## Uruchamianie aplikacji
+Instalacja:
+-----------
+1. Zainstaluj zależności:
+   ```bash
+   yarn install
+   ```
 
-### Tryb deweloperski (oddzielne serwery)
+2. Utwórz plik `.env` w katalogu `apps/app`:
+   ```env
+   REACT_APP_NEST_API_URL=http://localhost:3001
+   ```
 
-```bash
-# Uruchomienie React App
-npm start
+3. Uruchom projekt:
+   ```bash
+   
+   yarn dev:all
 
-# Uruchomienie JSON Server (w osobnym terminalu)
-npm run server
-```
+   ```
 
-### Tryb deweloperski (jednoczesne uruchomienie)
+Dodatkowe informacje:
+---------------------
+- Tymczasowy backend (Express) uruchamiany przez `npm run server`
+- Endpointy REST dostępne pod `/api/agents`, `/api/orders`, itd.
+- NestJS CORS włączone globalnie (`origin: '*'`)
 
-```bash
-npm run dev
-```
-
-### Tryb produkcyjny (zintegrowany serwer)
-
-```bash
-npm run prod
-```
-
-## Wdrożenie
-
-Aplikacja jest gotowa do wdrożenia na platformach takich jak Heroku, Render, Railway itp.
-
-### Heroku
-
-```bash
-heroku create
-git add .
-git commit -m "Przygotowanie do wdrożenia"
-git push heroku master
-```
-
-### Render/Railway
-
-Skonfiguruj nowy projekt, wskazując na to repozytorium i ustaw komendę startową:
-
-```
-npm run start-server
-```
-
-## Struktura projektu
-
-- `/src` - Kod źródłowy aplikacji React
-- `/build` - Skompilowana wersja aplikacji (generowana po `npm run build`)
-- `db.json` - Baza danych JSON
-- `server.js` - Zintegrowany serwer (Express + JSON Server)
+Autorzy:
+--------
+Effectit AB Team
