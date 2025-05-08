@@ -28,3 +28,30 @@ model Agent {
   additionalServices String[]
 }
 
+model User {
+  id                 Int       @id @default(autoincrement())
+  email              String    @unique
+  username           String    @unique
+  password           String
+  role               Role      @default(USER)
+  resetToken         String?   @db.VarChar(255)
+  resetTokenExpiry   DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  companyId          Int?
+  company            Company?  @relation(fields: [companyId], references: [id])
+}
+
+model Company {
+  id          Int      @id @default(autoincrement())
+  name        String
+  users       User[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  USER
+}

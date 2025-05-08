@@ -1,0 +1,96 @@
+{
+  "info": {
+    "_postman_id": "d55e6d58-3a94-4090-b5fe-b953dd2a67ab",
+    "name": "Authentication API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "Specify the content type as JSON"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"user@example.com\", \"password\": \"yourpassword\"}"
+        },
+        "url": {
+          "raw": "http://localhost:3001/auth/login",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Generate Reset Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "Specify the content type as JSON"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"user@example.com\"}"
+        },
+        "url": {
+          "raw": "http://localhost:3001/auth/reset-token",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth",
+            "reset-token"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reset Password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "Specify the content type as JSON"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"token\": \"reset_token_value\", \"newPassword\": \"newpassword123\"}"
+        },
+        "url": {
+          "raw": "http://localhost:3001/auth/reset-password",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth",
+            "reset-password"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
