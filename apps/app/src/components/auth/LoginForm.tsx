@@ -22,7 +22,7 @@ export const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuc
             if (!response.ok) throw new Error('Błędne dane logowania');
 
             const result = await response.json();
-            localStorage.setItem('token', result.token); // zakładamy, że API zwraca { token: "..." }
+            localStorage.setItem('token', result.access_token);
             toast({ title: 'Zalogowano pomyślnie', status: 'success' });
             onLoginSuccess();
         } catch (err: any) {
@@ -31,18 +31,44 @@ export const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuc
     };
 
     return (
-        <Box as="form" onSubmit={handleSubmit(onSubmit)} p={4}>
-            <VStack spacing={4}>
-                <FormControl isInvalid={!!errors.email}>
-                    <FormLabel>Email</FormLabel>
-                    <Input {...register('email', { required: 'Wymagany email' })} />
-                </FormControl>
-                <FormControl isInvalid={!!errors.password}>
-                    <FormLabel>Hasło</FormLabel>
-                    <Input type="password" {...register('password', { required: 'Wymagane hasło' })} />
-                </FormControl>
-                <Button type="submit" colorScheme="blue">Zaloguj się</Button>
-            </VStack>
+        <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            minHeight="100vh"
+            bg="gray.100"
+        >
+            <Box
+                p={6}
+                maxWidth="400px"
+                width="100%"
+                bg="white"
+                boxShadow="lg"
+                borderRadius="md"
+                border="1px solid #e2e8f0"
+            >
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <VStack spacing={4}>
+                        <FormControl isInvalid={!!errors.email}>
+                            <FormLabel>Email</FormLabel>
+                            <Input
+                                {...register('email', { required: 'Wymagany email' })}
+                                autoFocus // Ustawienie focus na pierwsze pole
+                            />
+                        </FormControl>
+                        <FormControl isInvalid={!!errors.password}>
+                            <FormLabel>Hasło</FormLabel>
+                            <Input
+                                type="password"
+                                {...register('password', { required: 'Wymagane hasło' })}
+                            />
+                        </FormControl>
+                        <Button type="submit" colorScheme="blue">
+                            Zaloguj się
+                        </Button>
+                    </VStack>
+                </form>
+            </Box>
         </Box>
     );
 };

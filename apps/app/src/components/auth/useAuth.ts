@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useToast } from '@chakra-ui/react';
+import { jwtDecode } from 'jwt-decode'; // Importujemy jwt-decode
 
 type LoginInput = {
     email: string;
@@ -38,11 +39,30 @@ export const useAuth = () => {
         toast({ title: 'Wylogowano', status: 'info' });
     };
 
+    // Funkcja do pobierania danych użytkownika
+    const getUserData = () => {
+        const token = localStorage.getItem('token');
+        if (!token) return { email: '', name: '' };
+
+        try {
+            const decodedToken: any = jwtDecode(token);
+            const email = decodedToken.email || '';
+            const name = decodedToken.username || 'gość';
+            const id = decodedToken.sub || '';
+            const role = decodedToken.role || 'user';
+            const companyId = decodedToken.companyId || '';
+            return { email, name, id, role, companyId };
+        } catch (error) {
+            return { email: '', name: '' };
+        }
+    };
+
     return {
         login,
         logout,
         loading,
         isAuthenticated: !!localStorage.getItem('token'),
-        token: localStorage.getItem('token')
+        token: localStorage.getItem('token'),
+        getUserData // Zwracamy funkcję getUserData
     };
 };

@@ -1,4 +1,7 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/useAuth';
+import md5 from 'md5';
 import {
     Box,
     Flex,
@@ -19,6 +22,19 @@ import {
 import { FiBell, FiSearch, FiHelpCircle, FiUser, FiSettings, FiLogOut } from 'react-icons/fi';
 
 const Header = () => {
+    const { logout, getUserData } = useAuth(); // Używamy funkcji getUserData z useAuth
+    const navigate = useNavigate();
+
+    const { email: userEmail, name: userName , role:userRole} = getUserData(); // Pobieramy dane użytkownika
+
+    // Generowanie URL do Gravatara na podstawie emaila
+    const gravatarUrl = `https://www.gravatar.com/avatar/${md5(userEmail.trim().toLowerCase())}?s=128&d=identicon`;
+
+    const handleLogout = () => {
+        logout();
+        navigate('/'); // Przekierowanie na stronę główną
+    };
+
     const bg = useColorModeValue('white', 'gray.800');
     const borderColor = useColorModeValue('gray.200', 'gray.700');
 
@@ -42,9 +58,9 @@ const Header = () => {
                     <InputLeftElement pointerEvents="none">
                         <FiSearch color="gray.300" />
                     </InputLeftElement>
-                    <Input 
-                        type="text" 
-                        placeholder="Szukaj..." 
+                    <Input
+                        type="text"
+                        placeholder="Szukaj..."
                         borderRadius="full"
                         bg={useColorModeValue('gray.50', 'gray.700')}
                     />
@@ -112,21 +128,21 @@ const Header = () => {
                     <MenuButton>
                         <Avatar
                             size="sm"
-                            name="Jan Kowalski"
-                            src="https://bit.ly/dan-abramov"
+                            name={userName}
+                            src={gravatarUrl} // Użycie URL do Gravatara
                             cursor="pointer"
                         />
                     </MenuButton>
                     <MenuList zIndex={2}>
                         <Box px={4} py={2}>
-                            <Text fontWeight="bold">Jan Kowalski</Text>
-                            <Text fontSize="sm" color="gray.500">jan.kowalski@transeu.com</Text>
+                            <Text fontWeight="bold">{userName}</Text>
+                            <Text fontSize="sm" color="gray.500">{userEmail} ({userRole})</Text>
                         </Box>
                         <MenuDivider />
                         <MenuItem icon={<FiUser />}>Profil</MenuItem>
                         <MenuItem icon={<FiSettings />}>Ustawienia</MenuItem>
                         <MenuDivider />
-                        <MenuItem icon={<FiLogOut />}>Wyloguj</MenuItem>
+                        <MenuItem icon={<FiLogOut />} onClick={handleLogout}>Wyloguj</MenuItem>
                     </MenuList>
                 </Menu>
             </Flex>

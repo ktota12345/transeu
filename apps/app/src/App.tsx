@@ -36,7 +36,7 @@ function App() {
                             <Route path="/login" element={<LoginForm onLoginSuccess={() => window.location.replace('/')}/>}/>
 
                             <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
-                            <Route path="/agents" element={<RequireAuth><RequireAuth><AgentsList /></RequireAuth></RequireAuth>} />
+                            <Route path="/agents" element={<RequireAuth><AgentsList /></RequireAuth>} />
                             <Route path="/agent/new" element={<RequireAuth><RequireAuth><AgentForm onSubmit={console.log} /></RequireAuth></RequireAuth>} />
                             <Route path="/agent/:id" element={<RequireAuth><RequireAuth><AgentForm onSubmit={console.log} /></RequireAuth></RequireAuth>} />
                             <Route path="/orders" element={<RequireAuth><OrdersList /></RequireAuth>} />
