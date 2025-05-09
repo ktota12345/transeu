@@ -11,7 +11,7 @@ import {
   Divider,
   Tooltip,
 } from '@chakra-ui/react';
-import { FiTruck, FiCalendar, FiMapPin, FiUser, FiPackage, FiSettings } from 'react-icons/fi';
+import { FiTruck, FiCalendar, FiMapPin, FiUser, FiPackage } from 'react-icons/fi';
 import { RiRobotLine } from 'react-icons/ri';
 
 // Komponent dla statusu zlecenia

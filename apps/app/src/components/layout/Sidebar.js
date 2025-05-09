@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, VStack, Icon, Text, Flex, Divider, useColorModeValue } from '@chakra-ui/react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { FiHome, FiUsers, FiTruck, FiSettings, FiBarChart2, FiCalendar } from 'react-icons/fi';
+import { FiHome, FiUsers, FiTruck, FiSettings, FiBarChart2, FiCalendar, FiSearch } from 'react-icons/fi';
 
 const NavItem = ({ icon, children, to, ...rest }) => {
     const location = useLocation();
@@ -64,18 +64,21 @@ const Sidebar = () => {
                 <NavItem icon={FiHome} to="/">
                     Dashboard
                 </NavItem>
+                <NavItem icon={FiSearch} to="/quick-search">
+                    Szybkie wyszukiwanie
+                </NavItem>
                 <NavItem icon={FiUsers} to="/agents">
                     Agenci
                 </NavItem>
-                <NavItem icon={FiTruck} to="/orders">
+                {/* <NavItem icon={FiTruck} to="/orders">
                     Zlecenia
-                </NavItem>
+                </NavItem> */}
                 <NavItem icon={FiCalendar} to="/schedule">
                     Harmonogram
                 </NavItem>
-                <NavItem icon={FiBarChart2} to="/reports">
+                {/* <NavItem icon={FiBarChart2} to="/reports">
                     Raporty
-                </NavItem>
+                </NavItem> */}
                 <Divider my={2} />
                 <NavItem icon={FiSettings} to="/settings">
                     Ustawienia

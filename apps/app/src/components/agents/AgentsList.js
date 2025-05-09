@@ -2,12 +2,10 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
-    Box,
+    VStack,
     Heading,
     Button,
-    VStack,
     HStack,
-    Spacer,
     Text,
     Flex,
     Badge,
@@ -70,6 +68,13 @@ const DeleteIcon = (props) => (
     </svg>
 );
 
+const HistoryIcon = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+    </svg>
+);
+
 export const AgentsList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -78,10 +83,11 @@ export const AgentsList = () => {
     const toast = useToast();
 
     useEffect(() => {
-        if (status === 'idle') {
-            dispatch(fetchAgents());
-        }
-    }, [status, dispatch]);
+        // Zawsze próbuj pobrać agentów przy montowaniu komponentu.
+        // Logika w Redux (createAsyncThunk) powinna zapobiegać zbędnym zapytaniom,
+        // jeśli dane są już ładowane lub zostały niedawno pobrane.
+        dispatch(fetchAgents());
+    }, [dispatch]);
 
     const handleAddNew = () => {
         navigate('/agent/new');
@@ -157,6 +163,10 @@ export const AgentsList = () => {
                     isClosable: true,
                 });
             });
+    };
+
+    const handleViewHistory = (id) => {
+        navigate(`/agent/${id}/history`);
     };
 
     if (status === 'loading') {
@@ -236,61 +246,78 @@ export const AgentsList = () => {
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {agents.map((agent) => (
-                                    <Tr key={agent.id} _hover={{ bg: 'gray.50' }}>
-                                        <Td fontWeight="medium">{agent.name}</Td>
-                                        <Td>
-                                            <Badge 
-                                                colorScheme={agent.isActive ? 'green' : 'gray'} 
-                                                borderRadius="full" 
-                                                px={2}
-                                            >
-                                                {agent.isActive ? 'Aktywny' : 'Nieaktywny'}
-                                            </Badge>
-                                        </Td>
-                                        <Td>
-                                            {agent.checkFrequency === 'custom'
-                                                ? `Co ${agent.customCheckInterval} minut`
-                                                : agent.checkFrequency === 'live'
-                                                ? 'Na żywo'
-                                                : agent.checkFrequency === 'hourly'
-                                                ? 'Co godzinę'
-                                                : agent.checkFrequency && typeof agent.checkFrequency === 'string' && agent.checkFrequency.includes('min')
-                                                ? `Co ${agent.checkFrequency.replace('min', ' minut')}`
-                                                : agent.checkFrequency || 'Nie określono'}
-                                        </Td>
-                                        <Td>
-                                            {agent.workingHours 
-                                                ? `${agent.workingHours.start} - ${agent.workingHours.end}`
-                                                : 'Nie określono'}
-                                        </Td>
-                                        <Td>
-                                            <Flex justify="flex-end">
-                                                <Tooltip label="Edytuj" hasArrow>
-                                                    <IconButton
-                                                        icon={<EditIcon boxSize={4} />}
+                                {agents && agents.length > 0 ? (
+                                    agents.map((agent) => (
+                                        <Tr key={agent.id} _hover={{ bg: 'gray.50' }}>
+                                            <Td fontWeight="medium">{agent.name}</Td>
+                                            <Td>
+                                                <Badge 
+                                                    colorScheme={agent.isActive ? 'green' : 'gray'} 
+                                                    borderRadius="full" 
+                                                    px={2}
+                                                >
+                                                    {agent.isActive ? 'Aktywny' : 'Nieaktywny'}
+                                                </Badge>
+                                            </Td>
+                                            <Td>
+                                                {agent.checkFrequency === 'custom'
+                                                    ? `Co ${agent.customCheckInterval || 60} minut`
+                                                    : agent.checkFrequency === 'live'
+                                                    ? 'Na żywo'
+                                                    : agent.checkFrequency === 'hourly'
+                                                    ? 'Co godzinę'
+                                                    : agent.checkFrequency && typeof agent.checkFrequency === 'string' && agent.checkFrequency.includes('min')
+                                                    ? `Co ${agent.checkFrequency.replace('min', ' minut')}`
+                                                    : agent.checkFrequency || 'Nie określono'}
+                                            </Td>
+                                            <Td>
+                                                {agent.workingHours 
+                                                    ? `${agent.workingHours.start || '08:00'} - ${agent.workingHours.end || '16:00'}`
+                                                    : 'Nie określono'}
+                                            </Td>
+                                            <Td>
+                                                <Flex justify="flex-end">
+                                                    <Button
+                                                        leftIcon={<HistoryIcon boxSize={4} />}
                                                         size="sm"
-                                                        colorScheme="blue"
-                                                        variant="ghost"
+                                                        colorScheme="purple"
                                                         mr={2}
-                                                        onClick={() => handleEdit(agent.id)}
-                                                        aria-label="Edytuj"
-                                                    />
-                                                </Tooltip>
-                                                <Tooltip label="Usuń" hasArrow>
-                                                    <IconButton
-                                                        icon={<DeleteIcon boxSize={4} />}
-                                                        size="sm"
-                                                        colorScheme="red"
-                                                        variant="ghost"
-                                                        aria-label="Usuń"
-                                                        onClick={() => handleDelete(agent.id)}
-                                                    />
-                                                </Tooltip>
-                                            </Flex>
+                                                        onClick={() => handleViewHistory(agent.id)}
+                                                    >
+                                                        Historia
+                                                    </Button>
+                                                    <Tooltip label="Edytuj" hasArrow>
+                                                        <IconButton
+                                                            icon={<EditIcon boxSize={4} />}
+                                                            size="sm"
+                                                            colorScheme="blue"
+                                                            variant="ghost"
+                                                            mr={2}
+                                                            onClick={() => handleEdit(agent.id)}
+                                                            aria-label="Edytuj"
+                                                        />
+                                                    </Tooltip>
+                                                    <Tooltip label="Usuń" hasArrow>
+                                                        <IconButton
+                                                            icon={<DeleteIcon boxSize={4} />}
+                                                            size="sm"
+                                                            colorScheme="red"
+                                                            variant="ghost"
+                                                            aria-label="Usuń"
+                                                            onClick={() => handleDelete(agent.id)}
+                                                        />
+                                                    </Tooltip>
+                                                </Flex>
+                                            </Td>
+                                        </Tr>
+                                    ))
+                                ) : (
+                                    <Tr>
+                                        <Td colSpan={5} textAlign="center">
+                                            <Text>Brak agentów do wyświetlenia</Text>
                                         </Td>
                                     </Tr>
-                                ))}
+                                )}
                             </Tbody>
                         </Table>
                     </TableContainer>

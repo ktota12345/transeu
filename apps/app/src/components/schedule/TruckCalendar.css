@@ -1,0 +1,44 @@
+/* Styles for TruckCalendar component */
+
+/* Ograniczenie wysokości kalendarza */
+.truck-calendar-container {
+  height: calc(100vh - 200px); /* Przywrócono poprzednią wysokość */
+  overflow: auto; /* Ukrywa ewentualne wewnętrzne przewijanie kalendarza */
+}
+
+/* Zmniejszenie czcionki dla etykiet godzin na osi czasu - USUNIĘTO
+.truck-calendar-container .rbc-time-gutter .rbc-time-slot .rbc-label {
+  font-size: 0.7rem; 
+  padding-top: 1px; 
+}*/
+
+/* Poprawki wyrównania - resetowanie niektórych potencjalnie konfliktowych stylów Chakra */
+.truck-calendar-container .rbc-time-view,
+.truck-calendar-container .rbc-time-header,
+.truck-calendar-container .rbc-time-content,
+.truck-calendar-container .rbc-day-slot,
+.truck-calendar-container .rbc-header {
+  border-color: inherit !important; /* Użyj domyślnych kolorów obramowania kalendarza */
+  box-sizing: border-box !important; /* Upewnij się, że box-sizing jest spójny */
+}
+
+.truck-calendar-container .rbc-time-header-content {
+  border-left: none; /* Usunięcie potencjalnego lewego obramowania */
+}
+
+.truck-calendar-container .rbc-time-gutter,
+.truck-calendar-container .rbc-day-bg,
+.truck-calendar-container .rbc-header {
+  padding: 0 !important; /* Resetowanie paddingu */
+  margin: 0 !important;  /* Resetowanie marginesu */
+}
+
+/* Ukrycie wiersza wydarzeń całodniowych */
+.truck-calendar-container .rbc-allday-cell {
+  display: none !important;
+}
+
+/* Styl dla daty/godziny w modalu */
+.date-time {
+  font-weight: normal; 
+}

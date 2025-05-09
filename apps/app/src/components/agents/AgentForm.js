@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { createAgent, updateAgent, fetchAgent, clearCurrentAgent } from '../../features/agents/agentsSlice';
-import { useEffect } from 'react';
+import { 
+    selectAllLogisticsBases, 
+    fetchLogisticsBases, 
+    selectLogisticsBasesStatus 
+} from '../../features/company/logisticsBasesSlice';
+import { germanStateCities } from '../../utils/germanCities';
 import {
     Box,
     Button,
@@ -42,9 +47,16 @@ import {
     SliderTrack,
     SliderFilledTrack,
     SliderThumb,
-    SliderMark
+    SliderMark,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
 } from '@chakra-ui/react';
-import { FiSliders, FiArrowLeft, FiSave } from 'react-icons/fi';
+import { FiArrowLeft, FiSave, FiSliders } from 'react-icons/fi';
 
 const checkFrequencyOptions = [
     { value: 'live', label: 'Na żywo (ciągłe monitorowanie)' },
@@ -133,28 +145,25 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { id } = useParams();
-    const { currentAgent, status } = useSelector(state => state.agents);
+    const { currentAgent, status: agentStatus } = useSelector(state => state.agents); 
+    const logisticsBases = useSelector(selectAllLogisticsBases);
+    const logisticsBasesStatus = useSelector(selectLogisticsBasesStatus); 
     const toast = useToast();
-    const isSubmitting = status === 'loading';
+    const isSubmitting = agentStatus === 'loading'; 
     const isEditing = !!id;
 
+    console.log('AgentForm - Logistics Bases:', logisticsBases);
+    console.log('AgentForm - Logistics Bases Status:', logisticsBasesStatus);
+
+    // Pobieranie baz logistycznych przy montowaniu komponentu
     useEffect(() => {
-        // Jeśli mamy ID, pobierz agenta do edycji
-        if (id) {
-            dispatch(fetchAgent(id));
-        }
+        console.log('Pobieranie baz logistycznych w komponencie AgentForm');
+        dispatch(fetchLogisticsBases());
+    }, [dispatch]);
 
-        // Cleanup przy odmontowaniu komponentu
-        return () => {
-            dispatch(clearCurrentAgent());
-        };
-    }, [dispatch, id]);
-
-    // Użyj danych z Redux store, jeśli edytujemy istniejącego agenta
-    const formDefaultValues = isEditing ? currentAgent : initialData;
-
-    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
-        defaultValues: formDefaultValues || {
+    // Pobierz dane i zainicjuj formularz
+    const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm({
+        defaultValues: {
             // 1. Informacje podstawowe
             name: '',
             description: '',
@@ -174,10 +183,10 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
             preferredRoutes: [],
             regionsToAvoid: [],
             vehicleBases: [],
-            maxOperatingRadius: 500,
-            preferredCountries: [],
-            unwantedCountries: [],
-            roadPreferences: [],
+            selectedLogisticsBase: null,
+            customLogisticsPoint: null,
+            destinationCity: null, // Nowe pole dla miasta docelowego
+            searchRadius: 30, // Nowe pole dla promienia poszukiwań
             
             // 4. Parametry finansowe
             minRatePerKm: 1.0,
@@ -231,7 +240,7 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
             keywordTriggers: [],
             emotionDetectionLevel: 50, // 0-100 scale
             negotiationStagesRequiringHuman: [],
-            maxResponseTime: 15,
+            maxClientIdleTime: 15, // Maksymalny czas bez odpowiedzi klienta
             
             // 9. Harmonogram pracy agenta
             checkFrequency: 'hourly',
@@ -468,8 +477,27 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
         setValue('scheduleExceptions', exceptions.filter(e => e.date !== date));
     };
 
+    const handleSelectLogisticsBase = (baseId) => {
+        setValue('selectedLogisticsBase', baseId);
+        setValue('customLogisticsPoint', null);
+    };
+
+    const handleSelectCustomPoint = () => {
+        setValue('selectedLogisticsBase', null);
+        if (!watch('customLogisticsPoint')) {
+            setValue('customLogisticsPoint', { latitude: '', longitude: '', name: 'Punkt niestandardowy' });
+        }
+    };
+
+    const handleCustomPointChange = (field, value) => {
+        const currentPoint = watch('customLogisticsPoint') || { latitude: '', longitude: '', name: 'Punkt niestandardowy' };
+        setValue('customLogisticsPoint', { ...currentPoint, [field]: value });
+    };
+
     const onFormSubmit = (data) => {
+        console.log("Data being submitted:", data); 
         if (isEditing) {
+            console.log("Editing agent with data:", data); 
             dispatch(updateAgent({ id, agentData: data }))
                 .unwrap()
                 .then(() => {
@@ -492,6 +520,7 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                     });
                 });
         } else {
+            console.log("Creating agent with data:", data); 
             dispatch(createAgent(data))
                 .unwrap()
                 .then(() => {
@@ -515,6 +544,35 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                 });
         }
     };
+
+    // Efekt do pobierania danych agenta i baz logistycznych
+    useEffect(() => {
+        dispatch(fetchLogisticsBases());
+        if (id) {
+            dispatch(fetchAgent(id));
+        } else {
+            // Jeśli tworzymy nowego agenta, wartości domyślne z useForm
+            // powinny wystarczyć. Nie resetujemy tutaj dodatkowo.
+        }
+        // Cleanup przy odmontowaniu komponentu
+        return () => {
+            dispatch(clearCurrentAgent());
+        };
+    }, [dispatch, id]); 
+
+    // Efekt do resetowania formularza, gdy dane agenta (currentAgent) zostaną załadowane w trybie edycji
+    useEffect(() => {
+        if (isEditing && currentAgent) {
+            console.log("Resetting form with currentAgent:", currentAgent); 
+            // Upewnij się, że przekazujesz obiekt z polami pasującymi do formularza
+            // Możesz potrzebować transformacji jeśli struktura się różni
+            reset({
+                ...currentAgent,
+                destinationCity: currentAgent.destinationCity || null,
+                searchRadius: currentAgent.searchRadius || 30,
+            }); 
+        }
+    }, [isEditing, currentAgent, reset]);
 
     return (
         <Box p={6} bg="gray.50">
@@ -732,82 +790,99 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                             <CardBody>
                                 <SimpleGrid columns={[1, null, 2]} spacing={6}>
                                     <FormControl>
-                                        <FormLabel fontWeight="medium">Maksymalny promień operacyjny (km)</FormLabel>
-                                        <NumberInput min={0} max={2000}>
-                                            <NumberInputField {...register('maxOperatingRadius')} />
-                                            <NumberInputStepper>
-                                                <NumberIncrementStepper />
-                                                <NumberDecrementStepper />
-                                            </NumberInputStepper>
-                                        </NumberInput>
+                                        <FormLabel fontWeight="medium">Baza logistyczna (punkt startowy)</FormLabel>
+                                        <Select {...register('selectedLogisticsBase')} onChange={(e) => handleSelectLogisticsBase(e.target.value)}>
+                                            <option value="">Wybierz bazę logistyczną</option>
+                                            {logisticsBases && logisticsBases.length > 0 ? (
+                                                logisticsBases.map(base => (
+                                                    <option key={base.id} value={base.id}>
+                                                        {base.name}
+                                                    </option>
+                                                ))
+                                            ) : (
+                                                null
+                                            )}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl>
+                                        <FormLabel fontWeight="medium">Miasto docelowe (Niemcy)</FormLabel>
+                                        <Select {...register('destinationCity')}>
+                                            <option value="">Wybierz miasto docelowe</option>
+                                            {germanStateCities.map(city => (
+                                                <option key={city.name} value={city.name}>
+                                                    {city.name}
+                                                </option>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl>
+                                        <FormLabel fontWeight="medium">Promień poszukiwań ofert (km)</FormLabel>
+                                        <Flex>
+                                            <NumberInput 
+                                                min={0} 
+                                                max={150} 
+                                                value={watch('searchRadius')} 
+                                                onChange={(valueString) => setValue('searchRadius', parseInt(valueString))}
+                                                flex="1"
+                                                mr={4}
+                                            >
+                                                <NumberInputField />
+                                                <NumberInputStepper>
+                                                    <NumberIncrementStepper />
+                                                    <NumberDecrementStepper />
+                                                </NumberInputStepper>
+                                            </NumberInput>
+                                        </Flex>
+                                        <Slider
+                                            min={0}
+                                            max={150}
+                                            step={5}
+                                            value={watch('searchRadius')}
+                                            onChange={(val) => setValue('searchRadius', val)}
+                                            mt={2}
+                                        >
+                                            <SliderTrack>
+                                                <SliderFilledTrack />
+                                            </SliderTrack>
+                                            <SliderThumb boxSize={6} />
+                                            <SliderMark
+                                                value={watch('searchRadius')}
+                                                textAlign='center'
+                                                bg='blue.500'
+                                                color='white'
+                                                mt='-10'
+                                                ml='-5'
+                                                w='12'
+                                                borderRadius="md"
+                                            >
+                                                {watch('searchRadius')} km
+                                            </SliderMark>
+                                        </Slider>
+                                    </FormControl>
+
+                                    <FormControl mt={6}>
+                                        <FormLabel fontWeight="medium">Punkt niestandardowy</FormLabel>
+                                        <Button onClick={handleSelectCustomPoint}>Dodaj punkt niestandardowy</Button>
+                                        {watch('customLogisticsPoint') && (
+                                            <Box mt={4}>
+                                                <FormControl>
+                                                    <FormLabel>Szerokość geograficzna</FormLabel>
+                                                    <Input type="number" {...register('customLogisticsPoint.latitude')} />
+                                                </FormControl>
+                                                <FormControl>
+                                                    <FormLabel>Długość geograficzna</FormLabel>
+                                                    <Input type="number" {...register('customLogisticsPoint.longitude')} />
+                                                </FormControl>
+                                                <FormControl>
+                                                    <FormLabel>Nazwa punktu</FormLabel>
+                                                    <Input {...register('customLogisticsPoint.name')} />
+                                                </FormControl>
+                                            </Box>
+                                        )}
                                     </FormControl>
                                 </SimpleGrid>
-
-                                <FormControl mt={6}>
-                                    <FormLabel fontWeight="medium">Preferowane kraje</FormLabel>
-                                    <SimpleGrid columns={[2, null, 4]} spacing={3}>
-                                        {countriesList.map((country) => (
-                                            <Tag
-                                                key={country}
-                                                size="md"
-                                                variant={preferredCountries.includes(country) ? "solid" : "outline"}
-                                                colorScheme="green"
-                                                cursor="pointer"
-                                                onClick={() => handleToggleCountry(country, 'preferredCountries')}
-                                                mb={2}
-                                                borderRadius="md"
-                                                boxShadow="sm"
-                                                p={2}
-                                            >
-                                                <TagLabel>{country}</TagLabel>
-                                            </Tag>
-                                        ))}
-                                    </SimpleGrid>
-                                </FormControl>
-
-                                <FormControl mt={6}>
-                                    <FormLabel fontWeight="medium">Niepożądane kraje</FormLabel>
-                                    <SimpleGrid columns={[2, null, 4]} spacing={3}>
-                                        {countriesList.map((country) => (
-                                            <Tag
-                                                key={country}
-                                                size="md"
-                                                variant={unwantedCountries.includes(country) ? "solid" : "outline"}
-                                                colorScheme="red"
-                                                cursor="pointer"
-                                                onClick={() => handleToggleCountry(country, 'unwantedCountries')}
-                                                mb={2}
-                                                borderRadius="md"
-                                                boxShadow="sm"
-                                                p={2}
-                                            >
-                                                <TagLabel>{country}</TagLabel>
-                                            </Tag>
-                                        ))}
-                                    </SimpleGrid>
-                                </FormControl>
-
-                                <FormControl mt={6}>
-                                    <FormLabel fontWeight="medium">Preferencje drogowe</FormLabel>
-                                    <SimpleGrid columns={[2, null, 4]} spacing={3}>
-                                        {roadPreferences.map((preference) => (
-                                            <Tag
-                                                key={preference}
-                                                size="md"
-                                                variant={roadPreferencesSelected.includes(preference) ? "solid" : "outline"}
-                                                colorScheme="blue"
-                                                cursor="pointer"
-                                                onClick={() => handleToggleRoadPreference(preference)}
-                                                mb={2}
-                                                borderRadius="md"
-                                                boxShadow="sm"
-                                                p={2}
-                                            >
-                                                <TagLabel>{preference}</TagLabel>
-                                            </Tag>
-                                        ))}
-                                    </SimpleGrid>
-                                </FormControl>
                             </CardBody>
                         </Card>
                     </Box>
@@ -1283,7 +1358,7 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                             <FormControl>
                                 <FormLabel>Przekroczenie czasu (minuty)</FormLabel>
                                 <NumberInput min={1} max={60} defaultValue={15}>
-                                    <NumberInputField {...register('maxResponseTime', { min: 1, max: 60 })} />
+                                    <NumberInputField {...register('maxClientIdleTime', { min: 1, max: 60 })} />
                                     <NumberInputStepper>
                                         <NumberIncrementStepper />
                                         <NumberDecrementStepper />
@@ -1488,19 +1563,21 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                         >
                             Anuluj
                         </Button>
-                        <Button 
-                            colorScheme="blue" 
-                            type="submit"
-                            isLoading={isSubmitting}
-                            loadingText="Zapisywanie..."
-                            rightIcon={<FiSave />}
-                            boxShadow="md"
-                        >
-                            Zapisz agenta
-                        </Button>
+                        <ButtonGroup>
+                            <Button 
+                                colorScheme="blue" 
+                                type="submit"
+                                isLoading={isSubmitting}
+                                loadingText="Zapisywanie..."
+                                leftIcon={<FiSave />}
+                                boxShadow="md"
+                            >
+                                {isEditing ? 'Zapisz zmiany' : 'Zapisz profil'}
+                            </Button>
+                        </ButtonGroup>
                     </Flex>
                 </VStack>
             </form>
         </Box>
     );
-};
+ };
