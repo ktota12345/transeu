@@ -17,7 +17,7 @@ __metadata:
     md5: "npm:^2.3.0"
     react-icons: "npm:^5.5.0"
     tsx: "npm:^4.19.2"
-    turbo: "npm:^2.0.6"
+    turbo: "npm:^2.5.3"
   languageName: unknown
   linkType: soft
 
@@ -20200,7 +20200,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo@npm:^2.0.6":
+"turbo@npm:^2.5.3":
   version: 2.5.3
   resolution: "turbo@npm:2.5.3"
   dependencies:
