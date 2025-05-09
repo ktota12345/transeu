@@ -12,11 +12,9 @@ import {
 import { 
   FiDownload, 
   FiGrid, 
-  FiList, 
   FiRefreshCw, 
   FiArrowUp, 
-  FiArrowDown,
-  FiFilter
+  FiArrowDown
 } from 'react-icons/fi';
 import { useDispatch } from 'react-redux';
 import { fetchOrders } from '../../features/orders/ordersSlice';

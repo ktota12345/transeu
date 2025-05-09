@@ -11,6 +11,9 @@ import Dashboard from './components/dashboard/Dashboard';
 import Layout from './components/layout/Layout';
 import OrdersList from './components/orders/OrdersList';
 import OrderCard from './components/orders/OrderCard';
+import Settings from './components/settings/Settings';
+import Schedule from './components/schedule/Schedule';
+import QuickSearchPage from './pages/QuickSearchPage';
 
 const RequireAuth = ({children}: { children: JSX.Element }) => {
     const location = useLocation();
@@ -19,7 +22,7 @@ const RequireAuth = ({children}: { children: JSX.Element }) => {
         return <Navigate to="/login" state={{from: location}} replace/>;
     }
 
-    return children;
+    return <Layout>{children}</Layout>;
 };
 
 
@@ -32,12 +35,15 @@ function App() {
                         <Routes>
                             <Route path="/login" element={<LoginForm onLoginSuccess={() => window.location.replace('/')}/>}/>
 
-                            <Route path="/" element={<Layout><RequireAuth><Dashboard /></RequireAuth></Layout>} />
-                            <Route path="/agents" element={<Layout><RequireAuth><AgentsList /></RequireAuth></Layout>} />
-                            <Route path="/agent/new" element={<Layout><RequireAuth><AgentForm onSubmit={console.log} /></RequireAuth></Layout>} />
-                            <Route path="/agent/:id" element={<Layout><RequireAuth><AgentForm onSubmit={console.log} /></RequireAuth></Layout>} />
-                            <Route path="/orders" element={<Layout><OrdersList /></Layout>} />
-                            <Route path="/order/:id" element={<Layout><OrderCard /></Layout>} />
+                            <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
+                            <Route path="/agents" element={<RequireAuth><RequireAuth><AgentsList /></RequireAuth></RequireAuth>} />
+                            <Route path="/agent/new" element={<RequireAuth><RequireAuth><AgentForm onSubmit={console.log} /></RequireAuth></RequireAuth>} />
+                            <Route path="/agent/:id" element={<RequireAuth><RequireAuth><AgentForm onSubmit={console.log} /></RequireAuth></RequireAuth>} />
+                            <Route path="/orders" element={<RequireAuth><OrdersList /></RequireAuth>} />
+                            <Route path="/order/:id" element={<RequireAuth><OrderCard /></RequireAuth>} />
+                            <Route path="/schedule" element={<RequireAuth><Schedule /></RequireAuth>} />
+                            <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
+                            <Route path="/quick-search" element={<RequireAuth><QuickSearchPage /></RequireAuth>} />
                         </Routes>
                 </Router>
             </ChakraProvider>

@@ -1,31 +1,9 @@
-import React, { ReactNode } from 'react';
-import {
-    Box,
-    VStack,
-    Icon,
-    Text,
-    Flex,
-    Divider,
-    useColorModeValue
-} from '@chakra-ui/react';
+import React from 'react';
+import { Box, VStack, Icon, Text, Flex, Divider, useColorModeValue } from '@chakra-ui/react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import {
-    FiHome,
-    FiUsers,
-    FiTruck,
-    FiSettings,
-    FiBarChart2,
-    FiCalendar
-} from 'react-icons/fi';
-import { IconType } from 'react-icons';
+import { FiHome, FiUsers, FiTruck, FiSettings, FiBarChart2, FiCalendar, FiSearch } from 'react-icons/fi';
 
-interface NavItemProps {
-    icon: IconType;
-    to: string;
-    children: ReactNode;
-}
-
-const NavItem: React.FC<NavItemProps> = ({ icon, children, to, ...rest }) => {
+const NavItem = ({ icon, children, to, ...rest }) => {
     const location = useLocation();
     const isActive = location.pathname === to;
     const activeBg = useColorModeValue('brand.50', 'brand.900');
@@ -51,13 +29,19 @@ const NavItem: React.FC<NavItemProps> = ({ icon, children, to, ...rest }) => {
             }}
             {...rest}
         >
-            <Icon mr="4" fontSize="16" as={icon} />
+            {icon && (
+                <Icon
+                    mr="4"
+                    fontSize="16"
+                    as={icon}
+                />
+            )}
             {children}
         </Flex>
     );
 };
 
-const Sidebar: React.FC = () => {
+const Sidebar = () => {
     const bg = useColorModeValue('white', 'gray.800');
     const borderColor = useColorModeValue('gray.200', 'gray.700');
 
@@ -80,18 +64,21 @@ const Sidebar: React.FC = () => {
                 <NavItem icon={FiHome} to="/">
                     Dashboard
                 </NavItem>
+                <NavItem icon={FiSearch} to="/quick-search">
+                    Szybkie wyszukiwanie
+                </NavItem>
                 <NavItem icon={FiUsers} to="/agents">
                     Agenci
                 </NavItem>
-                <NavItem icon={FiTruck} to="/orders">
+                {/* <NavItem icon={FiTruck} to="/orders">
                     Zlecenia
-                </NavItem>
+                </NavItem> */}
                 <NavItem icon={FiCalendar} to="/schedule">
                     Harmonogram
                 </NavItem>
-                <NavItem icon={FiBarChart2} to="/reports">
+                {/* <NavItem icon={FiBarChart2} to="/reports">
                     Raporty
-                </NavItem>
+                </NavItem> */}
                 <Divider my={2} />
                 <NavItem icon={FiSettings} to="/settings">
                     Ustawienia
