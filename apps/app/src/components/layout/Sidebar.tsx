@@ -1,9 +1,31 @@
-import React from 'react';
-import { Box, VStack, Icon, Text, Flex, Divider, useColorModeValue } from '@chakra-ui/react';
+import React, { ReactNode } from 'react';
+import {
+    Box,
+    VStack,
+    Icon,
+    Text,
+    Flex,
+    Divider,
+    useColorModeValue
+} from '@chakra-ui/react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { FiHome, FiUsers, FiTruck, FiSettings, FiBarChart2, FiCalendar } from 'react-icons/fi';
+import {
+    FiHome,
+    FiUsers,
+    FiTruck,
+    FiSettings,
+    FiBarChart2,
+    FiCalendar
+} from 'react-icons/fi';
+import { IconType } from 'react-icons';
 
-const NavItem = ({ icon, children, to, ...rest }) => {
+interface NavItemProps {
+    icon: IconType;
+    to: string;
+    children: ReactNode;
+}
+
+const NavItem: React.FC<NavItemProps> = ({ icon, children, to, ...rest }) => {
     const location = useLocation();
     const isActive = location.pathname === to;
     const activeBg = useColorModeValue('brand.50', 'brand.900');
@@ -29,19 +51,13 @@ const NavItem = ({ icon, children, to, ...rest }) => {
             }}
             {...rest}
         >
-            {icon && (
-                <Icon
-                    mr="4"
-                    fontSize="16"
-                    as={icon}
-                />
-            )}
+            <Icon mr="4" fontSize="16" as={icon} />
             {children}
         </Flex>
     );
 };
 
-const Sidebar = () => {
+const Sidebar: React.FC = () => {
     const bg = useColorModeValue('white', 'gray.800');
     const borderColor = useColorModeValue('gray.200', 'gray.700');
 

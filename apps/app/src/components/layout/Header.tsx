@@ -16,9 +16,16 @@ import {
     Badge,
     Text
 } from '@chakra-ui/react';
-import { FiBell, FiSearch, FiHelpCircle, FiUser, FiSettings, FiLogOut } from 'react-icons/fi';
+import {
+    FiBell,
+    FiSearch,
+    FiHelpCircle,
+    FiUser,
+    FiSettings,
+    FiLogOut
+} from 'react-icons/fi';
 
-const Header = () => {
+const Header: React.FC = () => {
     const bg = useColorModeValue('white', 'gray.800');
     const borderColor = useColorModeValue('gray.200', 'gray.700');
 
@@ -29,7 +36,7 @@ const Header = () => {
             w="100%"
             h="16"
             px={4}
-            zIndex="1"
+            zIndex={1}
             alignItems="center"
             bg={bg}
             borderBottomWidth="1px"
@@ -38,13 +45,17 @@ const Header = () => {
             boxShadow="sm"
         >
             <Flex alignItems="center" ml={{ base: 0, md: 60 }}>
-                <InputGroup w={{ base: '100%', md: '400px' }} mr={4} display={{ base: 'none', md: 'block' }}>
+                <InputGroup
+                    w={{ base: '100%', md: '400px' }}
+                    mr={4}
+                    display={{ base: 'none', md: 'block' }}
+                >
                     <InputLeftElement pointerEvents="none">
                         <FiSearch color="gray.300" />
                     </InputLeftElement>
-                    <Input 
-                        type="text" 
-                        placeholder="Szukaj..." 
+                    <Input
+                        type="text"
+                        placeholder="Szukaj..."
                         borderRadius="full"
                         bg={useColorModeValue('gray.50', 'gray.700')}
                     />
@@ -61,6 +72,7 @@ const Header = () => {
                     color="gray.500"
                     _hover={{ color: 'brand.500' }}
                 />
+
                 <Menu>
                     <MenuButton
                         as={IconButton}
@@ -75,7 +87,7 @@ const Header = () => {
                                     right="-6px"
                                     colorScheme="red"
                                     borderRadius="full"
-                                    size="xs"
+                                    fontSize="0.7em"
                                 >
                                     3
                                 </Badge>

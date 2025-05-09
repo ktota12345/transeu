@@ -31,25 +31,22 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
     if(user) {
       console.log("Hashed password:", hashedPassword);
-      console.log("User password from DB:", user.password);  // Hasło w bazie danych
-      console.log("Password from request:", password);  // Hasło podane przez użytkownika
+      console.log("User password from DB:", user.password);
+      console.log("Password from request:", password);
 
-// Sprawdzanie, czy hasło się zgadza
       const passwordMatch = await compare(password, user.password);
-      console.log("Password match result:", passwordMatch); // Prawda/fałsz
+      console.log("Password match result:", passwordMatch);
     }
     if (!user || !(await compare(password, user.password))) {
       throw new Error('Invalid credentials');
     }
 
-    // Generowanie tokenu JWT
     const payload = { email: user.email, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
 
-  // Nowa metoda resetowania hasła
   async generateResetToken(email: string): Promise<string> {
     const user = await this.usersService.findByEmail(email);
     if (!user) {
@@ -90,13 +87,12 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Zaktualizuj hasło użytkownika
     await this.prisma.user.update({
-      where: { email: user.email }, // Zmieniamy na email
+      where: { email: user.email },
       data: {
         password: hashedPassword,
-        resetToken: null, // Wyczyść token po zakończeniu procesu
-        resetTokenExpiry: null, // Wyczyść datę wygaśnięcia tokenu
+        resetToken: null,
+        resetTokenExpiry: null,
       },
     });
 

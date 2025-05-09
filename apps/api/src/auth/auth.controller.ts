@@ -3,21 +3,21 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
-@Controller('auth') // Główna ścieżka dla endpointów autoryzacji
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('login') // Endpoint logowania
+  @Post('login')
   async login(@Body() loginDto: { email: string, password: string }) {
     return this.authService.login(loginDto.email, loginDto.password);
   }
 
-  @Post('reset-token') // Endpoint generowania tokenu resetowania hasła
+  @Post('reset-token')
   async generateResetToken(@Body() body: { email: string }) {
     return this.authService.generateResetToken(body.email);
   }
 
-  @Post('reset-password') // Endpoint resetowania hasła
+  @Post('reset-password')
   async resetPassword(@Body() body: { token: string, newPassword: string }) {
     return this.authService.resetPassword(body.token, body.newPassword);
   }
