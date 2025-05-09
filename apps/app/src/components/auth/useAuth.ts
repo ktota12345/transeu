@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useToast } from '@chakra-ui/react';
-import { jwtDecode } from 'jwt-decode'; // Importujemy jwt-decode
+import { jwtDecode } from 'jwt-decode';
 
 type LoginInput = {
     email: string;
@@ -17,13 +17,16 @@ export const useAuth = () => {
             const res = await fetch('http://localhost:3001/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(credentials)
+                body: JSON.stringify(credentials),
             });
 
             if (!res.ok) throw new Error('Nieprawidłowy login lub hasło');
 
             const data = await res.json();
-            localStorage.setItem('token', data.token);
+
+            localStorage.setItem('token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token); // zapisujemy refresh
+
             toast({ title: 'Zalogowano', status: 'success' });
             return true;
         } catch (error: any) {
@@ -36,10 +39,10 @@ export const useAuth = () => {
 
     const logout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('refresh_token');
         toast({ title: 'Wylogowano', status: 'info' });
     };
 
-    // Funkcja do pobierania danych użytkownika
     const getUserData = () => {
         const token = localStorage.getItem('token');
         if (!token) return { email: '', name: '' };
@@ -49,7 +52,7 @@ export const useAuth = () => {
             const email = decodedToken.email || '';
             const name = decodedToken.username || 'gość';
             const id = decodedToken.sub || '';
-            const role = decodedToken.role || 'user';
+            const role = decodedToken.role || 'guest';
             const companyId = decodedToken.companyId || '';
             return { email, name, id, role, companyId };
         } catch (error) {
@@ -63,6 +66,7 @@ export const useAuth = () => {
         loading,
         isAuthenticated: !!localStorage.getItem('token'),
         token: localStorage.getItem('token'),
-        getUserData // Zwracamy funkcję getUserData
+        refreshToken: localStorage.getItem('refresh_token'),
+        getUserData
     };
 };

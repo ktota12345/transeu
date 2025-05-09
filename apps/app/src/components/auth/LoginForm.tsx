@@ -1,7 +1,15 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Box, Button, Input, VStack, FormControl, FormLabel, useToast } from '@chakra-ui/react';
-
+import {
+    Box,
+    Button,
+    Input,
+    VStack,
+    FormControl,
+    FormLabel,
+    useToast
+} from '@chakra-ui/react';
+import { useAuth } from '../auth/useAuth';
 type LoginData = {
     email: string;
     password: string;
@@ -9,24 +17,13 @@ type LoginData = {
 
 export const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess }) => {
     const { register, handleSubmit, formState: { errors } } = useForm<LoginData>();
+    const { login } = useAuth();
     const toast = useToast();
 
     const onSubmit = async (data: LoginData) => {
-        try {
-            const response = await fetch('http://localhost:3001/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) throw new Error('Błędne dane logowania');
-
-            const result = await response.json();
-            localStorage.setItem('token', result.access_token);
-            toast({ title: 'Zalogowano pomyślnie', status: 'success' });
+        const success = await login(data);
+        if (success) {
             onLoginSuccess();
-        } catch (err: any) {
-            toast({ title: err.message, status: 'error' });
         }
     };
 
@@ -53,7 +50,7 @@ export const LoginForm: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuc
                             <FormLabel>Email</FormLabel>
                             <Input
                                 {...register('email', { required: 'Wymagany email' })}
-                                autoFocus // Ustawienie focus na pierwsze pole
+                                autoFocus
                             />
                         </FormControl>
                         <FormControl isInvalid={!!errors.password}>

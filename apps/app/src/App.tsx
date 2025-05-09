@@ -37,8 +37,8 @@ function App() {
 
                             <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/agents" element={<RequireAuth><AgentsList /></RequireAuth>} />
-                            <Route path="/agent/new" element={<RequireAuth><RequireAuth><AgentForm onSubmit={console.log} /></RequireAuth></RequireAuth>} />
-                            <Route path="/agent/:id" element={<RequireAuth><RequireAuth><AgentForm onSubmit={console.log} /></RequireAuth></RequireAuth>} />
+                            <Route path="/agent/new" element={<RequireAuth><AgentForm onSubmit={console.log} /></RequireAuth>} />
+                            <Route path="/agent/:id" element={<RequireAuth><AgentForm onSubmit={console.log} /></RequireAuth>} />
                             <Route path="/orders" element={<RequireAuth><OrdersList /></RequireAuth>} />
                             <Route path="/order/:id" element={<RequireAuth><OrderCard /></RequireAuth>} />
                             <Route path="/schedule" element={<RequireAuth><Schedule /></RequireAuth>} />

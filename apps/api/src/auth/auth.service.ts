@@ -1,44 +1,32 @@
-// src/auth/auth.service.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
-import * as crypto from 'crypto'; // Dla generowania losowych tokenów
-import { PrismaService } from '../prisma/prisma.service'; // W razie potrzeby
+import * as crypto from 'crypto';
+import { PrismaService } from '../prisma/prisma.service';
 
-import { compare } from 'bcryptjs';
 @Injectable()
 export class AuthService {
   constructor(
       private usersService: UsersService,
       private jwtService: JwtService,
-      private prisma: PrismaService, // Dodane do obsługi tokenu resetowania
+      private prisma: PrismaService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.usersService.findByEmail(email); // Znajdź użytkownika
+    const user = await this.usersService.findByEmail(email);
     if (user && user.password && await bcrypt.compare(password, user.password)) {
-      const { password, ...result } = user; // Destrukturalizujemy i usuwamy hasło
+      const { password, ...result } = user;
       return result;
     }
     return null;
   }
-  async login(email: string, password: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
-    const plainPassword = "user123";
-    const hashedPassword = await bcrypt.hash(plainPassword, 10);
-    if(user) {
-      console.log("Hashed password:", hashedPassword);
-      console.log("User password from DB:", user.password);
-      console.log("Password from request:", password);
 
-      const passwordMatch = await compare(password, user.password);
-      console.log("Password match result:", passwordMatch);
-    }
-    if (!user || !(await compare(password, user.password))) {
-      throw new Error('Invalid credentials');
+  async login(email: string, password: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const payload = {
@@ -48,9 +36,29 @@ export class AuthService {
       role: user.role,
       companyId: user.companyId,
     };
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, { expiresIn: '60s' }),
+      refresh_token: this.jwtService.sign(payload, { expiresIn: '7d' }),
     };
+  }
+
+  async refreshAccessToken(refreshToken: string): Promise<{ access_token: string }> {
+    try {
+      const payload = this.jwtService.verify(refreshToken);
+
+      const newAccessToken = this.jwtService.sign({
+        email: payload.email,
+        sub: payload.sub,
+        username: payload.username,
+        role: payload.role,
+        companyId: payload.companyId,
+      }, { expiresIn: '60s' });
+
+      return { access_token: newAccessToken };
+    } catch (err) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
   }
 
   async generateResetToken(email: string): Promise<string> {
@@ -61,32 +69,26 @@ export class AuthService {
 
     const resetToken = crypto.randomBytes(32).toString('hex');
     const resetTokenExpiry = new Date();
-    resetTokenExpiry.setHours(resetTokenExpiry.getHours() + 1); // Token ważny przez 1 godzinę
+    resetTokenExpiry.setHours(resetTokenExpiry.getHours() + 1);
 
-    // Zapisz token w bazie danych
     await this.prisma.user.update({
-      where: { email }, // Użyj emaila jako unikalnego identyfikatora
+      where: { email },
       data: {
         resetToken,
         resetTokenExpiry,
       },
     });
 
-    return resetToken; // Możesz wysłać ten token na email użytkownika
+    return resetToken;
   }
 
-  // Nowa metoda do resetowania hasła
   async resetPassword(token: string, newPassword: string): Promise<boolean> {
-    // Zmiana z findUnique na findFirst aby szukać po resetToken
     const user = await this.prisma.user.findFirst({
-      where: { resetToken: token }, // Wyszukiwanie po resetToken
+      where: { resetToken: token },
     });
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid token');
-    }
+    if (!user) throw new UnauthorizedException('Invalid token');
 
-    // Sprawdź, czy token nie wygasł
     if (user.resetTokenExpiry && new Date() > user.resetTokenExpiry) {
       throw new UnauthorizedException('Expired token');
     }
