@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "prisma generate && turbo build",
+    "build": "turbo build",
     "dev": "turbo dev",
     "dev:all": "concurrently \"yarn workspace transeu-agent start\" \"yarn workspace api start:dev\" \"node server.js\"",
     "lint": "turbo lint",
