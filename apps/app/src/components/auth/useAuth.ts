@@ -23,7 +23,7 @@ export const useAuth = () => {
             });
 
              */
-            const res = await axiosNest.post('/auth/login', credentials);
+            const res = await axiosNest.post('auth/login', credentials);
             console.log(res);
 
             //if (!res.ok) throw new Error('Nieprawidłowy login lub hasło');
