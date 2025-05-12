@@ -31,7 +31,7 @@ axiosNest.interceptors.response.use(
                 const refreshToken = localStorage.getItem('refresh_token');
                 if (!refreshToken) throw new Error('Brak refresh tokena');
 
-                const res = await axios.post(`${NEST_API_URL}auth/refresh`, {
+                const res = await axios.post(`${NEST_API_URL}/auth/refresh`, {
                     refreshToken,
                 });
 
