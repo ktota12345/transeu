@@ -91,7 +91,11 @@
       },
       "vehicle": {
         "type": "Plandeka",
-        "requirements": ["Winda", "Pas ADR", "GPS"],
+        "requirements": [
+          "Winda",
+          "Pas ADR",
+          "GPS"
+        ],
         "capacity": "24t",
         "size": "Standard 13.6m",
         "additionalEquipment": "Pasy transportowe, maty antypoślizgowe"
@@ -252,7 +256,11 @@
       },
       "vehicle": {
         "type": "Chłodnia",
-        "requirements": ["Agregat chłodniczy", "GPS", "Termograf"],
+        "requirements": [
+          "Agregat chłodniczy",
+          "GPS",
+          "Termograf"
+        ],
         "capacity": "22t",
         "size": "Standard 13.6m",
         "additionalEquipment": "Termograf z wydrukiem, system monitorowania temperatury"
@@ -423,7 +431,11 @@
       },
       "vehicle": {
         "type": "Plandeka",
-        "requirements": ["GPS", "System mocowania ładunku", "Certyfikat VDA 4.2"],
+        "requirements": [
+          "GPS",
+          "System mocowania ładunku",
+          "Certyfikat VDA 4.2"
+        ],
         "capacity": "24t",
         "size": "Standard 13.6m",
         "additionalEquipment": "Belki rozporowe, pasy transportowe, narożniki ochronne"
@@ -514,7 +526,12 @@
       },
       "vehicle": {
         "type": "Chłodnia",
-        "requirements": ["Agregat", "GPS", "Monitoring temperatury", "Certyfikat ATP"],
+        "requirements": [
+          "Agregat",
+          "GPS",
+          "Monitoring temperatury",
+          "Certyfikat ATP"
+        ],
         "capacity": "22t",
         "size": "Standard 13.6m",
         "additionalEquipment": "System rejestracji temperatury z wydrukiem, przegroda termiczna"
@@ -611,7 +628,12 @@
       },
       "vehicle": {
         "type": "Plandeka ADR",
-        "requirements": ["Certyfikat ADR", "GPS", "Monitoring online", "Wyposażenie ADR"],
+        "requirements": [
+          "Certyfikat ADR",
+          "GPS",
+          "Monitoring online",
+          "Wyposażenie ADR"
+        ],
         "capacity": "24t",
         "size": "Standard 13.6m",
         "additionalEquipment": "Kompletne wyposażenie ADR, gaśnice, środki neutralizujące"
@@ -990,5 +1012,330 @@
       "type": "Dokument ADR",
       "addedAt": "2025-03-17T15:10:00.000Z"
     }
-  ]
+  ],
+  "logisticsBases": [],
+  "agentHistory": {
+    "1": [
+      {
+        "id": "entry_1",
+        "agentId": 1,
+        "timestamp": "2025-03-27T10:15:00.000Z",
+        "type": "search",
+        "searchParams": {
+          "agentConfig": {
+            "name": "Agent Transportowy Premium",
+            "selectedLogisticsBase": "WRO1"
+          }
+        },
+        "initialOffers": [
+          {
+            "id": "offer_1",
+            "loadingPlace": {
+              "address": {
+                "city": "Warszawa"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Berlin"
+              }
+            },
+            "price": {
+              "amount": 1200,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 520
+            }
+          },
+          {
+            "id": "offer_2",
+            "loadingPlace": {
+              "address": {
+                "city": "Poznań"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Hamburg"
+              }
+            },
+            "price": {
+              "amount": 1350,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 650
+            }
+          },
+          {
+            "id": "offer_3",
+            "loadingPlace": {
+              "address": {
+                "city": "Wrocław"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Praga"
+              }
+            },
+            "price": {
+              "amount": 850,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 280
+            }
+          }
+        ],
+        "processedOffers": [
+          {
+            "id": "offer_1",
+            "loadingPlace": {
+              "address": {
+                "city": "Warszawa"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Berlin"
+              }
+            },
+            "price": {
+              "amount": 1200,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 520
+            },
+            "profitability": {
+              "score": 75,
+              "profit": 320.5,
+              "revenue": 1200,
+              "cost": 879.5
+            }
+          },
+          {
+            "id": "offer_2",
+            "loadingPlace": {
+              "address": {
+                "city": "Poznań"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Hamburg"
+              }
+            },
+            "price": {
+              "amount": 1350,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 650
+            },
+            "profitability": {
+              "score": 65,
+              "profit": 280.75,
+              "revenue": 1350,
+              "cost": 1069.25
+            }
+          },
+          {
+            "id": "offer_3",
+            "loadingPlace": {
+              "address": {
+                "city": "Wrocław"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Praga"
+              }
+            },
+            "price": {
+              "amount": 850,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 280
+            },
+            "profitability": {
+              "score": 82,
+              "profit": 310.2,
+              "revenue": 850,
+              "cost": 539.8
+            }
+          }
+        ],
+        "offersCount": 3,
+        "acceptedOffersCount": 2
+      },
+      {
+        "id": "entry_2",
+        "agentId": 1,
+        "timestamp": "2025-03-27T12:30:00.000Z",
+        "type": "search",
+        "searchParams": {
+          "agentConfig": {
+            "name": "Agent Transportowy Premium",
+            "selectedLogisticsBase": "POZ1"
+          }
+        },
+        "initialOffers": [
+          {
+            "id": "offer_4",
+            "loadingPlace": {
+              "address": {
+                "city": "Gdańsk"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Kopenhaga"
+              }
+            },
+            "price": {
+              "amount": 1800,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 780
+            }
+          },
+          {
+            "id": "offer_5",
+            "loadingPlace": {
+              "address": {
+                "city": "Szczecin"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Malmö"
+              }
+            },
+            "price": {
+              "amount": 1250,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 420
+            }
+          }
+        ],
+        "processedOffers": [
+          {
+            "id": "offer_4",
+            "loadingPlace": {
+              "address": {
+                "city": "Gdańsk"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Kopenhaga"
+              }
+            },
+            "price": {
+              "amount": 1800,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 780
+            },
+            "profitability": {
+              "score": 58,
+              "profit": 290.5,
+              "revenue": 1800,
+              "cost": 1509.5
+            }
+          },
+          {
+            "id": "offer_5",
+            "loadingPlace": {
+              "address": {
+                "city": "Szczecin"
+              }
+            },
+            "unloadingPlace": {
+              "address": {
+                "city": "Malmö"
+              }
+            },
+            "price": {
+              "amount": 1250,
+              "currency": "EUR"
+            },
+            "distance": {
+              "value": 420
+            },
+            "profitability": {
+              "score": 78,
+              "profit": 420.3,
+              "revenue": 1250,
+              "cost": 829.7
+            }
+          }
+        ],
+        "offersCount": 2,
+        "acceptedOffersCount": 1
+      },
+      {
+        "id": "entry_3",
+        "agentId": 1,
+        "timestamp": "2025-03-27T13:45:00.000Z",
+        "type": "action",
+        "offer": {
+          "id": "offer_1",
+          "loadingPlace": {
+            "address": {
+              "city": "Warszawa"
+            }
+          },
+          "unloadingPlace": {
+            "address": {
+              "city": "Berlin"
+            }
+          },
+          "price": {
+            "amount": 1200,
+            "currency": "EUR"
+          }
+        },
+        "action": "accept",
+        "actionDetails": {
+          "reason": "Wysoka rentowność, dobra cena za kilometr"
+        }
+      },
+      {
+        "id": "entry_4",
+        "agentId": 1,
+        "timestamp": "2025-03-27T13:50:00.000Z",
+        "type": "action",
+        "offer": {
+          "id": "offer_2",
+          "loadingPlace": {
+            "address": {
+              "city": "Poznań"
+            }
+          },
+          "unloadingPlace": {
+            "address": {
+              "city": "Hamburg"
+            }
+          },
+          "price": {
+            "amount": 1350,
+            "currency": "EUR"
+          }
+        },
+        "action": "reject",
+        "actionDetails": {
+          "reason": "Niska rentowność, zbyt wysokie koszty"
+        }
+      }
+    ]
+  }
 }

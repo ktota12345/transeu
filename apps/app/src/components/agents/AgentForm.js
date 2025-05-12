@@ -173,7 +173,7 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
             tags: [],
             
             // 2. Kontekst biznesowy
-            specialization: [],
+            specializations: [],
             priorityClients: [],
             preferredCargoTypes: [],
             unwantedCargoTypes: [],
@@ -260,7 +260,7 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
 
     const checkFrequency = watch('checkFrequency');
     const tags = watch('tags') || [];
-    const specialization = watch('specialization') || [];
+    const specializations = watch('specializations') || [];
     const priorityClients = watch('priorityClients') || [];
     const preferredCargoTypes = watch('preferredCargoTypes') || [];
     const unwantedCargoTypes = watch('unwantedCargoTypes') || [];
@@ -311,10 +311,10 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
     };
 
     const handleToggleSpecialization = (spec) => {
-        if (specialization.includes(spec)) {
-            setValue('specialization', specialization.filter(s => s !== spec));
+        if (specializations.includes(spec)) {
+            setValue('specializations', specializations.filter(s => s !== spec));
         } else {
-            setValue('specialization', [...specialization, spec]);
+            setValue('specializations', [...specializations, spec]);
         }
     };
 
@@ -665,7 +665,7 @@ export const AgentForm = ({ initialData, onSubmit, onTest, onDuplicate, onDelete
                                             <Tag
                                                 key={spec}
                                                 size="lg"
-                                                variant={specialization.includes(spec) ? "solid" : "outline"}
+                                                variant={specializations.includes(spec) ? "solid" : "outline"}
                                                 colorScheme="blue"
                                                 cursor="pointer"
                                                 onClick={() => handleToggleSpecialization(spec)}
