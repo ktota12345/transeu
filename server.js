@@ -161,9 +161,9 @@ app.get('/api/documents', (req, res) => {
 });
 
 // Wszystkie pozostałe żądania kieruj do React App
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
 
 // Uruchomienie serwera
 app.listen(PORT, () => {
