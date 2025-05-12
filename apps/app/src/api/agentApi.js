@@ -4,12 +4,10 @@ import axiosNest from './axiosNest';
 const API_URL = process.env.NODE_ENV === 'production' 
   ? '/api' 
   : 'http://localhost:3002/api';
-const NEST_API_URL = process.env.REACT_APP_NEST_API_URL || 'http://localhost:3001';
-
 // Pobieranie wszystkich agentów
 export const fetchAgents = async () => {
   try {
-    const response = await axiosNest.get(`${NEST_API_URL}/agents`);
+    const response = await axiosNest.get(`/agents`);
     return response.data;
   } catch (error) {
     console.error('Error fetching agents:', error);

@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useToast } from '@chakra-ui/react';
 import { jwtDecode } from 'jwt-decode';
+import axiosNest from '../../api/axiosNest';
 
 type LoginInput = {
     email: string;
@@ -14,15 +15,22 @@ export const useAuth = () => {
     const login = useCallback(async (credentials: LoginInput) => {
         setLoading(true);
         try {
+            /*
             const res = await fetch('http://localhost:3001/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(credentials),
             });
 
-            if (!res.ok) throw new Error('Nieprawidłowy login lub hasło');
+             */
+            const res = await axiosNest.post('/auth/login', credentials);
+            console.log(res);
 
-            const data = await res.json();
+            //if (!res.ok) throw new Error('Nieprawidłowy login lub hasło');
+            if (res.status !== 201) throw new Error('Nieprawidłowy login lub hasło');
+
+            //const data = await res.json();
+            const data = res.data;
 
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('refresh_token', data.refresh_token); // zapisujemy refresh

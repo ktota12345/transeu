@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const NEST_API_URL = 'https://transeu-dev.onrender.com/';//process.env.REACT_APP_NEST_API_URL || 'http://localhost:3001';
+//const NEST_API_URL = 'https://transeu-dev.onrender.com/';//process.env.REACT_APP_NEST_API_URL || 'http://localhost:3001';
+
+const NEST_API_URL = process.env.REACT_APP_NEST_API_URL || 'https://transeu-dev.onrender.com/';
+
 
 const axiosNest = axios.create({
     baseURL: NEST_API_URL,
