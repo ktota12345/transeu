@@ -1,9 +1,10 @@
 import axios from 'axios';
 import axiosNest from './axiosNest';
 
-const API_URL = process.env.NODE_ENV === 'production' 
-  ? '/api' 
-  : 'http://localhost:3002/api';
+const API_URL = process.env.NODE_ENV === 'production'
+    ? '/api'
+    : 'http://localhost:3002/api';
+
 // Pobieranie wszystkich agentów
 export const fetchAgents = async () => {
   try {
@@ -18,7 +19,7 @@ export const fetchAgents = async () => {
 // Pobieranie pojedynczego agenta
 export const fetchAgent = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/agents/${id}`);
+    const response = await axiosNest.get(`/agents/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching agent with id ${id}:`, error);
@@ -29,7 +30,7 @@ export const fetchAgent = async (id) => {
 // Dodawanie nowego agenta
 export const createAgent = async (agentData) => {
   try {
-    const response = await axios.post(`${API_URL}/agents`, {
+    const response = await axiosNest.post(`/agents`, {
       ...agentData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -44,7 +45,7 @@ export const createAgent = async (agentData) => {
 // Aktualizacja agenta
 export const updateAgent = async (id, agentData) => {
   try {
-    const response = await axios.put(`${API_URL}/agents/${id}`, {
+    const response = await axiosNest.put(`/agents/${id}`, {
       ...agentData,
       updatedAt: new Date().toISOString()
     });
@@ -58,7 +59,7 @@ export const updateAgent = async (id, agentData) => {
 // Usuwanie agenta
 export const deleteAgent = async (id) => {
   try {
-    await axios.delete(`${API_URL}/agents/${id}`);
+    await axiosNest.delete(`/agents/${id}`);
     return { success: true, id };
   } catch (error) {
     console.error(`Error deleting agent with id ${id}:`, error);
@@ -69,7 +70,7 @@ export const deleteAgent = async (id) => {
 // Sprawdzenie, czy agent istnieje w bazie
 export const checkIfAgentExists = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/agents/${id}`);
+    const response = await axiosNest.get(`/agents/${id}`);
     return { exists: true, data: response.data };
   } catch (error) {
     if (error.response && error.response.status === 404) {
@@ -77,4 +78,5 @@ export const checkIfAgentExists = async (id) => {
     }
     throw error;
   }
+
 };

@@ -16,17 +16,78 @@ datasource db {
 
 
 model Agent {
-  id                 Int      @id @default(autoincrement())
-  name               String
-  description        String
-  isActive           Boolean  @default(true)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  specializations    String[] // array of strings
-  priorityClients    String[]
-  cargoTypes         String[]
-  additionalServices String[]
+  id                        Int       @id @default(autoincrement())
+  name                      String
+  description               String
+  isActive                  Boolean   @default(true)
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+  priority                  Int?
+  operator                  String?
+  tags                      String[]
+  specializations           String[]
+  priorityClients           String[]
+  preferredCargoTypes       String[]
+  unwantedCargoTypes        String[]
+  cargoTypes                String[]
+  additionalServices        String[]
+  preferredRoutes           String[]
+  regionsToAvoid            String[]
+  vehicleBases              String[]
+  selectedLogisticsBase     Int?
+  selectedGermanDestinations String[]
+  customLogisticsPoint      Json?
+  maxOperatingRadius        Int?
+  preferredCountries        String[]
+  unwantedCountries         String[]
+  roadPreferences           String[]
+  timocomSettings           Json?
+  minRatePerKm              Decimal?  @default(0.0)
+  targetRatePerKm           Decimal?  @default(0.0)
+  minOrderValue             Decimal?  @default(0.0)
+  preferredPaymentTerms     String[]
+  currencies                String[]
+  additionalFees            Json?
+  emptyKmCost               Decimal?  @default(0.0)
+  minProfitMargin           Float?    @default(0.0)
+  availabilityQueryParams   Json?
+  minAvailabilityBuffer     Int?
+  preferredDays             String[]
+  preferredHours            Json?
+  maxExecutionTime          Int?
+  timeBuffer                Int?
+  availabilityUpdateFrequency String?
+  checkPriority             String?
+  trailerTypes              String[]
+  liftCapacityRange         Json?
+  specialEquipment          String[]
+  certificates              String[]
+  cargoParameters           Json?
+  specialRequirements       String?
+  negotiationAggressiveness Int?      @default(0)
+  maxCounterOffers          Int?
+  minResponseTime           Int?
+  maxResponseTime           Int?
+  negotiationStrategiesSelected String[]
+  negotiationInstructions   String?
+  priceThreshold            Float?
+  unusualClientRequirements String[]
+  keywordTriggers           String[]
+  emotionDetectionLevel     Int?
+  negotiationStagesRequiringHuman String[]
+  maxClientIdleTime         Int?
+  checkFrequency            String?
+  customCheckInterval       Int?
+  workingHours              Json?
+  workingDays               String[]
+  scheduleExceptions        Json?
+  workIntensity             String?
+  maxConcurrentNegotiations Int?
+  isDraft                   Boolean   @default(false)
+  destinationCity           String?
+  searchRadius              Int?
 }
+
 
 model User {
   id                 Int       @id @default(autoincrement())
