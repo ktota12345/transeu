@@ -14,6 +14,7 @@ import OrderCard from './components/orders/OrderCard';
 import Settings from './components/settings/Settings';
 import Schedule from './components/schedule/Schedule';
 import QuickSearchPage from './pages/QuickSearchPage';
+import AgentHistoryPage from './pages/AgentHistoryPage';
 
 const RequireAuth = ({children}: { children: JSX.Element }) => {
     const location = useLocation();
@@ -51,6 +52,7 @@ function App() {
                                 onDuplicate={() => {}} // Funkcja do duplikowania (przekaż pustą funkcję, jeśli nie potrzebujesz)
                                 onDelete={() => {}}
                             /></RequireAuth>} />
+                            <Route path="/agent/:id/history" element={<AgentHistoryPage />} />
                             <Route path="/orders" element={<RequireAuth><OrdersList /></RequireAuth>} />
                             <Route path="/order/:id" element={<RequireAuth><OrderCard /></RequireAuth>} />
                             <Route path="/schedule" element={<RequireAuth><Schedule /></RequireAuth>} />
