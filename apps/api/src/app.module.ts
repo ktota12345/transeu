@@ -9,6 +9,9 @@ import {PrismaService} from './prisma/prisma.service';
 import {AuthModule} from './auth/auth.module';
 import {ImportController} from './import/import.controller';
 import {DataFinderController} from "./dataFinder/dataFinder.controller";
+import { CarsService } from './cars/cars.service';
+import { CarsController } from './cars/cars.controller';
+import { CarsModule } from './cars/cars.module';
 import {OpenAIService}  from "./services/openai/openai.service";
 import {SerpapiService}    from "./services/serp/serpapi.service";
 
@@ -18,6 +21,7 @@ import {SerpapiService}    from "./services/serp/serpapi.service";
             isGlobal: true, // dzięki temu nie trzeba importować ConfigModule w innych modułach
         }),
         AuthModule,
+        CarsModule,
 
     ],
     controllers: [
@@ -25,14 +29,16 @@ import {SerpapiService}    from "./services/serp/serpapi.service";
         AgentsController,
         AuthController,
         ImportController,
-        DataFinderController
+        DataFinderController,
+        CarsController
     ],
     providers: [
         AppService,
         AgentsService,
         PrismaService,
         OpenAIService,
-        SerpapiService
+        SerpapiService,
+        CarsService
     ],
 })
 export class AppModule {

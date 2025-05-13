@@ -213,3 +213,11 @@ model CarrierContact {
 
   carrier    Carrier @relation(fields: [carrierId], references: [id])
 }
+
+model Car {
+  id               Int      @id @default(autoincrement())
+  name             String
+  registrationNumber String
+  carType          String
+  trailerType      String
+}
