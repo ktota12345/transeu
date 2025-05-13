@@ -32,6 +32,8 @@
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "class-validator": "^0.14.2",
+    "csv-parser": "^3.2.0",
+    "openai": "^4.98.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",

@@ -188,3 +188,28 @@ enum Role {
   ADMIN
   USER
 }
+
+model Carrier {
+  id                 Int       @id @default(autoincrement())
+  type               String
+  name               String
+  postalCode         String
+  city               String
+  address            String
+  region             String
+  licenseNumber      String
+  licenseExpiryDate  DateTime?
+
+  contacts           CarrierContact[]
+}
+
+model CarrierContact {
+  id         Int     @id @default(autoincrement())
+  carrierId  Int
+  name       String?
+  email      String?
+  phone      String?
+  source     String?
+
+  carrier    Carrier @relation(fields: [carrierId], references: [id])
+}
