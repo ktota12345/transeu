@@ -10,7 +10,7 @@ import DriverList from './drivers/DriverList';
 import DriverEdit from './drivers/DriverEdit';
 import DriverCreate from './drivers/DriverCreate';
 const AdminApp = () => (
-    <Admin dataProvider={dataProvider} layout={CustomLayout}>
+    <Admin dataProvider={dataProvider} layout={CustomLayout} basename="/admin">
         <Resource name="cars" label="Samochody" list={CarList} create={CarCreate} edit={CarEdit} />
         <Resource
             name="drivers"
