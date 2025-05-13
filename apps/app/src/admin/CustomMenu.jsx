@@ -4,7 +4,11 @@ import {Link} from 'react-router-dom';
 
 export const CustomMenu = () => (
     <Menu>
-        <MenuItemLink to="/" primaryText="Dashboard"/>
+            <MenuItemLink
+                component={Link}
+                to="/" // zmieniamy to na "/quick-search"
+                primaryText="Dashboard"
+            />
         <MenuItemLink
             component={Link}
             to="/quick-search" // zmieniamy to na "/quick-search"
@@ -25,7 +29,7 @@ export const CustomMenu = () => (
             to="/settings"
             primaryText="Ustawienia"
         />
-        <MenuItemLink to="/cars" primaryText="Samochody"/>
-        <MenuItemLink to="/drivers" primaryText="Kierowcy"/>
+        <MenuItemLink to={`${process.env.REACT_APP_ADMIN_PREFIX}cars`} primaryText="Samochody"/>
+        <MenuItemLink to={`${process.env.REACT_APP_ADMIN_PREFIX}drivers`} primaryText="Kierowcy"/>
     </Menu>
 );
