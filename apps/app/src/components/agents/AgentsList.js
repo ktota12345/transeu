@@ -213,13 +213,14 @@ export const AgentsList = () => {
                                 <option value="draft">Szkice</option>
                             </Select>
                             <Button
-                                colorScheme="brand"
+                                colorScheme="green"
                                 onClick={handleAddNew}
                                 leftIcon={<AddIcon boxSize={4} />}
                                 borderRadius="md"
                                 size="md"
+                                px={8}
                             >
-                                Dodaj nowego
+                                Dodaj
                             </Button>
                             <Button
                                 colorScheme="blue"
@@ -227,6 +228,7 @@ export const AgentsList = () => {
                                 leftIcon={<DeleteIcon boxSize={4} />}
                                 borderRadius="md"
                                 size="md"
+                                px={8}
                             >
                                 Wyczyść listę
                             </Button>
