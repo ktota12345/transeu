@@ -83,6 +83,9 @@ const Sidebar = () => {
                 <NavItem icon={FiSettings} to="/settings">
                     Ustawienia
                 </NavItem>
+                <NavItem icon={FiTruck} to="/admin/#/cars">
+                    Samochody
+                </NavItem>
             </VStack>
         </Box>
     );
