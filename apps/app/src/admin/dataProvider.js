@@ -53,6 +53,23 @@ const dataProvider = {
             throw error;
         }
     },
+    getMany: async (resource, params) => {
+        try {
+            const response = await axiosNest.get(`/${resource}`, {
+                params: {
+                    filter: JSON.stringify({ id: params.ids }),
+                },
+            });
+
+            return {
+                data: response.data,
+            };
+        } catch (error) {
+            throw error;
+        }
+    },
+
+
 
     // Można również dodać inne metody, jak getMany, updateMany itp.
 };

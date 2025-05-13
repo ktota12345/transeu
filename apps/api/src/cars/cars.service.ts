@@ -24,6 +24,9 @@ export class CarsService {
                 skip,
                 take,
                 orderBy: sort,  // Sortowanie
+                include: {
+                    driver: true, // <--- dodaj to
+                },
             }),
             this.prisma.car.count({
                 where: filter,  // Zliczanie po filtrze

@@ -26,5 +26,6 @@ export const CustomMenu = () => (
             primaryText="Ustawienia"
         />
         <MenuItemLink to="/cars" primaryText="Samochody"/>
+        <MenuItemLink to="/drivers" primaryText="Kierowcy"/>
     </Menu>
 );

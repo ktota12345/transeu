@@ -214,10 +214,24 @@ model CarrierContact {
   carrier    Carrier @relation(fields: [carrierId], references: [id])
 }
 
-model Car {
-  id               Int      @id @default(autoincrement())
-  name             String
-  registrationNumber String
-  carType          String
-  trailerType      String
+model Driver {
+  id       Int     @id @default(autoincrement())
+  name     String
+  surname  String
+  phone    String
+  email    String
+
+  cars     Car[]   // 1:N relacja — jeden kierowca może mieć wiele samochodów
 }
+
+model Car {
+  id                 Int     @id @default(autoincrement())
+  name               String
+  registrationNumber String
+  carType            String
+  trailerType        String
+
+  driverId           Int?
+  driver             Driver? @relation(fields: [driverId], references: [id])
+}
+
