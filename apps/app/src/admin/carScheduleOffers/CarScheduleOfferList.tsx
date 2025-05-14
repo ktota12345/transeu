@@ -7,9 +7,10 @@ import {
     ReferenceField,
     ListProps,
 } from 'react-admin';
+import {CarScheduleOfferFilter} from "./CarScheduleOfferFilter";
 
 const CarScheduleOfferList = (props: ListProps) => (
-    <List {...props}>
+    <List {...props} filters={<CarScheduleOfferFilter />}>
         <Datagrid rowClick="edit">
             <TextField source="id" />
 

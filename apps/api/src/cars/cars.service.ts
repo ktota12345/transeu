@@ -27,7 +27,11 @@ export class CarsService {
                 orderBy: sort,  // Sortowanie
                 include: {
                     driver: true,
-                    schedules: true,  // <-- Dodane
+                    schedules: {
+                        include: {
+                            offers: true
+                        }
+                    },
                 },
             }),
             this.prisma.car.count({
