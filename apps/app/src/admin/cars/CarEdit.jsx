@@ -6,7 +6,7 @@ import {
     SelectInput,
     ArrayInput,
     SimpleFormIterator,
-    DateTimeInput
+    DateInput
 } from 'react-admin';
 import { carTypes, trailerTypes, scheduleStatuses } from "../../data/dictOptions";
 
@@ -33,8 +33,8 @@ export const CarEdit = () => (
 
             <ArrayInput source="schedules" label="Harmonogramy">
                 <SimpleFormIterator inline>
-                    <DateTimeInput source="from" label="Od" defaultValue={new Date()} />
-                    <DateTimeInput source="to" label="Do" defaultValue={new Date()} />
+                    <DateInput source="from" label="Od" defaultValue={new Date()} />
+                    <DateInput source="to" label="Do" defaultValue={new Date()} />
                     <SelectInput
                         source="status"
                         choices={scheduleStatuses.map(status => ({ id: status.name, name: status.name }))}
