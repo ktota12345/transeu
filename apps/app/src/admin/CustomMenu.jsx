@@ -31,5 +31,6 @@ export const CustomMenu = () => (
         />
         <MenuItemLink to={`${process.env.REACT_APP_ADMIN_PREFIX}cars`} primaryText="Samochody"/>
         <MenuItemLink to={`${process.env.REACT_APP_ADMIN_PREFIX}drivers`} primaryText="Kierowcy"/>
+        <MenuItemLink to={`${process.env.REACT_APP_ADMIN_PREFIX}car-schedule-offers`} primaryText="Oferty"/>
     </Menu>
 );

@@ -9,6 +9,9 @@ import {CustomLayout} from "./CustomLayout";
 import DriverList from './drivers/DriverList';
 import DriverEdit from './drivers/DriverEdit';
 import DriverCreate from './drivers/DriverCreate';
+
+import CarScheduleOfferList from './carScheduleOffers/CarScheduleOfferList';
+
 const AdminApp = () => (
     <Admin
         dataProvider={dataProvider}
@@ -22,6 +25,11 @@ const AdminApp = () => (
             list={DriverList}
             edit={DriverEdit}
             create={DriverCreate}
+        />
+
+        <Resource
+            name="car-schedule-offers"
+            list={CarScheduleOfferList}
         />
     </Admin>
 );

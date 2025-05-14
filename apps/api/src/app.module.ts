@@ -15,6 +15,7 @@ import { CarsModule } from './cars/cars.module';
 import {OpenAIService}  from "./services/openai/openai.service";
 import {SerpapiService}    from "./services/serp/serpapi.service";
 import {DriversModule} from './drivers/drivers.module';
+import {CarScheduleOffersModule} from './carScheduleOffers/car-schedule-offers.module';
 
 @Module({
     imports: [
@@ -24,6 +25,7 @@ import {DriversModule} from './drivers/drivers.module';
         AuthModule,
         CarsModule,
         DriversModule,
+        CarScheduleOffersModule,
 
     ],
     controllers: [

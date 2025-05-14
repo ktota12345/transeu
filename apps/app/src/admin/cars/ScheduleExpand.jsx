@@ -26,6 +26,7 @@ const ScheduleExpand = ({ schedules }) => {
                         <TableCell>Do</TableCell>
                         <TableCell>Status</TableCell>
                         <TableCell>Obłożenie %</TableCell>
+                        <TableCell>Oferty</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -40,6 +41,7 @@ const ScheduleExpand = ({ schedules }) => {
                             <TableCell>{dateFormat(schedule.to)}</TableCell>
                             <TableCell>{schedule.status}</TableCell>
                             <TableCell>?? %</TableCell>
+                            <TableCell>0</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

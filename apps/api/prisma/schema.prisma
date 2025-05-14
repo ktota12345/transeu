@@ -256,12 +256,12 @@ model CarScheduleOffer {
   fromLocation    String
   toLocation      String
   status          String    // np. 'pending', 'confirmed', 'rejected'
-  carId           Int
-  car             Car       @relation(fields: [carId], references: [id])
-  driverId        Int
-  driver          Driver    @relation(fields: [driverId], references: [id])
-  carScheduleId   Int
-  carSchedule     CarSchedule @relation(fields: [carScheduleId], references: [id])
+  carId           Int?
+  car             Car?       @relation(fields: [carId], references: [id])
+  driverId        Int?
+  driver          Driver?    @relation(fields: [driverId], references: [id])
+  carScheduleId   Int?
+  carSchedule     CarSchedule? @relation(fields: [carScheduleId], references: [id])
   details         Json
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
