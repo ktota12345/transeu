@@ -45,13 +45,40 @@ export class CarScheduleOffersService {
             },
         });
     }
+    async update(id: number, data: any): Promise<CarScheduleOffer> {
+        const { carId, driverId, carScheduleId, details, ...rest } = data;
 
-    async update(id: number, data: Prisma.CarScheduleOfferUpdateInput): Promise<CarScheduleOffer> {
-        return this.prisma.carScheduleOffer.update({
+        const updateData: Prisma.CarScheduleOfferUpdateInput = {
+            ...rest,
+            // Przekazywanie danych JSON details
+            details: details ? details : undefined,
+            updatedAt: new Date(), // Ustawienie daty aktualizacji
+        };
+
+        // Obsługa relacji: carId, driverId, carScheduleId
+        if (carId) {
+            updateData.car = { connect: { id: carId } };
+        }
+
+        if (driverId) {
+            updateData.driver = { connect: { id: driverId } };
+        }
+
+        if (carScheduleId) {
+            updateData.carSchedule = { connect: { id: carScheduleId } };
+        }
+
+        // Wykonaj aktualizację carScheduleOffer
+        const updatedOffer = await this.prisma.carScheduleOffer.update({
             where: { id },
-            data,
+            data: updateData,
         });
+
+        return updatedOffer;
     }
+
+
+
 
     async remove(id: number): Promise<CarScheduleOffer> {
         return this.prisma.carScheduleOffer.delete({ where: { id } });

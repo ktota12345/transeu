@@ -13,7 +13,6 @@ import { Response } from 'express';
 import { CarsService } from './cars.service';
 import { Prisma } from '../../generated/prisma/client';
 import {JwtAuthGuard} from "../auth/guards/jwt-auth.guard";
-
 @Controller('cars')
 @UseGuards(JwtAuthGuard)
 export class CarsController {
@@ -48,12 +47,18 @@ export class CarsController {
 
         // --- Filtry ---
         const filterObj: Record<string, any> = {};
-        for (const key in query) {
-            const match = key.match(/^filter\[(.+)]$/);
-            if (match) {
-                const fieldName = match[1];
-                const value = query[key];
-                filterObj[fieldName] = { contains: value };
+        if (query.filter) {
+            try {
+                const filters = JSON.parse(query.filter); // Parsowanie filtra JSON
+                for (const key in filters) {
+                    if (filters[key] && Array.isArray(filters[key])) {
+                        filterObj[key] = { in: filters[key] };  // Zastosowanie operatora IN
+                    } else {
+                        filterObj[key] = { contains: filters[key] };  // Zastosowanie contains dla tekstów
+                    }
+                }
+            } catch (error) {
+                console.error('Błąd przy parsowaniu filtra', error);
             }
         }
 

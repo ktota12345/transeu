@@ -11,6 +11,7 @@ import DriverEdit from './drivers/DriverEdit';
 import DriverCreate from './drivers/DriverCreate';
 
 import CarScheduleOfferList from './carScheduleOffers/CarScheduleOfferList';
+import CarScheduleOfferEdit  from "./carScheduleOffers/CarScheduleOfferEdit";
 
 const AdminApp = () => (
     <Admin
@@ -30,6 +31,7 @@ const AdminApp = () => (
         <Resource
             name="car-schedule-offers"
             list={CarScheduleOfferList}
+            edit={CarScheduleOfferEdit}
         />
     </Admin>
 );
