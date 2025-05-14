@@ -1,12 +1,11 @@
-import {Injectable} from '@nestjs/common';
-import {PrismaService} from '../prisma/prisma.service';
-import {Prisma} from '../../generated/prisma/client';
-import {Car} from '../../generated/prisma/client';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '../../generated/prisma/client';
+import { Car } from '../../generated/prisma/client';
 
 @Injectable()
 export class CarsService {
-    constructor(private prisma: PrismaService) {
-    }
+    constructor(private prisma: PrismaService) {}
 
     async create(data: Prisma.CarCreateInput) {
         return this.prisma.car.create({
@@ -27,8 +26,8 @@ export class CarsService {
                 take,
                 orderBy: sort,  // Sortowanie
                 include: {
-                    driver: true, // <--- dodaj to
-                    schedules: true, // <-- Dodane
+                    driver: true,
+                    schedules: true,  // <-- Dodane
                 },
             }),
             this.prisma.car.count({
@@ -38,30 +37,26 @@ export class CarsService {
         return [cars, total];
     }
 
-
     async findOne(id: number) {
         return this.prisma.car.findUnique({
-            where: {id},
+            where: { id },
             include: {
                 driver: true,
-                schedules: true, // <-- Dodane
+                schedules: true,  // <-- Dodane
             },
         });
     }
 
     async update(id: number, data: any) {
-        const {schedules, driverId, ...rest} = data;
+        const { schedules, driverId, ...rest } = data;
+        const updateData: Prisma.CarUpdateInput = { ...rest };
 
-        const updateData: Prisma.CarUpdateInput = {
-            ...rest,
-        };
-
-        // Obsługa relacji driverId → driver.connect
         if (driverId && typeof driverId === 'number') {
             updateData.driver = {
-                connect: {id: driverId},
+                connect: { id: driverId },
             };
         }
+
 
         if (schedules) {
             // Zaktualizuj stare harmonogramy, dodaj nowe, usuń usunięte
@@ -107,19 +102,17 @@ export class CarsService {
             });
         }
 
-        // Wykonaj aktualizację samochodu
         await this.prisma.car.update({
-            where: {id},
+            where: { id },
             data: updateData,
         });
 
         return this.findOne(id);
     }
 
-
     async remove(id: number) {
         return this.prisma.car.delete({
-            where: {id},
+            where: { id },
         });
     }
 }

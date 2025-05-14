@@ -14,6 +14,7 @@ import { Response } from 'express';
 import { CarSchedulesService } from './car-schedules.service';
 import { Prisma } from '../../generated/prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { buildFilters, buildSort, getPagination } from '../helpers/helpers';
 
 @Controller('carSchedules')
 @UseGuards(JwtAuthGuard)
@@ -26,40 +27,15 @@ export class CarSchedulesController {
     }
 
     @Get()
-    async findAll(
+    async list(
         @Res({ passthrough: true }) res: Response,
         @Query() query: Record<string, any>
     ) {
-        const page = parseInt(query['pagination[page]'] ?? '1', 10);
-        const perPage = parseInt(query['pagination[perPage]'] ?? '10', 10);
-        const skip = (page - 1) * perPage;
-        const take = perPage;
+        const { skip, take } = getPagination(query);
+        const sortObj = buildSort(query['sort[field]'], query['sort[order]']);
+        const filters = buildFilters(query);
 
-        const sortField = query['sort[field]'];
-        const sortOrder = query['sort[order]'];
-        let sortObj: { [key: string]: 'asc' | 'desc' } | undefined;
-
-        if (sortField && sortOrder) {
-            sortObj = {
-                [sortField]: sortOrder.toLowerCase() as 'asc' | 'desc',
-            };
-        }
-
-        const filterObj: Record<string, any> = {};
-        for (const key in query) {
-            const match = key.match(/^filter\[(.+)]$/);
-            if (match) {
-                const fieldName = match[1];
-                const value = query[key];
-                if (fieldName.toLowerCase().includes('id')) {
-                    filterObj[fieldName] = { equals: parseInt(value, 10) };
-                } else {
-                    filterObj[fieldName] = { contains: value };
-                }
-            }
-        }
-
-        const [items, total] = await this.service.findAll(skip, take, filterObj, sortObj);
+        const [items, total] = await this.service.findAll(skip, take, filters, sortObj);
 
         res.setHeader('Content-Range', `carSchedules ${skip}-${skip + items.length - 1}/${total}`);
         res.setHeader('Access-Control-Expose-Headers', 'Content-Range');

@@ -1,13 +1,7 @@
 import React from 'react';
 import { Filter, TextInput, SelectInput } from 'react-admin';
+import {carTypes} from "../../data/dictOptions";
 
-// Przykładowe dane do selecta (jeśli masz predefiniowane typy samochodów)
-const carTypes = [
-    { id: 'Sedan', name: 'Sedan' },
-    { id: 'SUV', name: 'SUV' },
-    { id: 'Truck', name: 'Truck' },
-    { id: 'Van', name: 'Van' },
-];
 
 export const CarFilter = (props) => (
     <Filter {...props}>
