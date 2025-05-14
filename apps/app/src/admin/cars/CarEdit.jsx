@@ -1,8 +1,18 @@
-import { Edit, SimpleForm, TextInput, ReferenceInput, SelectInput } from 'react-admin';
-import {carTypes, trailerTypes} from "../../data/dictOptions";
+import {
+    Edit,
+    SimpleForm,
+    TextInput,
+    ReferenceInput,
+    SelectInput,
+    ArrayInput,
+    SimpleFormIterator,
+    DateTimeInput
+} from 'react-admin';
+import { carTypes, trailerTypes, scheduleStatuses } from "../../data/dictOptions";
+
 
 export const CarEdit = () => (
-    <Edit>
+    <Edit mutationMode="pessimistic">
         <SimpleForm>
             <TextInput source="id" disabled />
             <TextInput source="name" />
@@ -20,6 +30,19 @@ export const CarEdit = () => (
             <ReferenceInput source="driverId" reference="drivers" label="Kierowca">
                 <SelectInput optionText={(record) => `${record.name} ${record.surname}`} />
             </ReferenceInput>
+
+            <ArrayInput source="schedules" label="Harmonogramy">
+                <SimpleFormIterator inline>
+                    <DateTimeInput source="from" label="Od" defaultValue={new Date()} />
+                    <DateTimeInput source="to" label="Do" defaultValue={new Date()} />
+                    <SelectInput
+                        source="status"
+                        choices={scheduleStatuses.map(status => ({ id: status.name, name: status.name }))}
+                        label="Status"
+                        defaultValue={scheduleStatuses[0].name}
+                    />
+                </SimpleFormIterator>
+            </ArrayInput>
         </SimpleForm>
     </Edit>
 );

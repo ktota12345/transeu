@@ -214,24 +214,56 @@ model CarrierContact {
   carrier    Carrier @relation(fields: [carrierId], references: [id])
 }
 
+
+model Car {
+  id           Int                @id @default(autoincrement())
+  name         String
+  registrationNumber String
+  carType      String
+  trailerType  String
+  driverId     Int?
+  driver       Driver?            @relation(fields: [driverId], references: [id])
+  schedules    CarSchedule[]
+  offers       CarScheduleOffer[]
+}
+
 model Driver {
   id       Int     @id @default(autoincrement())
   name     String
   surname  String
   phone    String
   email    String
-
-  cars     Car[]   // 1:N relacja — jeden kierowca może mieć wiele samochodów
+  cars     Car[]
+  offers   CarScheduleOffer[]
 }
 
-model Car {
-  id                 Int     @id @default(autoincrement())
-  name               String
-  registrationNumber String
-  carType            String
-  trailerType        String
+model CarSchedule {
+  id        Int                @id @default(autoincrement())
+  carId     Int
+  car       Car                @relation(fields: [carId], references: [id])
+  from      DateTime
+  to        DateTime
+  status    String             // np. 'available', 'unavailable', 'maintenance'
+  offers    CarScheduleOffer[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
 
-  driverId           Int?
-  driver             Driver? @relation(fields: [driverId], references: [id])
+model CarScheduleOffer {
+  id              Int       @id @default(autoincrement())
+  fromDate        DateTime
+  toDate          DateTime
+  fromLocation    String
+  toLocation      String
+  status          String    // np. 'pending', 'confirmed', 'rejected'
+  carId           Int
+  car             Car       @relation(fields: [carId], references: [id])
+  driverId        Int
+  driver          Driver    @relation(fields: [driverId], references: [id])
+  carScheduleId   Int
+  carSchedule     CarSchedule @relation(fields: [carScheduleId], references: [id])
+  details         Json
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 

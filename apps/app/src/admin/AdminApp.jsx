@@ -10,7 +10,12 @@ import DriverList from './drivers/DriverList';
 import DriverEdit from './drivers/DriverEdit';
 import DriverCreate from './drivers/DriverCreate';
 const AdminApp = () => (
-    <Admin dataProvider={dataProvider} layout={CustomLayout} basename={process.env.REACT_APP_ADMIN_PREFIX}>
+    <Admin
+        dataProvider={dataProvider}
+        layout={CustomLayout}
+        basename={process.env.REACT_APP_ADMIN_PREFIX}
+
+    >
         <Resource name="cars" label="Samochody" list={CarList} create={CarCreate} edit={CarEdit} />
         <Resource
             name="drivers"
