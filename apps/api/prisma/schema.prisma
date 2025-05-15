@@ -210,6 +210,7 @@ model CarrierContact {
   email      String?
   phone      String?
   source     String?
+  details    Json?
 
   carrier    Carrier @relation(fields: [carrierId], references: [id])
 }

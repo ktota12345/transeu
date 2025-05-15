@@ -15,7 +15,7 @@ export class DataFinderController {
     // Endpoint do obsługi paczek
     @Get('batch')
     async findContactsBatch(
-        @Query('batchSize') batchSize: number = 10, // domyślny rozmiar paczki to 10
+        @Query('batchSize') batchSize: number = 1, // domyślny rozmiar paczki to 10
     ) {
         let skip = 0;
         let hasMore = true;
@@ -28,6 +28,13 @@ export class DataFinderController {
                         contacts: {
                             some: {},
                         },
+                    },
+                    type: {
+                        in: [
+                            'Spółka z o.o.',
+                            'Spółka komandytowa',
+                            'Spółka z o.o. - spółka komandytowa'
+                        ]
                     },
                 },
                 take: batchSize,
@@ -54,6 +61,7 @@ export class DataFinderController {
                             email: data.email??'',
                             phone: data.phone??'',
                             source: 'google maps',
+                            details: data,
                         },
                     });
                 }else{
@@ -65,6 +73,7 @@ export class DataFinderController {
                             email: '',
                             phone: '',
                             source: 'google maps',
+                            details:{},
                         },
                     });
                 }

@@ -17,6 +17,7 @@ import {SerpapiService}    from "./services/serp/serpapi.service";
 import {DriversModule} from './drivers/drivers.module';
 import {CarScheduleOffersModule} from './carScheduleOffers/car-schedule-offers.module';
 import {CarSchedulesModule} from "./carSchedules/car-schedules.module";
+import { CarriersModule} from "./carriers/carriers.module";
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import {CarSchedulesModule} from "./carSchedules/car-schedules.module";
         DriversModule,
         CarScheduleOffersModule,
         CarSchedulesModule,
+        CarriersModule
 
     ],
     controllers: [
