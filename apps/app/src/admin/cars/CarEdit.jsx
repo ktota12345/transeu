@@ -3,15 +3,17 @@ import {
     SimpleForm,
     TextInput,
     ReferenceInput,
+    ReferenceArrayInput,
     SelectInput,
+    CheckboxGroupInput,
     ArrayInput,
     SimpleFormIterator,
-    DateInput
+    DateInput,
 } from 'react-admin';
 import { carTypes, trailerTypes, scheduleStatuses } from "../../data/dictOptions";
 
-
-export const CarEdit = () => (
+export const CarEdit = () => {
+    return (
     <Edit mutationMode="pessimistic">
         <SimpleForm>
             <TextInput source="id" disabled />
@@ -43,6 +45,15 @@ export const CarEdit = () => (
                     />
                 </SimpleFormIterator>
             </ArrayInput>
+
+            <ReferenceArrayInput
+                source="searchSchedules"
+                reference="search-schedule-setup"
+                label="Schematy wyszukiwania"
+            >
+                <CheckboxGroupInput optionText="name" />
+            </ReferenceArrayInput>
+
         </SimpleForm>
     </Edit>
-);
+)};

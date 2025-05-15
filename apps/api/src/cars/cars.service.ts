@@ -16,43 +16,89 @@ export class CarsService {
     async findAll(
         skip = 0,
         take = 10,
-        filter?: Prisma.CarWhereInput,  // Prisma car where filter
+        filter?: Prisma.CarWhereInput,
         sort?: { [key: string]: Prisma.SortOrder }
-    ): Promise<[Car[], number]> {
+    ): Promise<[any[], number]> {
         const [cars, total] = await this.prisma.$transaction([
             this.prisma.car.findMany({
-                where: filter,  // Zastosowanie filtra
+                where: filter,
                 skip,
                 take,
-                orderBy: sort,  // Sortowanie
+                orderBy: sort,
                 include: {
                     driver: true,
                     schedules: {
                         include: {
-                            offers: true
-                        }
+                            offers: true,
+                        },
                     },
+                    searchSchedules: true,
                 },
             }),
             this.prisma.car.count({
-                where: filter,  // Zliczanie po filtrze
+                where: filter,
             }),
         ]);
-        return [cars, total];
+
+        // Pobierz schematy domyślne
+        // const defaultSchedules = await this.prisma.searchScheduleSetup.findMany({
+        //     where: { isDefault: true },
+        //     select: { id: true },
+        // });
+        //const defaultIds = defaultSchedules.map(s => s.id);
+
+        const transformedCars = cars.map(car => {
+            const allScheduleIds = [
+                ...car.searchSchedules.map(s => s.id),
+                //...defaultIds,
+            ];
+            const uniqueIds = Array.from(new Set(allScheduleIds));
+
+            return {
+                ...car,
+                searchSchedules: uniqueIds,
+            };
+        });
+
+        return [transformedCars, total];
     }
 
+
     async findOne(id: number) {
-        return this.prisma.car.findUnique({
+        const car = await this.prisma.car.findUnique({
             where: { id },
             include: {
                 driver: true,
-                schedules: true,  // <-- Dodane
+                schedules: true,
+                searchSchedules: true,
             },
         });
+
+        if (!car) return null;
+
+        // Pobierz schematy domyślne
+        // const defaultSchedules = await this.prisma.searchScheduleSetup.findMany({
+        //     where: { isDefault: true },
+        //     select: { id: true },
+        // });
+
+        const allScheduleIds = [
+            ...car.searchSchedules.map(s => s.id),
+            //...defaultSchedules.map(s => s.id),
+        ];
+
+        // Usuń duplikaty
+        const uniqueScheduleIds = Array.from(new Set(allScheduleIds));
+
+        return {
+            ...car,
+            searchSchedules: uniqueScheduleIds,
+        };
     }
 
+
     async update(id: number, data: any) {
-        const { schedules, driverId, ...rest } = data;
+        const { schedules, driverId, searchSchedules, ...rest } = data;
         const updateData: Prisma.CarUpdateInput = { ...rest };
 
         if (driverId && typeof driverId === 'number') {
@@ -61,41 +107,49 @@ export class CarsService {
             };
         }
 
+        if (searchSchedules && Array.isArray(searchSchedules)) {
+            updateData.searchSchedules = {
+                set: [],
+                connect: searchSchedules.map((item: any) => {
+                    if (typeof item === 'object' && item !== null && 'id' in item) {
+                        return { id: item.id };
+                    }
+                    return { id: item };
+                }),
+            };
+        }
+
 
         if (schedules) {
-            // Zaktualizuj stare harmonogramy, dodaj nowe, usuń usunięte
             const existingSchedules = await this.prisma.carSchedule.findMany({
-                where: {carId: id},
+                where: { carId: id },
             });
 
-            const schedulesToUpdate = schedules.filter((schedule: any) => schedule.id); // Harmonogramy, które mają id
-            const schedulesToCreate = schedules.filter((schedule: any) => !schedule.id); // Harmonogramy, które nie mają id
+            const schedulesToUpdate = schedules.filter((schedule: any) => schedule.id);
+            const schedulesToCreate = schedules.filter((schedule: any) => !schedule.id);
             const schedulesToDelete = existingSchedules.filter((existing: any) =>
-                !schedules.some((schedule: any) => schedule.id === existing.id) // Harmonogramy, które zostały usunięte
+                !schedules.some((schedule: any) => schedule.id === existing.id)
             );
 
-            // Usuwanie starych harmonogramów, które zostały usunięte
             await this.prisma.carSchedule.deleteMany({
                 where: {
-                    id: {in: schedulesToDelete.map((schedule: any) => schedule.id)},
+                    id: { in: schedulesToDelete.map((s: any) => s.id) },
                 },
             });
 
-            // Zaktualizowanie istniejących harmonogramów
             await Promise.all(
-                schedulesToUpdate.map((schedule: any) => {
-                    return this.prisma.carSchedule.update({
-                        where: {id: schedule.id},
+                schedulesToUpdate.map((schedule: any) =>
+                    this.prisma.carSchedule.update({
+                        where: { id: schedule.id },
                         data: {
                             from: new Date(schedule.from),
                             to: new Date(schedule.to),
                             status: schedule.status,
                         },
-                    });
-                })
+                    })
+                )
             );
 
-            // Dodanie nowych harmonogramów
             await this.prisma.carSchedule.createMany({
                 data: schedulesToCreate.map((schedule: any) => ({
                     carId: id,
@@ -113,6 +167,7 @@ export class CarsService {
 
         return this.findOne(id);
     }
+
 
     async remove(id: number) {
         return this.prisma.car.delete({

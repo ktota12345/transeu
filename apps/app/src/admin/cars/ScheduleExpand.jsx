@@ -66,7 +66,7 @@ const ScheduleExpand = ({ schedules }) => {
                                     <Button
                                         variant="text"
                                         size="small"
-                                        href={`#/car-schedule-offers?displayedFilters=%7B%22carId%22%3Atrue%7D&filter=%7B%22carId%22%3A${carId}%7D`}
+                                        href={`/admin/#/car-schedule-offers?displayedFilters=%7B%22carId%22%3Atrue%7D&filter=%7B%22carId%22%3A${carId}%7D`}
                                         style={{ marginLeft: 8 }}
                                     >
                                         Zobacz oferty

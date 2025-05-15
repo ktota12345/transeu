@@ -215,17 +215,27 @@ model CarrierContact {
   carrier    Carrier @relation(fields: [carrierId], references: [id])
 }
 
+model SearchScheduleSetup {
+  id        Int      @id @default(autoincrement())
+  name      String
+  isDefault Boolean  @default(false)
+  schedule  Json
+
+  cars      Car[]    @relation("CarSearchSchedules")
+}
 
 model Car {
-  id           Int                @id @default(autoincrement())
-  name         String
-  registrationNumber String
-  carType      String
-  trailerType  String
-  driverId     Int?
-  driver       Driver?            @relation(fields: [driverId], references: [id])
-  schedules    CarSchedule[]
-  offers       CarScheduleOffer[]
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  registrationNumber  String
+  carType             String
+  trailerType         String
+  driverId            Int?
+  driver              Driver?              @relation(fields: [driverId], references: [id])
+  schedules           CarSchedule[]
+  offers              CarScheduleOffer[]
+
+  searchSchedules     SearchScheduleSetup[] @relation("CarSearchSchedules")
 }
 
 model Driver {

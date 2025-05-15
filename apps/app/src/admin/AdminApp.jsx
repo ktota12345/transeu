@@ -16,6 +16,10 @@ import CarScheduleOfferEdit from "./carScheduleOffers/CarScheduleOfferEdit";
 import CarrierList from "./carriers/CarrierList";
 import CarrierShow from "./carriers/CarrierShow";
 
+import SearchScheduleSetupList from "./searchScheduleSetups/SearchScheduleSetupList";
+import SearchScheduleSetupEdit from "./searchScheduleSetups/SearchScheduleSetupEdit";
+import SearchScheduleSetupCreate     from "./searchScheduleSetups/SearchScheduleSetupCreate";
+
 const AdminApp = () => (
     <Admin
         dataProvider={dataProvider}
@@ -41,6 +45,12 @@ const AdminApp = () => (
             name="carriers"
             list={CarrierList}
             show={CarrierShow}
+        />
+        <Resource
+            name="search-schedule-setup"
+            list={SearchScheduleSetupList}
+            edit={SearchScheduleSetupEdit}
+            create={SearchScheduleSetupCreate}
         />
     </Admin>
 );

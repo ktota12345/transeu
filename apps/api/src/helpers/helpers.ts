@@ -12,7 +12,6 @@ export const buildSort = (sortField: string | undefined, sortOrder: string | und
 export function buildFilters(query: Record<string, any>) {
     const filterObj: Record<string, any> = {};
 
-    // Sprawdzamy i rozdzielamy filtry typu filter[name]=value
     for (const key in query) {
         if (key.startsWith('filter[') && key.endsWith(']')) {
             const fieldName = key.slice(7, -1); // Usuwamy 'filter[' i ']' z klucza
@@ -20,7 +19,6 @@ export function buildFilters(query: Record<string, any>) {
         }
     }
 
-    // Sprawdzamy, czy w query pojawił się JSON w parametrze filter
     if (query.filter) {
         try {
             const jsonFilters = JSON.parse(query.filter);
@@ -30,11 +28,14 @@ export function buildFilters(query: Record<string, any>) {
         }
     }
 
-    // Można rozwinąć logikę tutaj np. dodając różne operatory, jak equals, contains, etc.
     const prismaFilters: Record<string, any> = {};
     for (const key in filterObj) {
         if (filterObj[key] && Array.isArray(filterObj[key])) {
-            prismaFilters[key] = { in: filterObj[key] };
+            prismaFilters[key] = {
+                in: filterObj[key].map((el: any) =>
+                    typeof el === 'object' && el !== null && 'id' in el ? el.id : el
+                ),
+            };
         } else {
             if(key==='id' || key.indexOf('Id') !== -1) {
                 prismaFilters[key] = { equals: parseInt(filterObj[key]) };

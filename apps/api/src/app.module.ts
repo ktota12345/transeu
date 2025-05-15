@@ -18,6 +18,7 @@ import {DriversModule} from './drivers/drivers.module';
 import {CarScheduleOffersModule} from './carScheduleOffers/car-schedule-offers.module';
 import {CarSchedulesModule} from "./carSchedules/car-schedules.module";
 import { CarriersModule} from "./carriers/carriers.module";
+import {SearchScheduleSetupModule } from "./search-schedule-setup/search-schedule-setup.module";
 
 @Module({
     imports: [
@@ -29,7 +30,8 @@ import { CarriersModule} from "./carriers/carriers.module";
         DriversModule,
         CarScheduleOffersModule,
         CarSchedulesModule,
-        CarriersModule
+        CarriersModule,
+        SearchScheduleSetupModule,
 
     ],
     controllers: [
