@@ -10,20 +10,14 @@ import {
     SimpleFormIterator,
     DateInput,
 } from 'react-admin';
-import { carTypes, trailerTypes, scheduleStatuses } from "../../data/dictOptions";
+import { trailerTypes,scheduleStatuses } from "../../data/dictOptions";
 
-export const CarEdit = () => {
-    return (
+export const CarEdit = () =>  (
     <Edit mutationMode="pessimistic">
         <SimpleForm>
             <TextInput source="id" disabled />
             <TextInput source="name" />
             <TextInput source="registrationNumber" />
-            <SelectInput
-                source="carType"
-                choices={carTypes.map(type => ({ id: type, name: type }))}
-                label="Typ samochodu"
-            />
             <SelectInput
                 source="trailerType"
                 choices={trailerTypes.map(type => ({ id: type, name: type }))}
@@ -54,6 +48,28 @@ export const CarEdit = () => {
                 <CheckboxGroupInput optionText="name" />
             </ReferenceArrayInput>
 
+            {/* Relacje wielu do wielu */}
+
+            <ReferenceArrayInput source="vehicleTypes" reference="vehicle-types" label="Typy pojazdu">
+                <CheckboxGroupInput optionText="name" />
+            </ReferenceArrayInput>
+
+            <ReferenceArrayInput source="vehicleLoadSecurings" reference="vehicle-load-securing" label="Zabezpieczenia ładunku">
+                <CheckboxGroupInput optionText="name" />
+            </ReferenceArrayInput>
+
+            <ReferenceArrayInput source="vehicleEquipments" reference="vehicle-equipment" label="Wyposażenie pojazdu">
+                <CheckboxGroupInput optionText="name" />
+            </ReferenceArrayInput>
+
+            <ReferenceArrayInput source="swapBodies" reference="swap-body" label="Wymienne nadwozia">
+                <CheckboxGroupInput optionText="name" />
+            </ReferenceArrayInput>
+
+            <ReferenceArrayInput source="bodyProperties" reference="body-property" label="Właściwości nadwozia">
+                <CheckboxGroupInput optionText="name" />
+            </ReferenceArrayInput>
+
         </SimpleForm>
     </Edit>
-)};
+);

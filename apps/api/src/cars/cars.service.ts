@@ -27,41 +27,33 @@ export class CarsService {
                 orderBy: sort,
                 include: {
                     driver: true,
-                    schedules: {
-                        include: {
-                            offers: true,
-                        },
-                    },
+                    schedules: { include: { offers: true } },
                     searchSchedules: true,
+                    vehicleTypes: true,
+                    vehicleLoadSecurings: true,
+                    vehicleEquipments: true,
+                    swapBodies: true,
+                    bodyProperties: true,
                 },
             }),
-            this.prisma.car.count({
-                where: filter,
-            }),
+            this.prisma.car.count({ where: filter }),
         ]);
 
-        // Pobierz schematy domyślne
-        // const defaultSchedules = await this.prisma.searchScheduleSetup.findMany({
-        //     where: { isDefault: true },
-        //     select: { id: true },
-        // });
-        //const defaultIds = defaultSchedules.map(s => s.id);
-
         const transformedCars = cars.map(car => {
-            const allScheduleIds = [
-                ...car.searchSchedules.map(s => s.id),
-                //...defaultIds,
-            ];
-            const uniqueIds = Array.from(new Set(allScheduleIds));
-
             return {
                 ...car,
-                searchSchedules: uniqueIds,
+                searchSchedules: car.searchSchedules.map(s => s.id),
+                vehicleTypes: car.vehicleTypes.map(v => v.id),
+                vehicleLoadSecurings: car.vehicleLoadSecurings.map(v => v.id),
+                vehicleEquipments: car.vehicleEquipments.map(v => v.id),
+                swapBodies: car.swapBodies.map(v => v.id),
+                bodyProperties: car.bodyProperties.map(v => v.id),
             };
         });
 
         return [transformedCars, total];
     }
+
 
 
     async findOne(id: number) {
@@ -71,34 +63,43 @@ export class CarsService {
                 driver: true,
                 schedules: true,
                 searchSchedules: true,
+                vehicleTypes: true,
+                vehicleLoadSecurings: true,
+                vehicleEquipments: true,
+                swapBodies: true,
+                bodyProperties: true,
             },
         });
 
         if (!car) return null;
 
-        // Pobierz schematy domyślne
-        // const defaultSchedules = await this.prisma.searchScheduleSetup.findMany({
-        //     where: { isDefault: true },
-        //     select: { id: true },
-        // });
-
-        const allScheduleIds = [
-            ...car.searchSchedules.map(s => s.id),
-            //...defaultSchedules.map(s => s.id),
-        ];
-
-        // Usuń duplikaty
-        const uniqueScheduleIds = Array.from(new Set(allScheduleIds));
 
         return {
             ...car,
-            searchSchedules: uniqueScheduleIds,
+            searchSchedules: car.searchSchedules.map(s => s.id),
+            vehicleTypes: car.vehicleTypes.map(v => v.id),
+            vehicleLoadSecurings: car.vehicleLoadSecurings.map(v => v.id),
+            vehicleEquipments: car.vehicleEquipments.map(v => v.id),
+            swapBodies: car.swapBodies.map(v => v.id),
+            bodyProperties: car.bodyProperties.map(v => v.id),
         };
     }
 
 
+
     async update(id: number, data: any) {
-        const { schedules, driverId, searchSchedules, ...rest } = data;
+        const {
+            schedules,
+            driverId,
+            searchSchedules,
+            vehicleTypes,
+            vehicleLoadSecurings,
+            vehicleEquipments,
+            swapBodies,
+            bodyProperties,
+            ...rest
+        } = data;
+
         const updateData: Prisma.CarUpdateInput = { ...rest };
 
         if (driverId && typeof driverId === 'number') {
@@ -107,55 +108,84 @@ export class CarsService {
             };
         }
 
+        const handleRelation = (input: any) =>
+            input?.map((item: any) =>
+                typeof item === 'object' && item !== null && 'id' in item ? { id: item.id } : { id: item }
+            );
+
         if (searchSchedules && Array.isArray(searchSchedules)) {
             updateData.searchSchedules = {
                 set: [],
-                connect: searchSchedules.map((item: any) => {
-                    if (typeof item === 'object' && item !== null && 'id' in item) {
-                        return { id: item.id };
-                    }
-                    return { id: item };
-                }),
+                connect: handleRelation(searchSchedules),
             };
         }
 
+        if (vehicleTypes && Array.isArray(vehicleTypes)) {
+            updateData.vehicleTypes = {
+                set: [],
+                connect: handleRelation(vehicleTypes),
+            };
+        }
 
+        if (vehicleLoadSecurings && Array.isArray(vehicleLoadSecurings)) {
+            updateData.vehicleLoadSecurings = {
+                set: [],
+                connect: handleRelation(vehicleLoadSecurings),
+            };
+        }
+
+        if (vehicleEquipments && Array.isArray(vehicleEquipments)) {
+            updateData.vehicleEquipments = {
+                set: [],
+                connect: handleRelation(vehicleEquipments),
+            };
+        }
+
+        if (swapBodies && Array.isArray(swapBodies)) {
+            updateData.swapBodies = {
+                set: [],
+                connect: handleRelation(swapBodies),
+            };
+        }
+
+        if (bodyProperties && Array.isArray(bodyProperties)) {
+            updateData.bodyProperties = {
+                set: [],
+                connect: handleRelation(bodyProperties),
+            };
+        }
+
+        // Obsługa schedule (jak wcześniej)
         if (schedules) {
-            const existingSchedules = await this.prisma.carSchedule.findMany({
-                where: { carId: id },
-            });
+            const existingSchedules = await this.prisma.carSchedule.findMany({ where: { carId: id } });
 
-            const schedulesToUpdate = schedules.filter((schedule: any) => schedule.id);
-            const schedulesToCreate = schedules.filter((schedule: any) => !schedule.id);
-            const schedulesToDelete = existingSchedules.filter((existing: any) =>
-                !schedules.some((schedule: any) => schedule.id === existing.id)
+            const schedulesToUpdate = schedules.filter((s: any) => s.id);
+            const schedulesToCreate = schedules.filter((s: any) => !s.id);
+            const schedulesToDelete = existingSchedules.filter(
+                (s: any) => !schedules.some((sch: any) => sch.id === s.id)
             );
 
-            await this.prisma.carSchedule.deleteMany({
-                where: {
-                    id: { in: schedulesToDelete.map((s: any) => s.id) },
-                },
-            });
+            await this.prisma.carSchedule.deleteMany({ where: { id: { in: schedulesToDelete.map((s: any) => s.id) } } });
 
             await Promise.all(
-                schedulesToUpdate.map((schedule: any) =>
+                schedulesToUpdate.map((s: any) =>
                     this.prisma.carSchedule.update({
-                        where: { id: schedule.id },
+                        where: { id: s.id },
                         data: {
-                            from: new Date(schedule.from),
-                            to: new Date(schedule.to),
-                            status: schedule.status,
+                            from: new Date(s.from),
+                            to: new Date(s.to),
+                            status: s.status,
                         },
                     })
                 )
             );
 
             await this.prisma.carSchedule.createMany({
-                data: schedulesToCreate.map((schedule: any) => ({
+                data: schedulesToCreate.map((s: any) => ({
                     carId: id,
-                    from: new Date(schedule.from),
-                    to: new Date(schedule.to),
-                    status: schedule.status,
+                    from: new Date(s.from),
+                    to: new Date(s.to),
+                    status: s.status,
                 })),
             });
         }
@@ -167,6 +197,7 @@ export class CarsService {
 
         return this.findOne(id);
     }
+
 
 
     async remove(id: number) {

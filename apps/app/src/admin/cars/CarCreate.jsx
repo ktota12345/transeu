@@ -1,16 +1,11 @@
 import { Create, SimpleForm, TextInput, ReferenceInput, SelectInput } from 'react-admin';
-import { trailerTypes, carTypes } from "../../data/dictOptions";
+import { trailerTypes } from "../../data/dictOptions";
 
 export const CarCreate = () => (
     <Create>
         <SimpleForm>
             <TextInput source="name" />
             <TextInput source="registrationNumber" />
-            <SelectInput
-                source="carType"
-                choices={carTypes.map(type => ({ id: type, name: type }))}
-                label="Typ samochodu"
-            />
             <SelectInput
                 source="trailerType"
                 choices={trailerTypes.map(type => ({ id: type, name: type }))}

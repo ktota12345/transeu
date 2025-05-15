@@ -236,6 +236,12 @@ model Car {
   offers              CarScheduleOffer[]
 
   searchSchedules     SearchScheduleSetup[] @relation("CarSearchSchedules")
+
+  vehicleTypes         VehicleType[]         @relation("CarVehicleTypes")
+  vehicleLoadSecurings VehicleLoadSecuring[] @relation("CarVehicleLoadSecurings")
+  vehicleEquipments    VehicleEquipment[]    @relation("CarVehicleEquipments")
+  swapBodies           SwapBody[]            @relation("CarSwapBodies")
+  bodyProperties       BodyProperty[]        @relation("CarBodyProperties")
 }
 
 model Driver {
@@ -282,24 +288,34 @@ model VehicleType {
   id             Int    @id @default(autoincrement())
   name           String
   apiNameTimocom String @unique
+
+  cars           Car[]   @relation("CarVehicleTypes")
 }
 model VehicleLoadSecuring {
   id               Int    @id @default(autoincrement())
   name             String
   apiNameTimocom   String @unique
+
+  cars           Car[]   @relation("CarVehicleLoadSecurings")
 }
 model VehicleEquipment {
   id             Int    @id @default(autoincrement())
   name           String
   apiNameTimocom String @unique
+
+  cars           Car[]   @relation("CarVehicleEquipments")
 }
 model SwapBody {
   id             Int    @id @default(autoincrement())
   name           String
   apiNameTimocom String @unique
+
+  cars           Car[]   @relation("CarSwapBodies")
 }
 model BodyProperty {
   id             Int    @id @default(autoincrement())
   name           String
   apiNameTimocom String @unique
+
+  cars           Car[]   @relation("CarBodyProperties")
 }

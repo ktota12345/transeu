@@ -27,23 +27,6 @@ import VehicleLoadSecuringList from './vehicleLoadSecuring/VehicleLoadSecuringLi
 import {VehicleLoadSecuringEdit, VehicleLoadSecuringCreate} from './vehicleLoadSecuring/VehicleLoadSecuring';
 
 
-// import {
-//     VehicleLoadSecuringList,
-//     VehicleLoadSecuringEdit,
-// } from './vehicleLoadSecuring';
-// import {
-//     VehicleEquipmentList,
-//     VehicleEquipmentEdit,
-// } from './vehicleEquipment';
-// import {
-//     SwapBodyList,
-//     SwapBodyEdit,
-// } from './swapBody';
-// import {
-//     BodyPropertyList,
-//     BodyPropertyEdit,
-// } from './bodyProperty';
-
 
 const AdminApp = () => (
     <Admin
