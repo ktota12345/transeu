@@ -18,7 +18,32 @@ import CarrierShow from "./carriers/CarrierShow";
 
 import SearchScheduleSetupList from "./searchScheduleSetups/SearchScheduleSetupList";
 import SearchScheduleSetupEdit from "./searchScheduleSetups/SearchScheduleSetupEdit";
-import SearchScheduleSetupCreate     from "./searchScheduleSetups/SearchScheduleSetupCreate";
+import SearchScheduleSetupCreate from "./searchScheduleSetups/SearchScheduleSetupCreate";
+
+import VehicleTypeList from './vehicleType/VehicleTypeList';
+import {VehicleTypeEdit, VehicleTypeCreate} from './vehicleType/VehicleType';
+
+import VehicleLoadSecuringList from './vehicleLoadSecuring/VehicleLoadSecuringList';
+import {VehicleLoadSecuringEdit, VehicleLoadSecuringCreate} from './vehicleLoadSecuring/VehicleLoadSecuring';
+
+
+// import {
+//     VehicleLoadSecuringList,
+//     VehicleLoadSecuringEdit,
+// } from './vehicleLoadSecuring';
+// import {
+//     VehicleEquipmentList,
+//     VehicleEquipmentEdit,
+// } from './vehicleEquipment';
+// import {
+//     SwapBodyList,
+//     SwapBodyEdit,
+// } from './swapBody';
+// import {
+//     BodyPropertyList,
+//     BodyPropertyEdit,
+// } from './bodyProperty';
+
 
 const AdminApp = () => (
     <Admin
@@ -52,6 +77,38 @@ const AdminApp = () => (
             edit={SearchScheduleSetupEdit}
             create={SearchScheduleSetupCreate}
         />
+
+        <Resource name={"vehicle-types"}
+                  label="Typy pojazdów"
+                  list={VehicleTypeList}
+                  edit={VehicleTypeEdit}
+                  create={VehicleTypeCreate}
+        />
+        <Resource name={"vehicle-load-securing"}
+                  label="Zabezpieczenia ładunku"
+                  list={VehicleLoadSecuringList}
+                  edit={VehicleLoadSecuringEdit}
+                  create={VehicleLoadSecuringCreate}
+        />
+        <Resource name={"vehicle-equipment"}
+                    label="Wyposażenie pojazdu"
+                    list={VehicleLoadSecuringList}
+                    edit={VehicleLoadSecuringEdit}
+                    create={VehicleLoadSecuringCreate}
+        />
+        <Resource name={"swap-body"}
+                  label="Rodzaje nadwozia"
+                  list={VehicleLoadSecuringList}
+                  edit={VehicleLoadSecuringEdit}
+                  create={VehicleLoadSecuringCreate}
+        />
+        <Resource name={"body-property"}
+                  label="Rodzaje zabudowy"
+                  list={VehicleLoadSecuringList}
+                  edit={VehicleLoadSecuringEdit}
+                  create={VehicleLoadSecuringCreate}
+        />
+
     </Admin>
 );
 

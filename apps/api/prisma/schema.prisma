@@ -278,3 +278,28 @@ model CarScheduleOffer {
   updatedAt       DateTime  @updatedAt
 }
 
+model VehicleType {
+  id             Int    @id @default(autoincrement())
+  name           String
+  apiNameTimocom String @unique
+}
+model VehicleLoadSecuring {
+  id               Int    @id @default(autoincrement())
+  name             String
+  apiNameTimocom   String @unique
+}
+model VehicleEquipment {
+  id             Int    @id @default(autoincrement())
+  name           String
+  apiNameTimocom String @unique
+}
+model SwapBody {
+  id             Int    @id @default(autoincrement())
+  name           String
+  apiNameTimocom String @unique
+}
+model BodyProperty {
+  id             Int    @id @default(autoincrement())
+  name           String
+  apiNameTimocom String @unique
+}

@@ -9,16 +9,25 @@ import {PrismaService} from './prisma/prisma.service';
 import {AuthModule} from './auth/auth.module';
 import {ImportController} from './import/import.controller';
 import {DataFinderController} from "./dataFinder/dataFinder.controller";
-import { CarsService } from './cars/cars.service';
-import { CarsController } from './cars/cars.controller';
-import { CarsModule } from './cars/cars.module';
-import {OpenAIService}  from "./services/openai/openai.service";
-import {SerpapiService}    from "./services/serp/serpapi.service";
+import {CarsService} from './cars/cars.service';
+import {CarsController} from './cars/cars.controller';
+import {CarsModule} from './cars/cars.module';
+import {OpenAIService} from "./services/openai/openai.service";
+import {SerpapiService} from "./services/serp/serpapi.service";
 import {DriversModule} from './drivers/drivers.module';
 import {CarScheduleOffersModule} from './carScheduleOffers/car-schedule-offers.module';
 import {CarSchedulesModule} from "./carSchedules/car-schedules.module";
-import { CarriersModule} from "./carriers/carriers.module";
-import {SearchScheduleSetupModule } from "./search-schedule-setup/search-schedule-setup.module";
+import {CarriersModule} from "./carriers/carriers.module";
+import {SearchScheduleSetupModule} from "./search-schedule-setup/search-schedule-setup.module";
+
+import {VehicleTypesModule} from "././car-attributes/vehicle-types/vehicle-types.module"
+import {VehicleLoadSecuringModule} from "./car-attributes/vehicle-load-securing/vehicle-load-securing.module";
+import {VehicleEquipmentModule} from "./car-attributes/vehicle-equipment/vehicle-equipment.module";
+import {SwapBodyModule} from "./car-attributes/swap-body/swap-body.module";
+import {BodyPropertyModule} from "./car-attributes/body-property/body-property.module";
+
+
+
 
 @Module({
     imports: [
@@ -32,6 +41,12 @@ import {SearchScheduleSetupModule } from "./search-schedule-setup/search-schedul
         CarSchedulesModule,
         CarriersModule,
         SearchScheduleSetupModule,
+
+        VehicleTypesModule,
+        VehicleLoadSecuringModule,
+        VehicleEquipmentModule,
+        SwapBodyModule,
+        BodyPropertyModule,
 
     ],
     controllers: [

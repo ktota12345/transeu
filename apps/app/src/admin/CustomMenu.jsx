@@ -33,6 +33,32 @@ export const CustomMenu = () => {
                                         primaryText="Kierowcy"
                                         style={{ paddingLeft: 32 }}
                                     />
+                                <MenuItemLink
+                                    to={`${process.env.REACT_APP_ADMIN_PREFIX}vehicle-types`}
+                                    primaryText="Typy pojazdów"
+                                    style={{ paddingLeft: 32 }}
+                                />
+                                <MenuItemLink
+                                    to={`${process.env.REACT_APP_ADMIN_PREFIX}vehicle-load-securing`}
+                                    primaryText="Zabezpieczenia ładunku"
+                                    style={{ paddingLeft: 32 }}
+                                />
+                                <MenuItemLink
+                                    to={`${process.env.REACT_APP_ADMIN_PREFIX}swap-body`}
+                                    primaryText="Rodzaje nadwozia"
+                                    style={{ paddingLeft: 32 }}
+                                />
+                                <MenuItemLink
+                                    to={`${process.env.REACT_APP_ADMIN_PREFIX}body-property`}
+                                    primaryText="Rodzaje zabudowy"
+                                    style={{ paddingLeft: 32 }}
+                                />
+                                <MenuItemLink
+                                    to={`${process.env.REACT_APP_ADMIN_PREFIX}vehicle-equipment`}
+                                    style={{ paddingLeft: 32 }}
+                                    primaryText="Wyposażenie pojazdu"
+                                />
+
                             </List>
                     </Collapse>
 
