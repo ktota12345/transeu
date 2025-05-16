@@ -31,7 +31,7 @@ export class DataFinderController {
                     },
                     type: {
                         in: [
-                            'Spółka z o.o.',
+                            'Spółka z o.o',
                             'Spółka komandytowa',
                             'Spółka z o.o. - spółka komandytowa'
                         ]
