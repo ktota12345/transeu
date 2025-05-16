@@ -68,6 +68,9 @@ export class CarsService {
                 vehicleEquipments: true,
                 swapBodies: true,
                 bodyProperties: true,
+                searchNotificationSetup: {
+                    include: { users: true },
+                },
             },
         });
 
@@ -82,6 +85,10 @@ export class CarsService {
             vehicleEquipments: car.vehicleEquipments.map(v => v.id),
             swapBodies: car.swapBodies.map(v => v.id),
             bodyProperties: car.bodyProperties.map(v => v.id),
+            searchNotificationSetup: {
+                ...car.searchNotificationSetup,
+                users: car.searchNotificationSetup?.users.map((user: any) => user.id) || [],
+            }
         };
     }
 
@@ -189,6 +196,36 @@ export class CarsService {
                 })),
             });
         }
+
+        if (data.searchNotificationSetup) {
+            const sns = data.searchNotificationSetup;
+
+            if (sns.id) {
+                updateData.searchNotificationSetup = {
+                    update: {
+                        customEmails: sns.customEmails,
+                        users: {
+                            set: [],
+                            connect: (sns.users || []).map((user: any) =>
+                                typeof user === 'object' ? { id: user.id } : { id: user }
+                            ),
+                        },
+                    },
+                };
+
+            } else {
+                updateData.searchNotificationSetup = {
+                    create: {
+                        customEmails: sns.customEmails,
+                        users: {
+                            connect: sns.users?.map((userId: number) => ({ id: userId })) || [],
+                        },
+                    },
+                };
+            }
+        }
+
+
 
         await this.prisma.car.update({
             where: { id },

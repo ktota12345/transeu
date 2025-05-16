@@ -9,6 +9,7 @@ import {
     ArrayInput,
     SimpleFormIterator,
     DateInput,
+    SelectArrayInput,
 } from 'react-admin';
 import { trailerTypes,scheduleStatuses } from "../../data/dictOptions";
 
@@ -69,6 +70,22 @@ export const CarEdit = () =>  (
             <ReferenceArrayInput source="bodyProperties" reference="body-property" label="Właściwości nadwozia">
                 <CheckboxGroupInput optionText="name" />
             </ReferenceArrayInput>
+
+
+            <ReferenceArrayInput
+                source="searchNotificationSetup.users"
+                reference="users"
+                label="Użytkownicy powiadamiani"
+            >
+                <SelectArrayInput optionText={(record) => `${record.username} (${record.email})`} />
+            </ReferenceArrayInput>
+
+
+            <ArrayInput source="searchNotificationSetup.customEmails" label="Dodatkowe adresy e-mail">
+                <SimpleFormIterator>
+                    <TextInput label="E-mail" />
+                </SimpleFormIterator>
+            </ArrayInput>
 
         </SimpleForm>
     </Edit>

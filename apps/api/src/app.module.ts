@@ -25,8 +25,7 @@ import {VehicleLoadSecuringModule} from "./car-attributes/vehicle-load-securing/
 import {VehicleEquipmentModule} from "./car-attributes/vehicle-equipment/vehicle-equipment.module";
 import {SwapBodyModule} from "./car-attributes/swap-body/swap-body.module";
 import {BodyPropertyModule} from "./car-attributes/body-property/body-property.module";
-
-
+import {UsersModule } from "./users/users.module";
 
 
 @Module({
@@ -47,6 +46,8 @@ import {BodyPropertyModule} from "./car-attributes/body-property/body-property.m
         VehicleEquipmentModule,
         SwapBodyModule,
         BodyPropertyModule,
+
+        UsersModule,
 
     ],
     controllers: [
