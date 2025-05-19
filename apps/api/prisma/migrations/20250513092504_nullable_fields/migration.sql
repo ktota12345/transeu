@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE "Carrier" ALTER COLUMN "licenseExpiryDate" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "CarrierContact" ALTER COLUMN "name" DROP NOT NULL,
+ALTER COLUMN "email" DROP NOT NULL,
+ALTER COLUMN "phone" DROP NOT NULL,
+ALTER COLUMN "source" DROP NOT NULL;

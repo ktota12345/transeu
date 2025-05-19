@@ -1,0 +1,17 @@
+-- AlterTable
+ALTER TABLE "Agent" ADD COLUMN     "cargoParameters" JSONB,
+ADD COLUMN     "checkFrequency" TEXT DEFAULT '',
+ADD COLUMN     "emotionDetectionLevel" TEXT DEFAULT '',
+ADD COLUMN     "emptyKmCost" TEXT DEFAULT '',
+ADD COLUMN     "liftCapacityRange" JSONB,
+ADD COLUMN     "maxClientIdleTime" TEXT DEFAULT '',
+ADD COLUMN     "maxCounterOffers" TEXT DEFAULT '',
+ADD COLUMN     "maxResponseTime" TEXT DEFAULT '',
+ADD COLUMN     "minOrderValue" TEXT DEFAULT '',
+ADD COLUMN     "minProfitMargin" TEXT DEFAULT '',
+ADD COLUMN     "minRatePerKm" TEXT DEFAULT '',
+ADD COLUMN     "minResponseTime" TEXT DEFAULT '',
+ADD COLUMN     "negotiationInstructions" TEXT DEFAULT '',
+ADD COLUMN     "priceThreshold" TEXT DEFAULT '',
+ADD COLUMN     "targetRatePerKm" TEXT DEFAULT '',
+ADD COLUMN     "workingHours" JSONB;
