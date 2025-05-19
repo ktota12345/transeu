@@ -40,7 +40,8 @@ export function buildFilters(query: Record<string, any>) {
             if(key==='id' || key.indexOf('Id') !== -1) {
                 prismaFilters[key] = { equals: parseInt(filterObj[key]) };
             }else {
-                prismaFilters[key] = {
+                const mappedKey = (key==='q') ? 'name' : key;
+                prismaFilters[mappedKey] = {
                     contains: filterObj[key],
                     mode: 'insensitive',
                 };

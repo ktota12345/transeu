@@ -10,6 +10,7 @@ import {
     SimpleFormIterator,
     DateInput,
     SelectArrayInput,
+    AutocompleteInput,
 } from 'react-admin';
 import { trailerTypes,scheduleStatuses } from "../../data/dictOptions";
 
@@ -26,6 +27,9 @@ export const CarEdit = () =>  (
             />
             <ReferenceInput source="driverId" reference="drivers" label="Kierowca">
                 <SelectInput optionText={(record) => `${record.name} ${record.surname}`} />
+            </ReferenceInput>
+            <ReferenceInput source="carrierId" reference="carriers" label="Przewoźnik" allowEmpty>
+                <AutocompleteInput optionText="name" />
             </ReferenceInput>
 
             <ArrayInput source="schedules" label="Harmonogramy">

@@ -27,6 +27,7 @@ export class CarsService {
                 orderBy: sort,
                 include: {
                     driver: true,
+                    carrier: true,
                     schedules: { include: { offers: true } },
                     searchSchedules: true,
                     vehicleTypes: true,
@@ -61,6 +62,7 @@ export class CarsService {
             where: { id },
             include: {
                 driver: true,
+                carrier: true,
                 schedules: true,
                 searchSchedules: true,
                 vehicleTypes: true,
@@ -98,6 +100,7 @@ export class CarsService {
         const {
             schedules,
             driverId,
+            carrierId,
             searchSchedules,
             vehicleTypes,
             vehicleLoadSecurings,
@@ -112,6 +115,13 @@ export class CarsService {
         if (driverId && typeof driverId === 'number') {
             updateData.driver = {
                 connect: { id: driverId },
+            };
+        }
+
+
+        if (carrierId && typeof carrierId === 'number') {
+            updateData.carrier = {
+                connect: { id: carrierId },
             };
         }
 
@@ -196,6 +206,8 @@ export class CarsService {
                 })),
             });
         }
+
+
 
         if (data.searchNotificationSetup) {
             const sns = data.searchNotificationSetup;

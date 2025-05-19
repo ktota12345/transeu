@@ -202,6 +202,9 @@ model Carrier {
   licenseExpiryDate  DateTime?
 
   contacts           CarrierContact[]
+
+  cars        Car[]      @relation("CarrierCars")
+  drivers     Driver[]   @relation("CarrierDrivers")
 }
 
 model CarrierContact {
@@ -233,6 +236,11 @@ model Car {
   trailerType         String
   driverId            Int?
   driver              Driver?              @relation(fields: [driverId], references: [id])
+
+
+  carrierId   Int?
+  carrier     Carrier?  @relation("CarrierCars", fields: [carrierId], references: [id])
+
   schedules           CarSchedule[]
   offers              CarScheduleOffer[]
 
@@ -265,6 +273,9 @@ model Driver {
   email    String
   cars     Car[]
   offers   CarScheduleOffer[]
+
+  carrierId   Int?
+  carrier     Carrier?  @relation("CarrierDrivers", fields: [carrierId], references: [id])
 }
 
 model CarSchedule {

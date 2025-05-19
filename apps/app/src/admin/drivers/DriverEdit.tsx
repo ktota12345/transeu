@@ -1,4 +1,4 @@
-import { Edit, SimpleForm, TextInput } from 'react-admin';
+import {AutocompleteInput, Edit, ReferenceInput, SimpleForm, TextInput} from 'react-admin';
 
 const DriverEdit = () => (
     <Edit>
@@ -8,6 +8,9 @@ const DriverEdit = () => (
             <TextInput source="surname" label="Nazwisko" />
             <TextInput source="phone" label="Telefon" />
             <TextInput source="email" label="Email" />
+            <ReferenceInput source="carrierId" reference="carriers" label="Przewoźnik" allowEmpty>
+                <AutocompleteInput optionText="name" />
+            </ReferenceInput>
         </SimpleForm>
     </Edit>
 );

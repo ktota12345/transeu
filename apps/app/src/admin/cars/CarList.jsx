@@ -21,6 +21,14 @@ const CarList = (props) => {
             >
                 <TextField source="id" />
                 <TextField source="name" label="Nazwa" />
+                <FunctionField
+                    label="Przewoźnik"
+                    render={(record) =>
+                        record.carrier
+                            ? record.carrier.name
+                            : '—'
+                    }
+                />
                 <TextField source="registrationNumber" label="Nr rejestracyjny" />
                 <TextField source="carType" label="Typ samochodu" />
                 <TextField source="trailerType" label="Typ naczepy" />
