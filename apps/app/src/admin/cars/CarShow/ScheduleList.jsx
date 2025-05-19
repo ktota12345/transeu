@@ -1,6 +1,6 @@
 import {DateField, useRecordContext} from "react-admin";
 import {useState} from "react";
-import axios from "axios";
+import axiosNest     from "../../../api/axiosNest";
 import {Button, Card, CardContent, Stack, Typography} from "@mui/material";
 
 export const ScheduleList = () => {
@@ -15,7 +15,7 @@ export const ScheduleList = () => {
     const handleSearchOffers = async () => {
         setLoading(true);
         try {
-            const res = await axios.get(`/offerSearch/car/${record.id}`);
+            const res = await axiosNest.get(`/offerSearch/car/${record.id}`);
             setOffers(JSON.stringify(res.data, null, 2));
         } catch (error) {
             setOffers("Błąd podczas pobierania ofert.");

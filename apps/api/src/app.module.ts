@@ -26,7 +26,7 @@ import {VehicleEquipmentModule} from "./car-attributes/vehicle-equipment/vehicle
 import {SwapBodyModule} from "./car-attributes/swap-body/swap-body.module";
 import {BodyPropertyModule} from "./car-attributes/body-property/body-property.module";
 import {UsersModule } from "./users/users.module";
-
+import {OfferSearchModule} from "./offerSearch/offer-search.module";
 
 @Module({
     imports: [
@@ -48,6 +48,7 @@ import {UsersModule } from "./users/users.module";
         BodyPropertyModule,
 
         UsersModule,
+        OfferSearchModule,
 
     ],
     controllers: [
