@@ -213,7 +213,7 @@ model CarrierContact {
   source     String?
   details    Json?
 
-  carrier    Carrier @relation(fields: [carrierId], references: [id])
+  carrier    Carrier @relation(fields: [carrierId], references: [id], onDelete: Cascade)
 }
 
 model SearchScheduleSetup {

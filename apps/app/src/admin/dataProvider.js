@@ -71,7 +71,19 @@ const dataProvider = {
 
 
 
-    // Można również dodać inne metody, jak getMany, updateMany itp.
+
+    deleteMany: async (resource, params) => {
+        try {
+            await Promise.all(
+                params.ids.map(id =>
+                    axiosNest.delete(`/${resource}/${id}`)
+                )
+            );
+            return { data: params.ids };
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 export default dataProvider;

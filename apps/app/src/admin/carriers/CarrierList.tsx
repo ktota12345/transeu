@@ -2,7 +2,7 @@ import { List, Datagrid, TextField, DateField, FunctionField } from 'react-admin
 import  CarrierFilters from './CarrierFilters';
 
 const CarrierList = () => (
-    <List filters={CarrierFilters}>
+    <List filters={CarrierFilters} >
         <Datagrid rowClick="show">
             <TextField source="id" label="ID" />
             <TextField source="name" label="Nazwa" />
@@ -23,6 +23,7 @@ const CarrierList = () => (
                 label="Źródło"
                 render={record => record?.contacts?.[0]?.source || '-'}
             />
+
         </Datagrid>
     </List>
 );
