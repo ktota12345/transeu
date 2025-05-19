@@ -1,4 +1,4 @@
-import { List, Datagrid, TextField, FunctionField, WithRecord, EditButton } from 'react-admin';
+import { List, Datagrid, TextField, FunctionField, WithRecord, ShowButton, EditButton } from 'react-admin';
 import { CarFilter } from './CarFilter';  // Importujemy nasz filtr
 import { useState } from 'react';
 import ScheduleExpand from './ScheduleExpand';  // Komponent do rozwijania harmonogramów
@@ -41,6 +41,7 @@ const CarList = (props) => {
                     }
                 />
                 <EditButton/>
+                <ShowButton/>
             </Datagrid>
         </List>
     );

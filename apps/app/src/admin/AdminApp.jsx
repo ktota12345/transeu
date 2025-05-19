@@ -1,10 +1,13 @@
 import React from 'react';
 import {Admin, Resource} from 'react-admin';
 import dataProvider from './dataProvider';
+
+import {CustomLayout} from "./CustomLayout";
+
 import CarList from './cars/CarList';
 import {CarCreate} from './cars/CarCreate';
 import {CarEdit} from './cars/CarEdit';
-import {CustomLayout} from "./CustomLayout";
+import {CarShow} from './cars/CarShow';
 
 import DriverList from './drivers/DriverList';
 import DriverEdit from './drivers/DriverEdit';
@@ -35,7 +38,15 @@ const AdminApp = () => (
         basename={process.env.REACT_APP_ADMIN_PREFIX}
 
     >
-        <Resource name="cars" label="Samochody" list={CarList} create={CarCreate} edit={CarEdit}/>
+        <Resource
+            name="cars"
+            label="Samochody"
+            list={CarList}
+            create={CarCreate}
+            edit={CarEdit}
+            show={CarShow}
+        />
+
         <Resource
             name="drivers"
             list={DriverList}
