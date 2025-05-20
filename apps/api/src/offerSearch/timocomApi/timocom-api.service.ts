@@ -48,47 +48,8 @@ export class TimocomApiService {
         }
     }
 
-    async testConnection(): Promise<any> {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
 
-        const testPayload = {
-            startLocation: {
-                objectType: 'areaSearch',
-                area: {
-                    address: {
-                        objectType: 'address',
-                        city: 'Berlin',
-                        postalCode: '10117',
-                        country: 'DE',
-                    },
-                    size_km: 50,
-                },
-            },
-            destinationLocation: {
-                objectType: 'areaSearch',
-                area: {
-                    address: {
-                        objectType: 'address',
-                        city: 'München',
-                        postalCode: '80331',
-                        country: 'DE',
-                    },
-                    size_km: 50,
-                },
-            },
-            inclusiveRightUpperBoundDateTime: tomorrow.toISOString(),
-        };
 
-        try {
-            const res = await this.client.post('/freight-offers/search', testPayload);
-            this.logger.log('Połączenie testowe do TIMOCOM powiodło się.');
-            return { success: true, status: res.status, message: 'Połączenie działa', dataPreview: res.data?.payload?.[0] || null };
-        } catch (error) {
-            this.logger.error('Błąd testu połączenia z TIMOCOM:', error.message);
-            return this.handleError(error);
-        }
-    }
 
     private handleError(error: any) {
         const response = error.response;

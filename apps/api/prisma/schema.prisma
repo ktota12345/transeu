@@ -343,3 +343,17 @@ model BodyProperty {
 
   cars           Car[]   @relation("CarBodyProperties")
 }
+
+model City {
+  id          Int     @id @default(autoincrement())
+  name        String  // np. "Warszawa"
+  postalCode  String  // np. "00-001"
+  country     String  // np. "PL"
+  latitude    Float   // np. 52.2297
+  longitude   Float   // np. 21.0122
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([country, name])
+  @@index([postalCode])
+}
