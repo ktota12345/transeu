@@ -253,7 +253,22 @@ model Car {
   bodyProperties       BodyProperty[]        @relation("CarBodyProperties")
   searchNotificationSetup SearchNotificationSetup?
   bodies             VehicleBody[]         @relation("CarVehicleBodies")
+
+
+  baseAddressId       Int?       @unique
+  baseAddress         Address?   @relation(fields: [baseAddressId], references: [id])
 }
+
+model Address {
+  id          Int     @id @default(autoincrement())
+  country     String
+  postalCode  String
+  city        String
+  latitude    Float
+  longitude   Float
+  car         Car?    @relation
+}
+
 
 model SearchNotificationSetup {
   id     Int  @id @default(autoincrement())

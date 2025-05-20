@@ -11,7 +11,7 @@ export const ScheduleList = () => {
     const [error, setError] = useState(null);
 
     const [numLoadingCities, setNumLoadingCities] = useState(3);
-    const [numUnloadingCities, setNumUnloadingCities] = useState(20);
+    const [numUnloadingCities, setNumUnloadingCities] = useState(10);
     const [searchArea, setSearchArea] = useState(50);
     const [perPage, setPerPage] = useState(100);
 
@@ -59,7 +59,7 @@ export const ScheduleList = () => {
     return (
         <Card>
             <CardContent>
-                <Typography variant="h6" gutterBottom>Harmonogramy (aktywny okres)</Typography>
+                <Typography variant="h6" gutterBottom>Harmonogramy (aktywne okresy okresy)</Typography>
                 <Stack spacing={2}>
                     {futureSchedules.map((s, idx) => (
                         <Stack key={idx} direction="row" spacing={2}>

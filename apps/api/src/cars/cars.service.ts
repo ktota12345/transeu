@@ -28,6 +28,7 @@ export class CarsService {
                 include: {
                     driver: true,
                     carrier: true,
+                    baseAddress: true,
                     schedules: { include: { offers: true } },
                     searchSchedules: true,
                     vehicleTypes: true,
@@ -65,6 +66,7 @@ export class CarsService {
             include: {
                 driver: true,
                 carrier: true,
+                baseAddress: true,
                 schedules: true,
                 searchSchedules: true,
                 vehicleTypes: true,
@@ -101,10 +103,14 @@ export class CarsService {
 
 
     async update(id: number, data: any) {
+        if ('baseAddressId' in data) {
+            delete data.baseAddressId;
+        }
         const {
             schedules,
             driverId,
             carrierId,
+            baseAddress,
             searchSchedules,
             vehicleTypes,
             vehicleLoadSecurings,
@@ -129,7 +135,36 @@ export class CarsService {
                 connect: { id: carrierId },
             };
         }
-
+        if (baseAddress) {
+            if (baseAddress.id) {
+                // Aktualizujemy istniejący adres
+                updateData.baseAddress = {
+                    update: {
+                        country: baseAddress.country,
+                        postalCode: baseAddress.postalCode,
+                        city: baseAddress.city,
+                        latitude: Number(baseAddress.latitude),
+                        longitude: Number(baseAddress.longitude),
+                    },
+                };
+            } else {
+                // Tworzymy nowy adres
+                updateData.baseAddress = {
+                    create: {
+                        country: baseAddress.country,
+                        postalCode: baseAddress.postalCode,
+                        city: baseAddress.city,
+                        latitude: Number(baseAddress.latitude),
+                        longitude:Number( baseAddress.longitude),
+                    },
+                };
+            }
+        } else {
+            // Jeśli baseAddress jest null lub undefined, można rozłączyć relację
+            updateData.baseAddress = {
+                disconnect: true,
+            };
+        }
         const handleRelation = (input: any) =>
             input?.map((item: any) =>
                 typeof item === 'object' && item !== null && 'id' in item ? { id: item.id } : { id: item }

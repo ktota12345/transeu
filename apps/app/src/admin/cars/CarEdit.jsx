@@ -14,6 +14,7 @@ import {
     useNotify,
 } from 'react-admin';
 import { trailerTypes,scheduleStatuses } from "../../data/dictOptions";
+import {Typography} from "@mui/material";
 
 export const CarEdit = () =>  {
 
@@ -44,6 +45,13 @@ export const CarEdit = () =>  {
             <ReferenceInput source="carrierId" reference="carriers" label="Przewoźnik" allowEmpty>
                 <AutocompleteInput optionText="name" />
             </ReferenceInput>
+
+            <Typography variant="h6" gutterBottom>Adres bazowy</Typography>
+            <TextInput source="baseAddress.country" label="Kraj" />
+            <TextInput source="baseAddress.postalCode" label="Kod pocztowy" />
+            <TextInput source="baseAddress.city" label="Miasto" />
+            <TextInput source="baseAddress.latitude" label="Szerokość geograficzna" />
+            <TextInput source="baseAddress.longitude" label="Długość geograficzna" />
 
             <ArrayInput source="schedules" label="Harmonogramy">
                 <SimpleFormIterator inline>

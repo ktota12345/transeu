@@ -40,6 +40,7 @@ export class OfferSearchService {
                 vehicleEquipments: true,
                 swapBodies: true,
                 bodyProperties: true,
+                baseAddress: true,
                 schedules: {
                     where: {
                         to: {
@@ -59,13 +60,17 @@ export class OfferSearchService {
         }
         const schedule = car?.schedules[0];
 
+        if(car.baseAddress == null) {
+            throw new Error(`Car with ID ${carId} has no base address.`);
+        }
+
         const plannedLocation = {
             address: {
                 objectType: 'address',
-                country: 'PL',
-                postalCode: '43-300',
-                city: 'Bielsko-Biała',
-                location: [49.8224, 19.0469],
+                country: car.baseAddress.country,
+                postalCode: car.baseAddress.postalCode,
+                city:   car.baseAddress.city,
+                location: [car.baseAddress.latitude, car.baseAddress.longitude],
             },
         };
 

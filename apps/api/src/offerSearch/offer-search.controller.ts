@@ -31,7 +31,6 @@ export class OfferSearchController {
             numUnloadingCities: numUnloadingCities ? parseInt(numUnloadingCities) : 0,
         });
 
-        // Przekaż query params do serwisu (np. konwertując na number)
         const offers = await this.offerSearchService.searchOffersBetweenCities(carData, {
             searchArea: searchArea ? parseInt(searchArea) : SEARCH_AREA,
             perPage: perPage ? parseInt(perPage) : 100,
