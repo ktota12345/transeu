@@ -2,6 +2,9 @@ import {Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {TimocomApiService} from './timocomApi/timocom-api.service';
 
+const CLOSEST_CITIES_LIMIT = 3;
+const FURTHEST_CITIES_LIMIT = 3;
+
 @Injectable()
 export class OfferSearchService {
     constructor(
@@ -47,8 +50,20 @@ export class OfferSearchService {
                 location: [49.8224, 19.0469],
             },
         };
-        const closeCities = await this.getClosestCities(plannedLocation.address.location[0], plannedLocation.address.location[1], 3);
-        const furthestCities = await this.getFurthestCities(plannedLocation.address.location[0], plannedLocation.address.location[1], 3);
+
+        // const plannedLocation = {
+        //     address: {
+        //         objectType: 'address',
+        //         country: 'PL',
+        //         postalCode: '85-001',
+        //         city: 'Bydgoszcz',
+        //         location: [53.1235, 18.0084],
+        //     },
+        // };
+
+
+        const closeCities = await this.getClosestCities(plannedLocation.address.location[0], plannedLocation.address.location[1], CLOSEST_CITIES_LIMIT);
+        const furthestCities = await this.getFurthestCities(plannedLocation.address.location[0], plannedLocation.address.location[1], FURTHEST_CITIES_LIMIT);
         return {
             carSpecification: {
                 vehicleTypeCodes: car.vehicleTypes.map((vt) => vt.apiNameTimocom),
@@ -115,6 +130,9 @@ export class OfferSearchService {
     }, searchArea = 50, page = 1, limit = 100) {
         const offers: any[] = [];
 
+        const searchPeriodStartDate = '2025-05-19T08:12:12Z';
+        const searchPeriodEndDate = '2025-05-21T08:12:12Z';
+
         for (const start of carData.closeCities) {
             for (const end of carData.furthestCities) {
                 const searchParams = {
@@ -142,8 +160,10 @@ export class OfferSearchService {
                             size_km: searchArea,
                         },
                     },
-                    exclusiveLeftLowerBoundDateTime: carData.period.startDate,
-                    inclusiveRightUpperBoundDateTime: carData.period.endDate,
+                    //exclusiveLeftLowerBoundDateTime: carData.period.startDate,
+                    //inclusiveRightUpperBoundDateTime: carData.period.endDate,
+                    exclusiveLeftLowerBoundDateTime: searchPeriodStartDate,
+                    inclusiveRightUpperBoundDateTime: searchPeriodEndDate,
                     vehicleTypeCodes: carData.carSpecification.vehicleTypeCodes,
                     paging: {
                         page,

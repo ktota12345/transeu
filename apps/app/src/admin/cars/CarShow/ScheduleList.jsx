@@ -74,6 +74,7 @@ export const ScheduleList = () => {
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
+                                            <TableCell>Data</TableCell>
                                             <TableCell>Opis ładunku</TableCell>
                                             <TableCell>Odległość (km)</TableCell>
                                             <TableCell>Waga (t)</TableCell>
@@ -93,6 +94,7 @@ export const ScheduleList = () => {
                                             const unloadingDate = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING")?.latestLoadingDate || '-';
                                             return (
                                                 <TableRow key={offer.id}>
+                                                    <TableCell>{offer.creationDateTime}</TableCell>
                                                     <TableCell>{offer.freightDescription}</TableCell>
                                                     <TableCell>{offer.distance_km}</TableCell>
                                                     <TableCell>{offer.weight_t}</TableCell>
