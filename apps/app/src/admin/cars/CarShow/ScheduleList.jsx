@@ -78,7 +78,9 @@ export const ScheduleList = () => {
                                             <TableCell>Odległość (km)</TableCell>
                                             <TableCell>Waga (t)</TableCell>
                                             <TableCell>Załadunek</TableCell>
+                                            <TableCell>Data</TableCell>
                                             <TableCell>Rozładunek</TableCell>
+                                            <TableCell>Data</TableCell>
                                             <TableCell>Cena</TableCell>
                                             <TableCell>Link</TableCell>
                                         </TableRow>
@@ -87,13 +89,17 @@ export const ScheduleList = () => {
                                         {offers.offers.map(offer => {
                                             const loadingCity = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING")?.address.city || '-';
                                             const unloadingCity = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING")?.address.city || '-';
+                                            const loadingDate = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING")?.earliestLoadingDate || '-';
+                                            const unloadingDate = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING")?.latestLoadingDate || '-';
                                             return (
                                                 <TableRow key={offer.id}>
                                                     <TableCell>{offer.freightDescription}</TableCell>
                                                     <TableCell>{offer.distance_km}</TableCell>
                                                     <TableCell>{offer.weight_t}</TableCell>
                                                     <TableCell>{loadingCity}</TableCell>
+                                                    <TableCell>{loadingDate}</TableCell>
                                                     <TableCell>{unloadingCity}</TableCell>
+                                                    <TableCell>{unloadingDate}</TableCell>
                                                     <TableCell>{offer.price ? `${offer.price.amount} ${offer.price.currency}` : 'Brak danych'}</TableCell>
                                                     <TableCell>
                                                         <Link href={offer.deeplink} target="_blank" rel="noopener noreferrer">Zobacz</Link>
