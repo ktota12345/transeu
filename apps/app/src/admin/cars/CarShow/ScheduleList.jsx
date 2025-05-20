@@ -16,6 +16,7 @@ export const ScheduleList = () => {
     const handleSearchOffers = async () => {
         setLoading(true);
         setError(null);
+        setOffers(null);
         try {
             const res = await axiosNest.get(`/offerSearch/car/${record.id}`);
             setOffers(res.data);
@@ -83,6 +84,7 @@ export const ScheduleList = () => {
                                             <TableCell>Rozładunek</TableCell>
                                             <TableCell>Data</TableCell>
                                             <TableCell>Cena</TableCell>
+                                            <TableCell>Cena za kilometr</TableCell>
                                             <TableCell>Link</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -90,7 +92,8 @@ export const ScheduleList = () => {
                                         {offers.offers.map(offer => {
                                             const loadingCity = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING")?.address.city || '-';
                                             const unloadingCity = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING")?.address.city || '-';
-                                            const loadingDate = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING")?.earliestLoadingDate || '-';
+                                            const earliestLoadingDate = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING")?.earliestLoadingDate || '-';
+                                            const latestLoadingDate = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING")?.latestLoadingDate || '-';
                                             const unloadingDate = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING")?.latestLoadingDate || '-';
                                             return (
                                                 <TableRow key={offer.id}>
@@ -99,10 +102,11 @@ export const ScheduleList = () => {
                                                     <TableCell>{offer.distance_km}</TableCell>
                                                     <TableCell>{offer.weight_t}</TableCell>
                                                     <TableCell>{loadingCity}</TableCell>
-                                                    <TableCell>{loadingDate}</TableCell>
+                                                    <TableCell>{earliestLoadingDate}-{latestLoadingDate}</TableCell>
                                                     <TableCell>{unloadingCity}</TableCell>
                                                     <TableCell>{unloadingDate}</TableCell>
                                                     <TableCell>{offer.price ? `${offer.price.amount} ${offer.price.currency}` : 'Brak danych'}</TableCell>
+                                                    <TableCell>{offer.pricePerKm}</TableCell>
                                                     <TableCell>
                                                         <Link href={offer.deeplink} target="_blank" rel="noopener noreferrer">Zobacz</Link>
                                                     </TableCell>

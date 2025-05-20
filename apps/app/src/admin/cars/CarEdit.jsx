@@ -11,11 +11,24 @@ import {
     DateInput,
     SelectArrayInput,
     AutocompleteInput,
+    useNotify,
 } from 'react-admin';
 import { trailerTypes,scheduleStatuses } from "../../data/dictOptions";
 
-export const CarEdit = () =>  (
-    <Edit mutationMode="pessimistic">
+export const CarEdit = () =>  {
+
+
+    const notify = useNotify();
+    return (
+    <Edit
+        mutationMode="pessimistic"
+        mutationOptions={{
+            onSuccess: () => {
+                notify('Zapisano zmiany', { type: 'success' });
+                // brak redirectu = zostaje na stronie
+            },
+        }}
+    >
         <SimpleForm>
             <TextInput source="id" disabled />
             <TextInput source="name" />
@@ -54,6 +67,10 @@ export const CarEdit = () =>  (
             </ReferenceArrayInput>
 
             {/* Relacje wielu do wielu */}
+
+            <ReferenceArrayInput source="bodies" reference="vehicle-body" label="Rodzaj zabudowy">
+                <CheckboxGroupInput optionText="name" />
+            </ReferenceArrayInput>
 
             <ReferenceArrayInput source="vehicleTypes" reference="vehicle-types" label="Typy pojazdu">
                 <CheckboxGroupInput optionText="name" />
@@ -94,3 +111,4 @@ export const CarEdit = () =>  (
         </SimpleForm>
     </Edit>
 );
+}

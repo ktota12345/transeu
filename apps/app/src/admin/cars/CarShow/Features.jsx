@@ -11,6 +11,13 @@ export const Features = () => (
             <Typography variant="h6" gutterBottom>Cechy pojazdu</Typography>
 
             <Box mb={2}>
+                <Typography variant="body2" color="textSecondary">Zabudowa</Typography>
+                <ReferenceArrayField source="bodies" reference="vehicle-body">
+                    <SingleFieldList><ChipField source="name" /></SingleFieldList>
+                </ReferenceArrayField>
+            </Box>
+
+            <Box mb={2}>
                 <Typography variant="body2" color="textSecondary">Typy pojazdu</Typography>
                 <ReferenceArrayField source="vehicleTypes" reference="vehicle-types">
                     <SingleFieldList><ChipField source="name" /></SingleFieldList>

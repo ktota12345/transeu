@@ -35,6 +35,7 @@ export class CarsService {
                     vehicleEquipments: true,
                     swapBodies: true,
                     bodyProperties: true,
+                    bodies: true,
                 },
             }),
             this.prisma.car.count({ where: filter }),
@@ -49,6 +50,7 @@ export class CarsService {
                 vehicleEquipments: car.vehicleEquipments.map(v => v.id),
                 swapBodies: car.swapBodies.map(v => v.id),
                 bodyProperties: car.bodyProperties.map(v => v.id),
+                bodies: car.bodies.map(v => v.id),
             };
         });
 
@@ -70,6 +72,7 @@ export class CarsService {
                 vehicleEquipments: true,
                 swapBodies: true,
                 bodyProperties: true,
+                bodies: true,
                 searchNotificationSetup: {
                     include: { users: true },
                 },
@@ -87,6 +90,7 @@ export class CarsService {
             vehicleEquipments: car.vehicleEquipments.map(v => v.id),
             swapBodies: car.swapBodies.map(v => v.id),
             bodyProperties: car.bodyProperties.map(v => v.id),
+            bodies: car.bodies.map(v => v.id),
             searchNotificationSetup: {
                 ...car.searchNotificationSetup,
                 users: car.searchNotificationSetup?.users.map((user: any) => user.id) || [],
@@ -107,6 +111,7 @@ export class CarsService {
             vehicleEquipments,
             swapBodies,
             bodyProperties,
+            bodies,
             ...rest
         } = data;
 
@@ -171,6 +176,13 @@ export class CarsService {
                 connect: handleRelation(bodyProperties),
             };
         }
+        if (bodies && Array.isArray(bodies)) {
+            updateData.bodies = {
+                set: [],
+                connect: handleRelation(bodies),
+            };
+        }
+
 
         // Obsługa schedule (jak wcześniej)
         if (schedules) {

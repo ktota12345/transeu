@@ -20,7 +20,8 @@ import {CarSchedulesModule} from "./carSchedules/car-schedules.module";
 import {CarriersModule} from "./carriers/carriers.module";
 import {SearchScheduleSetupModule} from "./search-schedule-setup/search-schedule-setup.module";
 
-import {VehicleTypesModule} from "././car-attributes/vehicle-types/vehicle-types.module"
+import {VehicleBodyModule} from "./car-attributes/vehicle-body/vehicle-body.module";
+import {VehicleTypesModule} from "./car-attributes/vehicle-types/vehicle-types.module"
 import {VehicleLoadSecuringModule} from "./car-attributes/vehicle-load-securing/vehicle-load-securing.module";
 import {VehicleEquipmentModule} from "./car-attributes/vehicle-equipment/vehicle-equipment.module";
 import {SwapBodyModule} from "./car-attributes/swap-body/swap-body.module";
@@ -46,6 +47,7 @@ import {OfferSearchModule} from "./offerSearch/offer-search.module";
         VehicleEquipmentModule,
         SwapBodyModule,
         BodyPropertyModule,
+        VehicleBodyModule,
 
         UsersModule,
         OfferSearchModule,

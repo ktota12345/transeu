@@ -29,7 +29,8 @@ import {VehicleTypeEdit, VehicleTypeCreate} from './vehicleType/VehicleType';
 import VehicleLoadSecuringList from './vehicleLoadSecuring/VehicleLoadSecuringList';
 import {VehicleLoadSecuringEdit, VehicleLoadSecuringCreate} from './vehicleLoadSecuring/VehicleLoadSecuring';
 
-
+import VehicleBodyList from "./vehicleBody/VehicleBodyList";
+import VehicleBodyEdit from "./vehicleBody/VehicleBodyEdit";
 
 const AdminApp = () => (
     <Admin
@@ -103,6 +104,11 @@ const AdminApp = () => (
                   list={VehicleLoadSecuringList}
                   edit={VehicleLoadSecuringEdit}
                   create={VehicleLoadSecuringCreate}
+        />
+        <Resource name={"vehicle-body"}
+                  label="Rodzaj zabudowy"
+                  list={VehicleBodyList}
+                  edit={VehicleBodyEdit}
         />
 
     </Admin>

@@ -252,6 +252,7 @@ model Car {
   swapBodies           SwapBody[]            @relation("CarSwapBodies")
   bodyProperties       BodyProperty[]        @relation("CarBodyProperties")
   searchNotificationSetup SearchNotificationSetup?
+  bodies             VehicleBody[]         @relation("CarVehicleBodies")
 }
 
 model SearchNotificationSetup {
@@ -356,4 +357,13 @@ model City {
 
   @@index([country, name])
   @@index([postalCode])
+}
+
+
+model VehicleBody {
+  id             Int    @id @default(autoincrement())
+  name           String
+  apiNameTimocom String @unique
+
+  cars           Car[]   @relation("CarVehicleBodies")
 }
