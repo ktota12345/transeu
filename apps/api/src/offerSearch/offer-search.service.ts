@@ -2,8 +2,6 @@ import {Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {TimocomApiService} from './timocomApi/timocom-api.service';
 
-const CLOSEST_CITIES_LIMIT = 2;
-const FURTHEST_CITIES_LIMIT = 30;
 type CarSpecification = {
     type: string[];
     body: string[];
@@ -22,7 +20,13 @@ export class OfferSearchService {
     ) {
     }
 
-    async getCarForSearch(carId: number) {
+    async getCarForSearch(carId: number,{
+        numLoadingCities = 1,
+        numUnloadingCities = 1,
+    }: {
+        numLoadingCities: number;
+        numUnloadingCities: number;
+    }) {
         const now = new Date();
 
         const car = await this.prisma.car.findUnique({
@@ -66,8 +70,8 @@ export class OfferSearchService {
         };
 
 
-        const closeCities = await this.getClosestCities(plannedLocation.address.location[0], plannedLocation.address.location[1], CLOSEST_CITIES_LIMIT);
-        const furthestCities = await this.getFurthestCities(plannedLocation.address.location[0], plannedLocation.address.location[1], FURTHEST_CITIES_LIMIT);
+        const closeCities = await this.getClosestCities(plannedLocation.address.location[0], plannedLocation.address.location[1], numLoadingCities);
+        const furthestCities = await this.getFurthestCities(plannedLocation.address.location[0], plannedLocation.address.location[1], numUnloadingCities);
         return {
             carSpecification: {
                 type: car.vehicleTypes.map((vt) => vt.apiNameTimocom),
@@ -137,10 +141,14 @@ export class OfferSearchService {
             period: { startDate: Date | null; endDate: Date | null };
             closeCities: any[];
             furthestCities: any[];
+        },{
+            searchArea,
+            perPage,
+        }: {
+            searchArea: number;
+            perPage: number;
         },
-        searchArea = 50,
-        page = 1,
-        limit = 100
+
     ) {
         const offers: any[] = [];
 
@@ -156,8 +164,8 @@ export class OfferSearchService {
                     searchPeriodStartDate,
                     searchPeriodEndDate,
                     searchArea,
-                    page,
-                    limit,
+                    1,
+                    perPage,
                 );
 
                 offers.push(...partialOffers);

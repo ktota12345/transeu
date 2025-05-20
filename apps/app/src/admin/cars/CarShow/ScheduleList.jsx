@@ -2,12 +2,19 @@ import {DateField, useRecordContext} from "react-admin";
 import {useState} from "react";
 import axiosNest from "../../../api/axiosNest";
 import {Button, Card, CardContent, Stack, Typography, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from "@mui/material";
+import {TextField, Grid} from "@mui/material";
 
 export const ScheduleList = () => {
     const record = useRecordContext();
     const [offers, setOffers] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const [numLoadingCities, setNumLoadingCities] = useState(3);
+    const [numUnloadingCities, setNumUnloadingCities] = useState(20);
+    const [searchArea, setSearchArea] = useState(50);
+    const [perPage, setPerPage] = useState(100);
+
 
     const futureSchedules = (record?.schedules || []).filter(schedule => {
         return new Date(schedule.to) >= new Date();
@@ -18,7 +25,14 @@ export const ScheduleList = () => {
         setError(null);
         setOffers(null);
         try {
-            const res = await axiosNest.get(`/offerSearch/car/${record.id}`);
+            const params = {
+                numLoadingCities,
+                numUnloadingCities,
+                searchArea,
+                perPage,
+            };
+
+            const res = await axiosNest.get(`/offerSearch/car/${record.id}`, {params});
             setOffers(res.data);
         } catch (error) {
             setError("Błąd podczas pobierania ofert.");
@@ -27,11 +41,12 @@ export const ScheduleList = () => {
         setLoading(false);
     };
 
+
     if (!futureSchedules.length) return null;
 
     const plannedLocation = offers ? offers.car.plannedLocation.address.city || '-' : '-';
-    const closeCities = offers ? offers.car.closeCities.map((city)=>city.name) || [] : [];
-    const furthestCities = offers ? offers.car.furthestCities.map((city)=>city.name) || [] : [];
+    const closeCities = offers ? offers.car.closeCities.map((city) => city.name) || [] : [];
+    const furthestCities = offers ? offers.car.furthestCities.map((city) => city.name) || [] : [];
 
     const loadingCities = offers?.offers
         ? [...new Set(offers.offers.map(offer => offer.loadingPlaces.find(lp => lp.loadingType === "LOADING")?.address.city).filter(Boolean))]
@@ -48,12 +63,75 @@ export const ScheduleList = () => {
                 <Stack spacing={2}>
                     {futureSchedules.map((s, idx) => (
                         <Stack key={idx} direction="row" spacing={2}>
-                            <Typography>Od: <DateField record={s} source="from" /></Typography>
-                            <Typography>Do: <DateField record={s} source="to" /></Typography>
+                            <Typography>Od: <DateField record={s} source="from"/></Typography>
+                            <Typography>Do: <DateField record={s} source="to"/></Typography>
                             <Typography>Status: {s.status}</Typography>
                         </Stack>
                     ))}
 
+                    <Grid
+                        container
+                        spacing={2}
+                        mb={4}
+                        alignItems="stretch"
+                    >
+                        <Grid
+                            item
+                            xs={12}
+                            md={3}
+                            sx={{display: 'flex', flexDirection: 'column', width: '20%'}}
+                        >
+                            <TextField
+                                label="Liczba miast początkowych"
+                                type="number"
+                                value={numLoadingCities}
+                                onChange={(e) => setNumLoadingCities(e.target.value)}
+                                size="small"
+                            />
+                        </Grid>
+                        <Grid
+                            item
+                            xs={12}
+                            md={3}
+                            sx={{display: 'flex', flexDirection: 'column', width: '20%'}}
+                        >
+                            <TextField
+                                label="Liczba miast końcowych"
+                                type="number"
+                                value={numUnloadingCities}
+                                onChange={(e) => setNumUnloadingCities(e.target.value)}
+                                size="small"
+                            />
+                        </Grid>
+                        <Grid
+                            item
+                            xs={12}
+                            md={3}
+                            sx={{display: 'flex', flexDirection: 'column', width: '20%'}}
+                        >
+                            <TextField
+                                label="Search Area (km)"
+                                type="number"
+                                value={searchArea}
+                                onChange={(e) => setSearchArea(e.target.value)}
+                                size="small"
+                            />
+                        </Grid>
+                        <Grid
+                            item
+                            xs={12}
+                            md={3}
+                            sx={{display: 'flex', flexDirection: 'column', width: '20%'}}
+                        >
+                            <TextField
+                                label="Liczba wyników na stronę"
+                                type="number"
+                                value={perPage}
+                                onChange={(e) => setPerPage(e.target.value)}
+                                size="small"
+                            />
+                        </Grid>
+                    </Grid>
                     <Button variant="contained" onClick={handleSearchOffers} disabled={loading}>
                         {loading ? 'Szukam...' : 'Szukaj ofert'}
                     </Button>
@@ -71,7 +149,7 @@ export const ScheduleList = () => {
                             <Typography variant="h6" gutterBottom>Miasta początkowe (załadunek): {loadingCities.join(', ') || '-'}</Typography>
                             <Typography variant="h6" gutterBottom>Miasta docelowe (rozładunek): {unloadingCities.join(', ') || '-'}</Typography>
 
-                            <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
+                            <TableContainer component={Paper} sx={{maxHeight: 400}}>
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
@@ -121,7 +199,7 @@ export const ScheduleList = () => {
 
                     {/* Opcjonalnie nadal możesz wyświetlić JSON */}
                     {offers && (
-                        <pre style={{ background: '#f4f4f4', padding: '10px', whiteSpace: 'pre-wrap', overflow:'auto', height:'600px' }}>
+                        <pre style={{background: '#f4f4f4', padding: '10px', whiteSpace: 'pre-wrap', overflow: 'auto', height: '600px'}}>
                             {JSON.stringify(offers, null, 2)}
                         </pre>
                     )}
