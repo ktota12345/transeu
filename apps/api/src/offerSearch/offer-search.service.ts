@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {TimocomApiService} from './timocomApi/timocom-api.service';
+import * as console from "console";
 
 type CarSpecification = {
     type: string[];
@@ -74,6 +75,9 @@ export class OfferSearchService {
                     fromAddress: true,
                     toAddress: true,
                 },
+                orderBy:{
+                    toDate: 'desc',
+                }
             });
             if (confirmedOffer?.toAddress) {
                 const address = confirmedOffer.toAddress;
@@ -182,6 +186,7 @@ export class OfferSearchService {
             period: { startDate: Date | null; endDate: Date | null };
             closeCities: any[];
             furthestCities: any[];
+            plannedLocation: any;
         },{
             searchArea,
             perPage,
@@ -250,6 +255,7 @@ export class OfferSearchService {
         carData: {
             carSpecification: CarSpecification;
             period: { startDate: Date | null; endDate: Date | null };
+            plannedLocation: any
         },
         searchPeriodStartDate: Date,
         searchPeriodEndDate: Date,
@@ -282,14 +288,19 @@ export class OfferSearchService {
                     size_km: searchArea,
                 },
             },
-            exclusiveLeftLowerBoundDateTime: searchPeriodEndDate.toISOString(),
-            inclusiveRightUpperBoundDateTime: searchPeriodStartDate.toISOString(),
+            //inclusiveRightUpperBoundDateTime: searchPeriodStartDate.toISOString(),
+            //exclusiveLeftLowerBoundDateTime: searchPeriodEndDate.toISOString(),
+            exclusiveLeftLowerBoundDateTime: '2025-05-20T14:43:26.074Z',
+            inclusiveRightUpperBoundDateTime: '2025-05-27T14:43:26.074Z',
             loadingDate: {
                 objectType: "individualDates",
-                individualDates: [
-                    {
-                        dateTime: carData.period.startDate?.toISOString().slice(0, 10),
-                    },
+                dates: [
+                    carData.plannedLocation.date.toISOString().slice(0, 10)
+                    // {
+                    //     //dateTime: carData.period.startDate?.toISOString().slice(0, 10),
+                    //     //dateTime: carData.plannedLocation.date.toISOString().slice(0, 10),
+                    //     dateTime: '2025-05-27T00:00:00.000Z',
+                    // },
                 ],
             },
             vehicleProperties: {

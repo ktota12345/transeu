@@ -70,4 +70,15 @@ export class CarScheduleOffersController {
         return this.offersService.assignExternalOffer(body);
     }
 
+    @Post(':id/accept')
+    async acceptOffer(@Param('id') id: string) {
+        return this.offersService.update(+id, { status: 'confirmed' });
+    }
+
+    @Post(':id/reject')
+    async rejectOffer(@Param('id') id: string) {
+        return this.offersService.update(+id, { status: 'rejected' });
+    }
+
+
 }

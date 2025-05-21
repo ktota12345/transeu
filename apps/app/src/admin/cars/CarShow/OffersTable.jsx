@@ -37,6 +37,7 @@ export const OffersTable = ({offers}) => {
     const plannedLocation = offers.car.plannedLocation.address.city || '-';
     const closeCities = offers.car.closeCities.map(c => c.name).join(', ') || '-';
     const furthestCities = offers.car.furthestCities.map(c => c.name).join(', ') || '-';
+    const plannedLocationDate = offers.car.plannedLocation.date || '-';
 
 
     const handleAddOffer = async (offer) => {
@@ -66,7 +67,7 @@ export const OffersTable = ({offers}) => {
                     <TableBody>
                         <TableRow>
                             <TableCell><strong>Planowana lokalizacja auta</strong></TableCell>
-                            <TableCell>{plannedLocation}</TableCell>
+                            <TableCell>{plannedLocation} ({plannedLocationDate})</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell><strong>Miasta bliskie (szukanie)</strong></TableCell>
