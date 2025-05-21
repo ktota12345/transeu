@@ -59,21 +59,55 @@ export class OfferSearchService {
         if (!car) {
             throw new Error(`Car with ID ${carId} not found.`);
         }
-        const schedule = car?.schedules[0];
 
-        if(car.baseAddress == null) {
-            throw new Error(`Car with ID ${carId} has no base address.`);
+        const schedule = car.schedules[0];
+
+        let plannedLocation;
+
+        if (car.schedules.length > 0) {
+            const confirmedOffer = await this.prisma.carScheduleOffer.findFirst({
+                where: {
+                    carScheduleId: schedule.id,
+                    status: 'confirmed',
+                },
+                include: {
+                    fromAddress: true,
+                    toAddress: true,
+                },
+            });
+            if (confirmedOffer?.toAddress) {
+                const address = confirmedOffer.toAddress;
+
+                plannedLocation = {
+                    address: {
+                        objectType: 'address',
+                        country: address.country,
+                        postalCode: address.postalCode,
+                        city: address.city,
+                        location: [address.latitude, address.longitude],
+                    },
+                    date: confirmedOffer.toDate
+
+                };
+            }
         }
 
-        const plannedLocation = {
-            address: {
-                objectType: 'address',
-                country: car.baseAddress.country,
-                postalCode: car.baseAddress.postalCode,
-                city:   car.baseAddress.city,
-                location: [car.baseAddress.latitude, car.baseAddress.longitude],
-            },
-        };
+        if (!plannedLocation) {
+            if (!car.baseAddress) {
+                throw new Error(`Car with ID ${carId} has no base address.`);
+            }
+
+            plannedLocation = {
+                address: {
+                    objectType: 'address',
+                    country: car.baseAddress.country,
+                    postalCode: car.baseAddress.postalCode,
+                    city: car.baseAddress.city,
+                    location: [car.baseAddress.latitude, car.baseAddress.longitude],
+                },
+                date: car.schedules[0]?.from,
+            };
+        }
 
 
         const closeCities = await this.getClosestCities(plannedLocation.address.location[0], plannedLocation.address.location[1], numLoadingCities);

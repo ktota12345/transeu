@@ -31,11 +31,11 @@ export class TimocomApiService {
     }
 
     async fetchOffers(searchParams: any): Promise<any> {
-        this.logger.debug('Wysyłam zapytanie do TIMOCOM /freight-offers/search', searchParams);
+        //this.logger.debug('Wysyłam zapytanie do TIMOCOM /freight-offers/search', searchParams);
         try {
             const res = await this.client.post('/freight-offers/search', searchParams);
             if (res.status >= 200 && res.status < 300 && res.data) {
-                this.logger.log(`Otrzymano ${res.data.payload?.length ?? 0} wyników z TIMOCOM.`);
+                //this.logger.log(`Otrzymano ${res.data.payload?.length ?? 0} wyników z TIMOCOM.`);
                 return { success: true, data: res.data };
             } else {
                 const msg = `Nieoczekiwany format odpowiedzi TIMOCOM: ${res.status}`;
