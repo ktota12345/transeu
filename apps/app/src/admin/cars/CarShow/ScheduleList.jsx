@@ -1,8 +1,15 @@
 import {DateField, useRecordContext} from "react-admin";
 import {useState} from "react";
 import axiosNest from "../../../api/axiosNest";
-import {Button, Card, CardContent, Stack, Typography, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from "@mui/material";
-import {TextField, Grid} from "@mui/material";
+import {
+    Button,
+    Card,
+    CardContent,
+    Stack,
+    Typography
+} from "@mui/material";
+import {SearchParameters} from "./SearchParameters";
+import {OffersTable} from "./OffersTable";
 
 export const ScheduleList = () => {
     const record = useRecordContext();
@@ -14,7 +21,6 @@ export const ScheduleList = () => {
     const [numUnloadingCities, setNumUnloadingCities] = useState(10);
     const [searchArea, setSearchArea] = useState(50);
     const [perPage, setPerPage] = useState(100);
-
 
     const futureSchedules = (record?.schedules || []).filter(schedule => {
         return new Date(schedule.to) >= new Date();
@@ -41,20 +47,7 @@ export const ScheduleList = () => {
         setLoading(false);
     };
 
-
     if (!futureSchedules.length) return null;
-
-    const plannedLocation = offers ? offers.car.plannedLocation.address.city || '-' : '-';
-    const closeCities = offers ? offers.car.closeCities.map((city) => city.name) || [] : [];
-    const furthestCities = offers ? offers.car.furthestCities.map((city) => city.name) || [] : [];
-
-    const loadingCities = offers?.offers
-        ? [...new Set(offers.offers.map(offer => offer.loadingPlaces.find(lp => lp.loadingType === "LOADING")?.address.city).filter(Boolean))]
-        : [];
-
-    const unloadingCities = offers?.offers
-        ? [...new Set(offers.offers.map(offer => offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING")?.address.city).filter(Boolean))]
-        : [];
 
     return (
         <Card>
@@ -69,135 +62,25 @@ export const ScheduleList = () => {
                         </Stack>
                     ))}
 
-                    <Grid
-                        container
-                        spacing={2}
-                        mb={4}
-                        alignItems="stretch"
-                    >
-                        <Grid
-                            item
-                            xs={12}
-                            md={3}
-                            sx={{display: 'flex', flexDirection: 'column', width: '20%'}}
-                        >
-                            <TextField
-                                label="Liczba miast początkowych"
-                                type="number"
-                                value={numLoadingCities}
-                                onChange={(e) => setNumLoadingCities(e.target.value)}
-                                size="small"
-                            />
-                        </Grid>
-                        <Grid
-                            item
-                            xs={12}
-                            md={3}
-                            sx={{display: 'flex', flexDirection: 'column', width: '20%'}}
-                        >
-                            <TextField
-                                label="Liczba miast końcowych"
-                                type="number"
-                                value={numUnloadingCities}
-                                onChange={(e) => setNumUnloadingCities(e.target.value)}
-                                size="small"
-                            />
-                        </Grid>
-                        <Grid
-                            item
-                            xs={12}
-                            md={3}
-                            sx={{display: 'flex', flexDirection: 'column', width: '20%'}}
-                        >
-                            <TextField
-                                label="Search Area (km)"
-                                type="number"
-                                value={searchArea}
-                                onChange={(e) => setSearchArea(e.target.value)}
-                                size="small"
-                            />
-                        </Grid>
-                        <Grid
-                            item
-                            xs={12}
-                            md={3}
-                            sx={{display: 'flex', flexDirection: 'column', width: '20%'}}
-                        >
-                            <TextField
-                                label="Liczba wyników na stronę"
-                                type="number"
-                                value={perPage}
-                                onChange={(e) => setPerPage(e.target.value)}
-                                size="small"
-                            />
-                        </Grid>
-                    </Grid>
+                    <SearchParameters
+                        numLoadingCities={numLoadingCities}
+                        setNumLoadingCities={setNumLoadingCities}
+                        numUnloadingCities={numUnloadingCities}
+                        setNumUnloadingCities={setNumUnloadingCities}
+                        searchArea={searchArea}
+                        setSearchArea={setSearchArea}
+                        perPage={perPage}
+                        setPerPage={setPerPage}
+                    />
+
                     <Button variant="contained" onClick={handleSearchOffers} disabled={loading}>
                         {loading ? 'Szukam...' : 'Szukaj ofert'}
                     </Button>
 
-                    {error && (
-                        <Typography color="error">{error}</Typography>
-                    )}
+                    {error && <Typography color="error">{error}</Typography>}
 
-                    {offers && offers.offers && (
-                        <>
-                            <Typography variant="h6" gutterBottom>Planowana lokalizacja auta: {plannedLocation}</Typography>
-                            <Typography variant="h6" gutterBottom>Miasta bliskie (szukanie): {closeCities.join(', ') || '-'}</Typography>
-                            <Typography variant="h6" gutterBottom>Miasta najdalsze (szukanie): {furthestCities.join(', ') || '-'}</Typography>
+                    {offers && offers.offers && <OffersTable offers={offers} />}
 
-                            <Typography variant="h6" gutterBottom>Miasta początkowe (załadunek): {loadingCities.join(', ') || '-'}</Typography>
-                            <Typography variant="h6" gutterBottom>Miasta docelowe (rozładunek): {unloadingCities.join(', ') || '-'}</Typography>
-
-                            <TableContainer component={Paper} sx={{maxHeight: 400}}>
-                                <Table stickyHeader size="small">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Data</TableCell>
-                                            <TableCell>Opis ładunku</TableCell>
-                                            <TableCell>Odległość (km)</TableCell>
-                                            <TableCell>Waga (t)</TableCell>
-                                            <TableCell>Załadunek</TableCell>
-                                            <TableCell>Data</TableCell>
-                                            <TableCell>Rozładunek</TableCell>
-                                            <TableCell>Data</TableCell>
-                                            <TableCell>Cena</TableCell>
-                                            <TableCell>Cena za kilometr</TableCell>
-                                            <TableCell>Link</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {offers.offers.map(offer => {
-                                            const loadingCity = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING")?.address.city || '-';
-                                            const unloadingCity = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING")?.address.city || '-';
-                                            const earliestLoadingDate = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING")?.earliestLoadingDate || '-';
-                                            const latestLoadingDate = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING")?.latestLoadingDate || '-';
-                                            const unloadingDate = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING")?.latestLoadingDate || '-';
-                                            return (
-                                                <TableRow key={offer.id}>
-                                                    <TableCell>{offer.creationDateTime}</TableCell>
-                                                    <TableCell>{offer.freightDescription}</TableCell>
-                                                    <TableCell>{offer.distance_km}</TableCell>
-                                                    <TableCell>{offer.weight_t}</TableCell>
-                                                    <TableCell>{loadingCity}</TableCell>
-                                                    <TableCell>{earliestLoadingDate}-{latestLoadingDate}</TableCell>
-                                                    <TableCell>{unloadingCity}</TableCell>
-                                                    <TableCell>{unloadingDate}</TableCell>
-                                                    <TableCell>{offer.price ? `${offer.price.amount} ${offer.price.currency}` : 'Brak danych'}</TableCell>
-                                                    <TableCell>{offer.pricePerKm}</TableCell>
-                                                    <TableCell>
-                                                        <Link href={offer.deeplink} target="_blank" rel="noopener noreferrer">Zobacz</Link>
-                                                    </TableCell>
-                                                </TableRow>
-                                            )
-                                        })}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </>
-                    )}
-
-                    {/* Opcjonalnie nadal możesz wyświetlić JSON */}
                     {offers && (
                         <pre style={{background: '#f4f4f4', padding: '10px', whiteSpace: 'pre-wrap', overflow: 'auto', height: '600px'}}>
                             {JSON.stringify(offers, null, 2)}

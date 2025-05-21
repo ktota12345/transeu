@@ -267,6 +267,8 @@ model Address {
   latitude    Float
   longitude   Float
   car         Car?    @relation
+  offerFrom   CarScheduleOffer[] @relation("OfferFromAddress")
+  offerTo     CarScheduleOffer[] @relation("OfferToAddress")
 }
 
 
@@ -310,8 +312,12 @@ model CarScheduleOffer {
   id              Int       @id @default(autoincrement())
   fromDate        DateTime
   toDate          DateTime
-  fromLocation    String
-  toLocation      String
+    fromAddressId   Int?
+    fromAddress     Address?   @relation("OfferFromAddress", fields: [fromAddressId], references: [id])
+
+    toAddressId     Int?
+    toAddress       Address?   @relation("OfferToAddress", fields: [toAddressId], references: [id])
+
   status          String    // np. 'pending', 'confirmed', 'rejected'
   carId           Int?
   car             Car?       @relation(fields: [carId], references: [id])

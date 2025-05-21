@@ -7,7 +7,7 @@ import {
     useDataProvider,
     useNotify,
     TextField,
-    DateField,
+    DateField, FunctionField,
 } from 'react-admin';
 import React, { useEffect, useState } from 'react';
 import { useWatch, useFormContext } from 'react-hook-form';
@@ -107,12 +107,29 @@ const CarScheduleOfferFormContent = () => {
                     </TableRow>
                     <TableRow>
                         <TableCell>Miejsce początkowe</TableCell>
-                        <TableCell><TextField source="fromLocation" /></TableCell>
+                        <TableCell>
+                            <FunctionField
+                                render={(record: any) =>
+                                    record.fromAddress
+                                        ? `${record.fromAddress.city}, ${record.fromAddress.postalCode}, ${record.fromAddress.country}`
+                                        : '—'
+                                }
+                            />
+                        </TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Miejsce docelowe</TableCell>
-                        <TableCell><TextField source="toLocation" /></TableCell>
+                        <TableCell>
+                            <FunctionField
+                                render={(record: any) =>
+                                    record.toAddress
+                                        ? `${record.toAddress.city}, ${record.toAddress.postalCode}, ${record.toAddress.country}`
+                                        : '—'
+                                }
+                            />
+                        </TableCell>
                     </TableRow>
+
                     <TableRow>
                         <TableCell>Cena</TableCell>
                         <TableCell><TextField source="details.price.amount" /></TableCell>

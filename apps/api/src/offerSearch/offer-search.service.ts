@@ -9,6 +9,7 @@ type CarSpecification = {
     equipment: string[];
     loadSecuring: string[];
     swapBody: string[];
+    carId: number;
 };
 
 
@@ -85,6 +86,7 @@ export class OfferSearchService {
                 equipment: car.vehicleEquipments.map((ve) => ve.apiNameTimocom),
                 loadSecuring: car.vehicleLoadSecurings.map((vls) => vls.apiNameTimocom),
                 swapBody: car.swapBodies.map((sb) => sb.apiNameTimocom),
+                carId: car.id,
             },
             period: {
                 startDate: schedule?.from ?? null,

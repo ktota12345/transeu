@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus,Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, CarScheduleOffer } from '../../generated/prisma/client';
 
@@ -26,6 +26,8 @@ export class CarScheduleOffersService {
                     car: true,
                     driver: true,
                     carSchedule: true,
+                    fromAddress: true,
+                    toAddress: true,
                 },
             }),
             this.prisma.carScheduleOffer.count({
@@ -42,6 +44,8 @@ export class CarScheduleOffersService {
                 car: true,
                 driver: true,
                 carSchedule: true,
+                fromAddress: true,
+                toAddress: true,
             },
         });
     }
@@ -77,10 +81,87 @@ export class CarScheduleOffersService {
         return updatedOffer;
     }
 
-
-
-
     async remove(id: number): Promise<CarScheduleOffer> {
         return this.prisma.carScheduleOffer.delete({ where: { id } });
     }
+
+    async assignExternalOffer(payload: any): Promise<CarScheduleOffer> {
+        const { carId, details } = payload;
+
+        if (!carId || !details?.loadingPlaces?.length) {
+            throw new HttpException('Missing required fields: carId or loadingPlaces', HttpStatus.BAD_REQUEST);
+        }
+
+        const loading = details.loadingPlaces.find((p) => p.loadingType === 'LOADING');
+        const unloading = details.loadingPlaces.find((p) => p.loadingType === 'UNLOADING');
+
+        if (!loading?.earliestLoadingDate || !unloading?.latestLoadingDate) {
+            throw new HttpException('Missing loading/unloading date info in loadingPlaces', HttpStatus.BAD_REQUEST);
+        }
+
+        const fromDate = new Date(loading.earliestLoadingDate);
+        const toDate = new Date(unloading.latestLoadingDate);
+
+        // --- Pobieramy auto i kierowcę ---
+        const car = await this.prisma.car.findUnique({
+            where: { id: carId },
+            include: { driver: true },
+        });
+
+        if (!car) {
+            throw new HttpException(`Car with ID ${carId} not found`, HttpStatus.NOT_FOUND);
+        }
+
+        // --- Szukamy pasującego schedule ---
+        const matchingSchedule = await this.prisma.carSchedule.findFirst({
+            where: {
+                carId,
+                from: { lte: fromDate },
+                to: { gte: toDate },
+            },
+        });
+
+        if (!matchingSchedule) {
+            throw new HttpException('No matching CarSchedule for given date range', HttpStatus.BAD_REQUEST);
+        }
+
+        // --- Tworzymy adresy ---
+        const fromAddress = await this.prisma.address.create({
+            data: {
+                country: loading.address.country,
+                city: loading.address.city,
+                postalCode: loading.address.postalCode,
+                latitude: loading.address.geoCoordinate.latitude,
+                longitude: loading.address.geoCoordinate.longitude,
+            },
+        });
+
+        const toAddress = await this.prisma.address.create({
+            data: {
+                country: unloading.address.country,
+                city: unloading.address.city,
+                postalCode: unloading.address.postalCode,
+                latitude: unloading.address.geoCoordinate.latitude,
+                longitude: unloading.address.geoCoordinate.longitude,
+            },
+        });
+
+        // --- Tworzymy ofertę ---
+        const offer = await this.prisma.carScheduleOffer.create({
+            data: {
+                fromDate,
+                toDate,
+                status: 'pending',
+                details,
+                car: { connect: { id: car.id } },
+                driver: car.driverId ? { connect: { id: car.driverId } } : undefined,
+                carSchedule: { connect: { id: matchingSchedule.id } },
+                fromAddress: { connect: { id: fromAddress.id } },
+                toAddress: { connect: { id: toAddress.id } },
+            },
+        });
+
+        return offer;
+    }
+
 }

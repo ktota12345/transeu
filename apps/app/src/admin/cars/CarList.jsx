@@ -15,7 +15,7 @@ const CarList = (props) => {
     return (
         <List {...props} filters={<CarFilter />}>
             <Datagrid
-                rowClick="expand"
+                rowClick="show"
                 expand={<WithRecord label="author" render={record => (<ScheduleExpand schedules={record.schedules}/>)}/>}
                 isRowExpandable={(record) => record.schedules?.length > 0}
             >

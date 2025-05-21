@@ -64,4 +64,10 @@ export class CarScheduleOffersController {
     remove(@Param('id') id: string) {
         return this.offersService.remove(+id);
     }
+
+    @Post('assign')
+    async assignOffer(@Body() body: any) {
+        return this.offersService.assignExternalOffer(body);
+    }
+
 }
