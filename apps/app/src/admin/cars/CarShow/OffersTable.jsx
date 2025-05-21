@@ -129,14 +129,18 @@ export const OffersTable = ({offers}) => {
                                         <Link href={offer.deeplink} target="_blank" rel="noopener noreferrer">Zobacz</Link>
                                     </TableCell>
                                     <TableCell>
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            onClick={() => handleAddOffer(offer)}
-                                            disabled={loadingOfferId === offer.id}
-                                        >
-                                            {loadingOfferId === offer.id ? <CircularProgress size={16}/> : "Dodaj ofertę"}
-                                        </Button>
+                                        {offer.alreadySaved ? (
+                                            <Typography variant="body2" color="textSecondary">Oferta już przypisana</Typography>
+                                        ) : (
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={() => handleAddOffer(offer)}
+                                                disabled={loadingOfferId === offer.id}
+                                            >
+                                                {loadingOfferId === offer.id ? <CircularProgress size={16}/> : "Dodaj ofertę"}
+                                            </Button>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             );

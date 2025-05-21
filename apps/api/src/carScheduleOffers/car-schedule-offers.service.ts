@@ -145,13 +145,15 @@ export class CarScheduleOffersService {
                 longitude: unloading.address.geoCoordinate.longitude,
             },
         });
-
         // --- Tworzymy ofertę ---
         const offer = await this.prisma.carScheduleOffer.create({
             data: {
                 fromDate,
                 toDate,
                 status: 'pending',
+                externalId: payload.details.id,
+                externalLink: payload.details.deeplink,
+                sourceSystem: 'timocom',
                 details,
                 car: { connect: { id: car.id } },
                 driver: car.driverId ? { connect: { id: car.driverId } } : undefined,

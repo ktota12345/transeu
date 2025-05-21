@@ -312,11 +312,15 @@ model CarScheduleOffer {
   id              Int       @id @default(autoincrement())
   fromDate        DateTime
   toDate          DateTime
-    fromAddressId   Int?
-    fromAddress     Address?   @relation("OfferFromAddress", fields: [fromAddressId], references: [id])
+  fromAddressId   Int?
+  fromAddress     Address?   @relation("OfferFromAddress", fields: [fromAddressId], references: [id])
 
-    toAddressId     Int?
-    toAddress       Address?   @relation("OfferToAddress", fields: [toAddressId], references: [id])
+  toAddressId     Int?
+  toAddress       Address?   @relation("OfferToAddress", fields: [toAddressId], references: [id])
+
+  externalId       String?   @unique
+  externalLink     String?
+  sourceSystem     String?
 
   status          String    // np. 'pending', 'confirmed', 'rejected'
   carId           Int?

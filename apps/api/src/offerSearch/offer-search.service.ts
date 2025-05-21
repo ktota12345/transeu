@@ -179,7 +179,34 @@ export class OfferSearchService {
             }
         }
 
-        return this.sortOffers(offers);
+
+        const fullOffers = this.sortOffers(offers);
+
+        const externalIds = fullOffers
+            .map(o => o.id)
+            .filter((id): id is string => !!id); // tylko nie-null
+
+        const existingOffers = await this.prisma.carScheduleOffer.findMany({
+            where: {
+                externalId: {
+                    in: externalIds,
+                },
+                sourceSystem: 'timocom',
+            },
+        });
+
+        const existingMap = new Map(existingOffers.map(e => [e.externalId, e]));
+
+        const offersWithStatus = offers.map(offer => {
+            const match = offer.id ? existingMap.get(offer.id) : null;
+            return {
+                ...offer,
+                alreadySaved: !!match,
+                savedOffer: match
+            };
+        });
+
+        return offersWithStatus;
     }
 
 
