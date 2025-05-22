@@ -64,25 +64,25 @@ const Sidebar = () => {
                 <NavItem icon={FiHome} to="/">
                     Dashboard
                 </NavItem>
-                <NavItem icon={FiSearch} to="/quick-search">
-                    Szybkie wyszukiwanie
-                </NavItem>
-                <NavItem icon={FiUsers} to="/agents">
-                    Agenci
-                </NavItem>
-                {/* <NavItem icon={FiTruck} to="/orders">
-                    Zlecenia
-                </NavItem> */}
-                <NavItem icon={FiCalendar} to="/schedule">
-                    Harmonogram
-                </NavItem>
-                {/* <NavItem icon={FiBarChart2} to="/reports">
-                    Raporty
-                </NavItem> */}
-                <Divider my={2} />
-                <NavItem icon={FiSettings} to="/settings">
-                    Ustawienia
-                </NavItem>
+                {/*<NavItem icon={FiSearch} to="/quick-search">*/}
+                {/*    Szybkie wyszukiwanie*/}
+                {/*</NavItem>*/}
+                {/*<NavItem icon={FiUsers} to="/agents">*/}
+                {/*    Agenci*/}
+                {/*</NavItem>*/}
+                {/*/!* <NavItem icon={FiTruck} to="/orders">*/}
+                {/*    Zlecenia*/}
+                {/*</NavItem> *!/*/}
+                {/*<NavItem icon={FiCalendar} to="/schedule">*/}
+                {/*    Harmonogram*/}
+                {/*</NavItem>*/}
+                {/*/!* <NavItem icon={FiBarChart2} to="/reports">*/}
+                {/*    Raporty*/}
+                {/*</NavItem> *!/*/}
+                {/*<Divider my={2} />*/}
+                {/*<NavItem icon={FiSettings} to="/settings">*/}
+                {/*    Ustawienia*/}
+                {/*</NavItem>*/}
                 <NavItem icon={FiTruck} to="/admin/#/cars">
                     Samochody
                 </NavItem>
