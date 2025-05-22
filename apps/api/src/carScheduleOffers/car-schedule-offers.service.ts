@@ -128,8 +128,8 @@ export class CarScheduleOffersService {
         const matchingSchedule = await this.prisma.carSchedule.findFirst({
             where: {
                 carId,
-                from: {lte: fromDate},
-                to: {gte: toDate},
+                //from: {lte: twoDaysBefore},
+                //to: {gte: toDate},
             },
         });
 
