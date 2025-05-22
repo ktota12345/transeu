@@ -10,11 +10,11 @@ export const CustomMenu = () => {
 
         return (
             <Menu>
-                    <MenuItemLink component={Link} to="/" primaryText="Dashboard" />
-                    <MenuItemLink component={Link} to="/quick-search" primaryText="Szybkie wyszukiwanie" />
-                    <MenuItemLink component={Link} to="/agents" primaryText="Agenci" />
-                    <MenuItemLink component={Link} to="/schedule" primaryText="Harmonogram" />
-                    <MenuItemLink component={Link} to="/settings" primaryText="Ustawienia" />
+                    {/*<MenuItemLink component={Link} to="/" primaryText="Dashboard" />*/}
+                    {/*<MenuItemLink component={Link} to="/quick-search" primaryText="Szybkie wyszukiwanie" />*/}
+                    {/*<MenuItemLink component={Link} to="/agents" primaryText="Agenci" />*/}
+                    {/*<MenuItemLink component={Link} to="/schedule" primaryText="Harmonogram" />*/}
+                    {/*<MenuItemLink component={Link} to="/settings" primaryText="Ustawienia" />*/}
                     <MenuItemLink to={`${process.env.REACT_APP_ADMIN_PREFIX}car-schedule-offers`} primaryText="Oferty" />
                     <MenuItemLink to={`${process.env.REACT_APP_ADMIN_PREFIX}carriers`} primaryText="Przewoźnicy" />
 

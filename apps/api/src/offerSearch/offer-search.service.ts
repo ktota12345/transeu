@@ -54,6 +54,12 @@ export class OfferSearchService {
                     },
                     take: 1,
                 },
+                driver: {
+                    include: {
+                        allowedCountries: true,
+                    },
+                },
+
             },
         });
 
@@ -113,9 +119,23 @@ export class OfferSearchService {
             };
         }
 
+        const allowedCountries = (car?.driver?.allowedCountries?.length) ? car.driver.allowedCountries.map(c => c.code) : [];
 
-        const closeCities = await this.getClosestCities(plannedLocation.address.location[0], plannedLocation.address.location[1], numLoadingCities);
-        const furthestCities = await this.getFurthestCities(plannedLocation.address.location[0], plannedLocation.address.location[1], numUnloadingCities);
+        const closeCities = await this.getClosestCities(
+            plannedLocation.address.location[0],
+            plannedLocation.address.location[1],
+            numLoadingCities,
+            allowedCountries
+        );
+        const furthestCities = await this.getFurthestCities(
+            plannedLocation.address.location[0],
+            plannedLocation.address.location[1],
+            numUnloadingCities,
+            allowedCountries
+        );
+
+
+
         return {
             carSpecification: {
                 type: car.vehicleTypes.map((vt) => vt.apiNameTimocom),
@@ -137,7 +157,7 @@ export class OfferSearchService {
         };
     }
 
-    async getClosestCities(lat: number, lng: number, limit: number = 5) {
+    async getClosestCities(lat: number, lng: number, limit: number = 5, allowedCountries: string[] = []) {
         return this.prisma.$queryRawUnsafe<any>(`
             SELECT id,
                    name,
@@ -153,12 +173,13 @@ export class OfferSearchService {
                               )
                        ) AS distance
             FROM "City"
+            WHERE country IN (${allowedCountries.map(c => `'${c}'`).join(',')})
             ORDER BY distance ASC
             LIMIT ${limit};
         `);
     }
 
-    async getFurthestCities(lat: number, lng: number, limit: number = 5) {
+    async getFurthestCities(lat: number, lng: number, limit: number = 5,allowedCountries: string[] = []) {
         return this.prisma.$queryRawUnsafe<any>(`
             SELECT id,
                    name,
@@ -174,6 +195,7 @@ export class OfferSearchService {
                               )
                        ) AS distance
             FROM "City"
+            WHERE country IN (${allowedCountries.map(c => `'${c}'`).join(',')})
             ORDER BY distance DESC
             LIMIT ${limit};
         `);

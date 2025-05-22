@@ -88,78 +88,8 @@ model Agent {
   searchRadius              Int?
 }
 
-model LogisticsBase {
-  id                Int     @id @default(autoincrement())
-  name              String
-  addressFull       String
-  addressCity       String
-  addressPostalCode String
-  addressCountry    String
-  coordinatesLat    Float
-  coordinatesLng    Float
-}
 
-model LocationDetails {
-  id             Int     @id @default(autoincrement())
-  date           DateTime
-  timeWindow     String
-  address        String
-  city           String
-  country        String
-  postalCode     String
-  contactPerson  String
-  contactPhone   String
-  contactEmail   String
-  additionalInfo String
-  location       String
 
-}
-
-model Cargo {
-  id                    Int     @id @default(autoincrement())
-  type                  String
-  weight                Float
-  weightUnit            String
-  volume                Float
-  volumeUnit            String
-  loadingMeters         Float
-  packages              Int
-  packageType           String
-  description           String
-  adr                   Boolean
-  temperature           Float?
-  stackable            Boolean
-  fragile               Boolean
-  additionalRequirements String
-
-}
-
-model Vehicle {
-  id                   Int     @id @default(autoincrement())
-  type                 String
-  requirements         String[]
-  capacity             String
-  size                 String
-  additionalEquipment  String
-
-}
-
-model Financials {
-  id               Int      @id @default(autoincrement())
-  value            Float
-  currency         String
-  ratePerKm        Float
-  estimatedDistance Float
-  distance         Float
-  fuelCost         Float
-  driverCost       Float
-  estimatedCosts   Float
-  estimatedProfit  Float
-  margin           Int
-  valuePerKm       Float
-  paymentTerm      String
-
-}
 
 model User {
   id                 Int       @id @default(autoincrement())
@@ -292,6 +222,8 @@ model Driver {
   cars     Car[]
   offers   CarScheduleOffer[]
 
+  allowedCountries Country[] @relation("AllowedCountries")
+
   carrierId   Int?
   carrier     Carrier?  @relation("CarrierDrivers", fields: [carrierId], references: [id])
 }
@@ -299,7 +231,7 @@ model Driver {
 model CarSchedule {
   id        Int                @id @default(autoincrement())
   carId     Int
-  car       Car                @relation(fields: [carId], references: [id])
+  car       Car                @relation(fields: [carId], references: [id], onDelete: Cascade)
   from      DateTime
   to        DateTime
   status    String             // np. 'available', 'unavailable', 'maintenance'
@@ -380,10 +312,21 @@ model City {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+
+  countryRel  Country @relation(fields: [country], references: [code], onDelete: Cascade)
+
   @@index([country, name])
   @@index([postalCode])
 }
 
+model Country {
+    id         Int      @default(autoincrement())
+  code        String   @id // np. "PL"
+  name        String
+  cities      City[]
+  allowedByDrivers Driver[] @relation("AllowedCountries")
+
+}
 
 model VehicleBody {
   id             Int    @id @default(autoincrement())

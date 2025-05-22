@@ -35,31 +35,33 @@ function App() {
             <ChakraProvider>
                 <Router>
                         <Routes>
-                            <Route path="/login" element={<LoginForm onLoginSuccess={() => window.location.replace('/')}/>}/>
+                            {/*<Route path="/login" element={<LoginForm onLoginSuccess={() => window.location.replace('/')}/>}/>*/}
 
-                            <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
-                            <Route path="/agents" element={<RequireAuth><AgentsList /></RequireAuth>} />
-                            <Route path="/agent/new" element={<RequireAuth><AgentForm
-                                initialData={{}}
-                                onSubmit={console.log} // Funkcja do obsługi submit
-                                onTest={() => {}} // Funkcja do testowania (przekaż pustą funkcję, jeśli nie potrzebujesz)
-                                onDuplicate={() => {}} // Funkcja do duplikowania (przekaż pustą funkcję, jeśli nie potrzebujesz)
-                                onDelete={() => {}}
-                                 /></RequireAuth>} />
-                            <Route path="/agent/:id" element={<RequireAuth><AgentForm
-                                initialData={{}}
-                                onSubmit={console.log} // Funkcja do obsługi submit
-                                onTest={() => {}} // Funkcja do testowania (przekaż pustą funkcję, jeśli nie potrzebujesz)
-                                onDuplicate={() => {}} // Funkcja do duplikowania (przekaż pustą funkcję, jeśli nie potrzebujesz)
-                                onDelete={() => {}}
-                            /></RequireAuth>} />
-                            <Route path="/agent/:id/history" element={<AgentHistoryPage />} />
-                            <Route path="/orders" element={<RequireAuth><OrdersList /></RequireAuth>} />
-                            <Route path="/order/:id" element={<RequireAuth><OrderCard /></RequireAuth>} />
-                            <Route path="/schedule" element={<RequireAuth><Schedule /></RequireAuth>} />
-                            <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
-                            <Route path="/quick-search" element={<RequireAuth><QuickSearchPage /></RequireAuth>} />
+                            {/*<Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />*/}
+                            {/*<Route path="/agents" element={<RequireAuth><AgentsList /></RequireAuth>} />*/}
+                            {/*<Route path="/agent/new" element={<RequireAuth><AgentForm*/}
+                            {/*    initialData={{}}*/}
+                            {/*    onSubmit={console.log} // Funkcja do obsługi submit*/}
+                            {/*    onTest={() => {}} // Funkcja do testowania (przekaż pustą funkcję, jeśli nie potrzebujesz)*/}
+                            {/*    onDuplicate={() => {}} // Funkcja do duplikowania (przekaż pustą funkcję, jeśli nie potrzebujesz)*/}
+                            {/*    onDelete={() => {}}*/}
+                            {/*     /></RequireAuth>} />*/}
+                            {/*<Route path="/agent/:id" element={<RequireAuth><AgentForm*/}
+                            {/*    initialData={{}}*/}
+                            {/*    onSubmit={console.log} // Funkcja do obsługi submit*/}
+                            {/*    onTest={() => {}} // Funkcja do testowania (przekaż pustą funkcję, jeśli nie potrzebujesz)*/}
+                            {/*    onDuplicate={() => {}} // Funkcja do duplikowania (przekaż pustą funkcję, jeśli nie potrzebujesz)*/}
+                            {/*    onDelete={() => {}}*/}
+                            {/*/></RequireAuth>} />*/}
+                            {/*<Route path="/agent/:id/history" element={<AgentHistoryPage />} />*/}
+                            {/*<Route path="/orders" element={<RequireAuth><OrdersList /></RequireAuth>} />*/}
+                            {/*<Route path="/order/:id" element={<RequireAuth><OrderCard /></RequireAuth>} />*/}
+                            {/*<Route path="/schedule" element={<RequireAuth><Schedule /></RequireAuth>} />*/}
+                            {/*<Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />*/}
+                            {/*<Route path="/quick-search" element={<RequireAuth><QuickSearchPage /></RequireAuth>} />*/}
                             <Route path="/admin/*" element={<AdminApp />} />
+
+                            <Route path="*" element={<Navigate to="/admin" replace />} />
                         </Routes>
                 </Router>
             </ChakraProvider>

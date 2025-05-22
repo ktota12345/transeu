@@ -9,35 +9,84 @@ export class DriversService {
     async create(data: Prisma.DriverCreateInput): Promise<Driver> {
         return this.prisma.driver.create({ data });
     }
+
     async findAll(
         skip = 0,
         take = 10,
         filter?: Prisma.DriverWhereInput,
         sort?: { [key: string]: Prisma.SortOrder }
-    ): Promise<[Driver[], number]> {
+    ): Promise<[any[], number]> {
         const [drivers, total] = await this.prisma.$transaction([
             this.prisma.driver.findMany({
                 where: filter,
                 skip,
                 take,
                 orderBy: sort,
+                include: {
+                    allowedCountries: true,
+                },
             }),
-            this.prisma.driver.count({
-                where: filter,
-            }),
+            this.prisma.driver.count({ where: filter }),
         ]);
-        return [drivers, total];
+
+        const transformedDrivers = drivers.map((driver) => ({
+            ...driver,
+            // zamieniamy allowedCountries na tablicę kodów
+            allowedCountries: driver.allowedCountries.map((c) => c.id),
+        }));
+
+        return [transformedDrivers, total];
     }
 
+    async findOne(id: number): Promise<any | null> {
+        const driver = await this.prisma.driver.findUnique({
+            where: { id },
+            include: {
+                allowedCountries: true,
+            },
+        });
 
-    async findOne(id: number): Promise<Driver | null> {
-        return this.prisma.driver.findUnique({ where: { id } });
+        if (!driver) return null;
+
+        return {
+            ...driver,
+            allowedCountries: driver.allowedCountries.map((c) => c.id),
+        };
     }
 
     async update(id: number, data: Prisma.DriverUpdateInput): Promise<Driver> {
+        const raw = data as any;
+
+        const updateData: Prisma.DriverUpdateInput = { ...raw };
+
+        if (Array.isArray(raw.allowedCountries)) {
+            // Wyciągamy id z obiektów lub wartości numeryczne
+            const ids = raw.allowedCountries
+                .map((item: any) =>
+                    typeof item === 'object' && item !== null && 'id' in item
+                        ? item.id
+                        : typeof item === 'number'
+                            ? item
+                            : null
+                )
+                .filter((id: number | null) => id !== null) as number[];
+
+            // Pobierz kody krajów z id
+            const countries = await this.prisma.country.findMany({
+                where: { id: { in: ids } },
+                select: { code: true },
+            });
+
+            // Nadpisujemy allowedCountries relacją 'set' na kody krajów
+            updateData.allowedCountries = {
+                set: [], // czyścimy wszystkie powiązania
+                connect: countries.map((c) => ({ code: c.code })),
+            };
+        }
+
         return this.prisma.driver.update({
             where: { id },
-            data,
+            data: updateData,
         });
     }
 
