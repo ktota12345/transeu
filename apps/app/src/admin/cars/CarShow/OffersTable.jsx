@@ -14,6 +14,7 @@ import {
 import axiosNest from "../../../api/axiosNest";
 import {useState} from "react";
 import {useNotify} from "react-admin";
+import {CarPlanTimeline} from "./CarPlanTimeline";
 
 
 export const OffersTable = ({offers}) => {
@@ -88,6 +89,7 @@ export const OffersTable = ({offers}) => {
                     </TableBody>
                 </Table>
             </TableContainer>
+
 
             <Typography variant="h6" gutterBottom>Lista ofert</Typography>
 

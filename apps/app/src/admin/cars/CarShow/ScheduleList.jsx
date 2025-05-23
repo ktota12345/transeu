@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import {SearchParameters} from "./SearchParameters";
 import {OffersTable} from "./OffersTable";
+import {CarPlanTimeline} from "./CarPlanTimeline";
 
 export const ScheduleList = () => {
     const record = useRecordContext();
@@ -71,6 +72,11 @@ export const ScheduleList = () => {
                         setSearchArea={setSearchArea}
                         perPage={perPage}
                         setPerPage={setPerPage}
+                    />
+
+                    <CarPlanTimeline
+
+
                     />
 
                     <Button variant="contained" onClick={handleSearchOffers} disabled={loading}>

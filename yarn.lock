@@ -17,6 +17,7 @@ __metadata:
     jwt-decode: "npm:^4.0.0"
     md5: "npm:^2.3.0"
     react-icons: "npm:^5.5.0"
+    recharts: "npm:^2.15.3"
     tsx: "npm:^4.19.2"
     turbo: "npm:^2.5.3"
   languageName: unknown
@@ -18376,7 +18377,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recharts@npm:^2.4.0":
+"recharts@npm:^2.15.3, recharts@npm:^2.4.0":
   version: 2.15.3
   resolution: "recharts@npm:2.15.3"
   dependencies:
