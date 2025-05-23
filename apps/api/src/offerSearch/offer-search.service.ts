@@ -241,10 +241,9 @@ export class OfferSearchService {
             }
         }
 
+        const uniqueOffers = this.removeDuplicateOffers(offers);
 
-        const fullOffers = this.sortOffers(offers);
-
-        const externalIds = fullOffers
+        const externalIds = uniqueOffers
             .map(o => o.id)
             .filter((id): id is string => !!id); // tylko nie-null
 
@@ -268,9 +267,18 @@ export class OfferSearchService {
             };
         });
 
-        return offersWithStatus;
+        return this.sortOffers(offersWithStatus);
     }
 
+    private removeDuplicateOffers(offers: any[]): any[] {
+        const seen = new Set<string>();
+        return offers.filter(offer => {
+            if (!offer.id) return true; // zachowaj oferty bez externalId
+            if (seen.has(offer.id)) return false;
+            seen.add(offer.id);
+            return true;
+        });
+    }
 
     private async searchOffersBetweenTwoCities(
         start: any,

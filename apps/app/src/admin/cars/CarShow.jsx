@@ -12,7 +12,7 @@ const OffersButton = () => {
     if (!record) return null;
 
     // Załóżmy, że oferty są dostępne pod ścieżką /offers?carId=...
-    const to = `/admin/#/car-schedule-offers?displayedFilters=%7B%22carId%22%3Atrue%7D&filter=%7B%22carId%22%3A${record.id}%7D`;
+    const to = `/admin/car-schedule-offers?displayedFilters=%7B%22carId%22%3Atrue%7D&filter=%7B%22carId%22%3A${record.id}%7D`;
 
     return (
         <Button
