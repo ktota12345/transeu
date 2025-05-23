@@ -61,7 +61,7 @@ function App() {
                             {/*<Route path="/quick-search" element={<RequireAuth><QuickSearchPage /></RequireAuth>} />*/}
                             <Route path="/admin/*" element={<AdminApp />} />
 
-                            <Route path="*" element={<Navigate to="/admin" replace />} />
+                            {/*<Route path="*" element={<Navigate to="/admin" replace />} />*/}
                         </Routes>
                 </Router>
             </ChakraProvider>

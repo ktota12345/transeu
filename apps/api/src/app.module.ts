@@ -29,6 +29,10 @@ import {BodyPropertyModule} from "./car-attributes/body-property/body-property.m
 import {UsersModule } from "./users/users.module";
 import {OfferSearchModule} from "./offerSearch/offer-search.module";
 import {CountriesModule} from "./countries/countries.module";
+import { ExchangeRateModule } from './exchangeRate/exchange-rate.module';
+
+
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
     imports: [
@@ -52,8 +56,11 @@ import {CountriesModule} from "./countries/countries.module";
 
         UsersModule,
         OfferSearchModule,
-        CountriesModule
+        CountriesModule,
 
+        ExchangeRateModule,
+
+        ScheduleModule.forRoot(),
 
     ],
     controllers: [

@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {TimocomApiService} from './timocomApi/timocom-api.service';
-import * as console from "console";
+import {ExchangeRateService} from '../exchangeRate/exchange-rate.service';
 
 type CarSpecification = {
     type: string[];
@@ -19,6 +19,7 @@ export class OfferSearchService {
     constructor(
         private prisma: PrismaService,
         private readonly timocomApiService: TimocomApiService,
+        private readonly exchangeRateService: ExchangeRateService,
     ) {
     }
 
@@ -354,26 +355,29 @@ export class OfferSearchService {
             offer.price.amount != null
         );
     }
-    private mapOffers(offers: any[]): any[] {
-        return offers.map(offer => {
+    private async mapOffers(offers: any[]): Promise<any[]> {
+        return Promise.all(offers.map(async offer => {
             const price = offer?.price?.amount;
             const distance = offer?.distance_km;
 
             if (typeof price === 'number' && typeof distance === 'number' && distance > 0) {
                 const pricePerKm = Number((price / distance).toFixed(2));
+                const converted =  await this.exchangeRateService.convertToEUR(price / distance, offer.price.currency);
+                const pricePerKmEur = Number((converted ?? 0).toFixed(2));
                 return {
                     ...offer,
                     pricePerKm,
+                    pricePerKmEur
                 };
             }
 
             return offer;
-        });
+        }));
     }
     private sortOffers(offers: any[]): any[] {
         return offers.sort((a, b) => {
-            const priceA = parseFloat(a.pricePerKm);
-            const priceB = parseFloat(b.pricePerKm);
+            const priceA = parseFloat(a.pricePerKmEur);
+            const priceB = parseFloat(b.pricePerKmEur);
 
 
             return  priceB - priceA;

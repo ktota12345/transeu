@@ -335,3 +335,11 @@ model VehicleBody {
 
   cars           Car[]   @relation("CarVehicleBodies")
 }
+
+model ExchangeRate {
+  id        Int      @id @default(autoincrement())
+  currency  String   @unique
+  rate      Float    // kurs względem EUR
+  date      DateTime?
+  createdAt DateTime @default(now())
+}

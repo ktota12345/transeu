@@ -105,6 +105,7 @@ export const OffersTable = ({offers}) => {
                             <TableCell>Data</TableCell>
                             <TableCell>Cena</TableCell>
                             <TableCell>Cena za km</TableCell>
+                            <TableCell>Cena za km EUR</TableCell>
                             <TableCell>Link</TableCell>
                             <TableCell>Dodaj ofertę</TableCell>
                         </TableRow>
@@ -126,6 +127,7 @@ export const OffersTable = ({offers}) => {
                                     <TableCell>{unloading?.latestLoadingDate || '-'}</TableCell>
                                     <TableCell>{offer.price ? `${offer.price.amount} ${offer.price.currency}` : 'Brak danych'}</TableCell>
                                     <TableCell>{offer.pricePerKm}</TableCell>
+                                    <TableCell>{offer.pricePerKmEur}</TableCell>
                                     <TableCell>
                                         <Link href={offer.deeplink} target="_blank" rel="noopener noreferrer">Zobacz</Link>
                                     </TableCell>
