@@ -258,7 +258,7 @@ export class OfferSearchService {
 
         const existingMap = new Map(existingOffers.map(e => [e.externalId, e]));
 
-        const offersWithStatus = offers.map(offer => {
+        const offersWithStatus = uniqueOffers.map(offer => {
             const match = offer.id ? existingMap.get(offer.id) : null;
             return {
                 ...offer,
