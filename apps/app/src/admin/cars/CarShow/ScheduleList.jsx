@@ -92,18 +92,28 @@ export const ScheduleList = () => {
         const loadingPlace = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING");
         const unloadingPlace = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING");
 
-        const fromDate = loadingPlace?.earliestLoadingDate ? new Date(loadingPlace.earliestLoadingDate + "T00:00:00") : null;
-        const toDate = unloadingPlace?.latestLoadingDate ? new Date(unloadingPlace.latestLoadingDate + "T00:00:00") : null;
+        const fromDate = loadingPlace?.earliestLoadingDate ? new Date(loadingPlace.earliestLoadingDate + 'T' + (loadingPlace.startTime || "07:00:00")) : null;
+        const toDate = unloadingPlace?.latestLoadingDate ? new Date(unloadingPlace.latestLoadingDate + 'T' + (loadingPlace.endTime || "17:00:00")) : null;
 
-        return {
+        const latestFrom = loadingPlace?.latestLoadingDate ? new Date(loadingPlace.latestLoadingDate + 'T' + (unloadingPlace.startTime || "17:00:00")) : null;
+        const earliestTo = unloadingPlace?.earliestLoadingDate ? new Date(unloadingPlace.earliestLoadingDate + 'T' + (unloadingPlace.endTime || "07:00:00")) : null;
+
+
+        const res = {
             id: offer.id,
             from: fromDate,
             to: toDate,
+            latestFrom: latestFrom,
+            earliestTo: earliestTo,
             status: "hover",
             fromCity: loadingPlace?.address?.city || "Nieznane",
+            fromCountry: loadingPlace?.address?.country || "Nieznane",
             toCity: unloadingPlace?.address?.city || "Nieznane",
+            toCountry: unloadingPlace?.address?.country || "Nieznane",
             details: offer.freightDescription || "Brak opisu"
         };
+        console.log(res);
+        return res;
     }
 
     return (

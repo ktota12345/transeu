@@ -3,16 +3,8 @@ import {TimelineOfferBar} from "./TimelineOfferBar";
 import {TimelineDayLabel} from "./TimelineDayLabel";
 import {eachDayOfInterval} from "date-fns";
 import {TodayMarker} from "./TodayMarker";
+import {Offer} from "./types";
 
-type Offer = {
-    id: number;
-    from: Date;
-    to: Date;
-    status: string;
-    fromCity: string;
-    toCity: string;
-    details: string;
-};
 
 type Props = {
     from: Date;

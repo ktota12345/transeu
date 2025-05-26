@@ -1,6 +1,6 @@
-import { Card, CardContent, Typography, Grid } from "@mui/material";
-import { TimelineBar } from "./Timeline/TimelineBar";
-import { format } from "date-fns";
+import {Card, CardContent, Typography, Grid} from "@mui/material";
+import {TimelineBar} from "./Timeline/TimelineBar";
+import {format} from "date-fns";
 
 export const CarPlanTimeline = ({
                                     from,
@@ -13,22 +13,41 @@ export const CarPlanTimeline = ({
 
     const totalDays = Math.round((new Date(to).getTime() - new Date(from).getTime()) / (1000 * 60 * 60 * 24));
 
-    const mappedOffers = assignedOffers.map((offer) => ({
-        id: offer.id,
-        from: new Date(offer.fromDate),
-        to: new Date(offer.toDate),
-        status: offer.status,
-        fromCity: offer.fromAddress?.city || "Nieznane",
-        toCity: offer.toAddress?.city || "Nieznane",
-        details: offer.details?.freightDescription || "Brak opisu"
-    }));
 
-    if(currentOffer){
+    const mappedOffers = assignedOffers.map((offer) => {
+
+        const loadingPlace = offer.details.loadingPlaces.find(lp => lp.loadingType === "LOADING");
+        const unloadingPlace = offer.details.loadingPlaces.find(lp => lp.loadingType === "UNLOADING");
+
+
+        const fromDate = loadingPlace?.earliestLoadingDate ? new Date(loadingPlace.earliestLoadingDate + "T" + (loadingPlace.startTime || "07:00:00")) : null;
+        const toDate = unloadingPlace?.latestLoadingDate ? new Date(unloadingPlace.latestLoadingDate + "T" + (unloadingPlace.endTime || "17:00:00")) : null;
+
+        const latestFrom = loadingPlace?.latestLoadingDate ? new Date(loadingPlace.latestLoadingDate + "T" + (loadingPlace.endTime || "17:00:00")) : null;
+        const earliestTo = unloadingPlace?.earliestLoadingDate ? new Date(unloadingPlace.earliestLoadingDate + "T" + (unloadingPlace.startTime || "07:00:00")) : null;
+
+        const res = {
+            id: offer.id,
+            from: fromDate,
+            latestFrom: latestFrom,
+            to: toDate,
+            earliestTo: earliestTo,
+            status: offer.status,
+            fromCity: offer.fromAddress?.city || "Nieznane",
+            fromCountry: offer.fromAddress?.country || "Nieznane",
+            toCity: offer.toAddress?.city || "Nieznane",
+            toCountry: offer.toAddress?.country || "Nieznane",
+            details: offer.details?.freightDescription || "Brak opisu"
+        }
+        return res;
+    });
+
+    if (currentOffer) {
         mappedOffers.push(currentOffer);
     }
 
     return (
-        <Card sx={{ width: '100%', padding: '20px' }}>
+        <Card sx={{width: '100%', padding: '20px'}}>
             <CardContent>
                 <TimelineBar
                     from={new Date(from)}

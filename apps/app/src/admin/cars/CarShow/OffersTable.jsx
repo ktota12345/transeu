@@ -128,9 +128,21 @@ export const OffersTable = ({ offers, onSelectOffer, selectedOffer }) => {
                                     <TableCell>{offer.distance_km}</TableCell>
                                     <TableCell>{offer.weight_t}</TableCell>
                                     <TableCell>{loading?.address.city || '-'}</TableCell>
-                                    <TableCell>{loading ? `${loading.earliestLoadingDate} - ${loading.latestLoadingDate}` : '-'}</TableCell>
+                                    <TableCell>
+                                        {loading.earliestLoadingDate || '-'}
+                                        <TableCell>{loading.startTime || ''}</TableCell>
+                                        {loading.latestLoadingDate || '-'}
+                                        <TableCell>{loading.endTime || ''}</TableCell>
+                                    </TableCell>
                                     <TableCell>{unloading?.address.city || '-'}</TableCell>
-                                    <TableCell>{unloading?.latestLoadingDate || '-'}</TableCell>
+                                    <TableCell>
+                                        {unloading?.earliestLoadingDate || '-'}
+                                        <Typography>{unloading?.startTime || ''}</Typography>
+
+                                        {unloading?.latestLoadingDate || '-'}
+                                        <Typography>{unloading?.endTime || ''}</Typography>
+
+                                    </TableCell>
                                     <TableCell>{offer.price ? `${offer.price.amount} ${offer.price.currency}` : 'Brak danych'}</TableCell>
                                     <TableCell>{offer.pricePerKm}</TableCell>
                                     <TableCell>{offer.pricePerKmEur}</TableCell>

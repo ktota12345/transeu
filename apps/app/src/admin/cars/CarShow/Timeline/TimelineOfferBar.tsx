@@ -1,16 +1,7 @@
-import { Box, Tooltip } from "@mui/material";
+import {Box, Tooltip, Typography} from "@mui/material";
 import { format } from "date-fns";
 import { STATUS_COLORS, getPercent } from "./constants";
-
-type Offer = {
-    id: number;
-    from: Date;
-    to: Date;
-    status: string;
-    fromCity: string;
-    toCity: string;
-    details: string;
-};
+import { Offer } from "./types";
 
 type Props = {
     offer: Offer;
@@ -20,32 +11,82 @@ type Props = {
 };
 
 export const TimelineOfferBar = ({ offer, from, to, index }: Props) => {
-    const left = getPercent(offer.from, from, to);
-    const right = getPercent(offer.to, from, to);
-    const width = right - left;
-    const topPosition = index % 2 === 0 ? 18 : 44; // 24px niżej dla nieparzystych (możesz dostosować)
+    const leftFrom = getPercent(offer.from, from, to);
+    const leftLatestFrom = getPercent(offer.latestFrom || offer.from, from, to);
+    const rightEarliestTo = getPercent(offer.earliestTo || offer.to, from, to);
+    const rightTo = getPercent(offer.to, from, to);
+
+    const mainLeft = leftLatestFrom;
+    const mainRight = rightEarliestTo;
+
+    const topPosition = index % 2 === 0 ? 18 : 44;
+
+    // Kolory: jasny kolor dla rozszerzeń (odcinki po bokach), normalny dla środka
+    const baseColor = STATUS_COLORS[offer.status];
+    // Można zrobić jaśniejszy kolor np. transparentny albo z opacity
+    const lightColor = baseColor + "60"; // np. półprzezroczysty
+    const lightColor2 = baseColor + "80"; // jeszcze jaśniejszy
+
+    const tooltipContent = (
+
+        <>
+            <strong>Status:</strong> {offer.status}<br />
+            <strong>Miasta:</strong> {offer.fromCity} ({offer.fromCountry}) → {offer.toCity} ({offer.toCountry})<br />
+            <strong>Daty:</strong> {format(offer.from, "yyyy-MM-dd")} – {format(offer.to, "yyyy-MM-dd")}<br />
+            {offer.details}
+        </>
+    );
 
     return (
-        <Tooltip
-            title={
-                <>
-                    <strong>Status:</strong> {offer.status}<br />
-                    <strong>Miasta:</strong> {offer.fromCity} → {offer.toCity}<br />
-                    <strong>Daty:</strong> {format(offer.from, "yyyy-MM-dd")} – {format(offer.to, "yyyy-MM-dd")}<br />
-                    {offer.details}
-                </>
-            }
-        >
-            <Box
-                position="absolute"
-                left={`${left}%`}
-                width={`${width}%`}
-                height={24}
-                top={topPosition}
-                bgcolor={STATUS_COLORS[offer.status]}
-                borderRadius={1}
-                sx={{ cursor: "pointer" }}
-            />
-        </Tooltip>
+        <>
+            {(offer.latestFrom && offer.latestFrom > offer.from) && (
+                <Tooltip title={tooltipContent}>
+                    <Box
+                        position="absolute"
+                        left={`${leftFrom}%`}
+                        width={`${leftLatestFrom - leftFrom}%`}
+                        height={24}
+                        top={topPosition}
+                        bgcolor={lightColor}
+                        borderRadius={1}
+                        sx={{ cursor: "pointer" }}
+                    />
+                </Tooltip>
+            )}
+
+            {(offer.earliestTo && offer.earliestTo < offer.to) && (
+                <Tooltip title={tooltipContent}>
+                    <Box
+                        position="absolute"
+                        left={`${rightEarliestTo}%`}
+                        width={`${rightTo - rightEarliestTo}%`}
+                        height={24}
+                        top={topPosition}
+                        bgcolor={lightColor2}
+                        borderRadius={1}
+                        sx={{ cursor: "pointer" }}
+                    />
+                </Tooltip>
+            )}
+
+            <Tooltip
+                title={tooltipContent}
+            >
+                <Box
+                    position="absolute"
+                    left={`${mainLeft}%`}
+                    width={`${mainRight - mainLeft}%`}
+                    height={24}
+                    top={topPosition}
+                    bgcolor={baseColor}
+                    borderRadius={1}
+                    sx={{ cursor: "pointer" }}
+
+                >
+                    <Typography lineHeight={"24px"} align={"center"} color="#FFFFFF" fontSize={10}>{offer.toCity} ({offer.toCountry})</Typography>
+                </Box>
+            </Tooltip>
+        </>
     );
 };
+
