@@ -16,12 +16,14 @@ type Props = {
     offer: Offer;
     from: Date;
     to: Date;
+    index: number;
 };
 
-export const TimelineOfferBar = ({ offer, from, to }: Props) => {
+export const TimelineOfferBar = ({ offer, from, to, index }: Props) => {
     const left = getPercent(offer.from, from, to);
     const right = getPercent(offer.to, from, to);
     const width = right - left;
+    const topPosition = index % 2 === 0 ? 18 : 44; // 24px niżej dla nieparzystych (możesz dostosować)
 
     return (
         <Tooltip
@@ -39,7 +41,7 @@ export const TimelineOfferBar = ({ offer, from, to }: Props) => {
                 left={`${left}%`}
                 width={`${width}%`}
                 height={24}
-                top={18}
+                top={topPosition}
                 bgcolor={STATUS_COLORS[offer.status]}
                 borderRadius={1}
                 sx={{ cursor: "pointer" }}

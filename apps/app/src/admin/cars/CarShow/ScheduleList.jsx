@@ -1,5 +1,5 @@
 import {DateField, useRecordContext} from "react-admin";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import axiosNest from "../../../api/axiosNest";
 import {
     Button,
@@ -22,10 +22,51 @@ export const ScheduleList = () => {
     const [numUnloadingCities, setNumUnloadingCities] = useState(10);
     const [searchArea, setSearchArea] = useState(50);
     const [perPage, setPerPage] = useState(100);
+    const [assignedOffers, setAssignedOffers] = useState([]);
+    const [selectedOffer, setSelectedOffer] = useState(null);
+    const [currentOfferMapped, setCurrentOfferMapped] = useState(null);
+
 
     const futureSchedules = (record?.schedules || []).filter(schedule => {
         return new Date(schedule.to) >= new Date();
     });
+
+    const currentSchedule = futureSchedules[0];
+    const fetchAssignedOffers = async () => {
+        if (!record?.id || !currentSchedule?.id) return;
+
+        try {
+            const res = await axiosNest.get(`/car-schedule-offers`, {
+                params: {
+                    'pagination[page]': 1,
+                    'pagination[perPage]': 100,
+                    'sort[field]': 'id',
+                    'sort[order]': 'ASC',
+                    'filter[carId]': record.id,
+                    'filter[carScheduleId]': currentSchedule.id,
+                }
+            });
+
+            setAssignedOffers(res.data); // ← pełna lista obiektów
+        } catch (e) {
+            console.error("Błąd podczas pobierania assignedOffers", e);
+        }
+    };
+    useEffect(() => {
+        if (selectedOffer) {
+            setCurrentOfferMapped(mapOfferToTimelineFormat(selectedOffer));
+        } else {
+            setCurrentOfferMapped(null);
+        }
+    }, [selectedOffer]);
+
+    useEffect(() => {
+        if (record && currentSchedule) {
+            fetchAssignedOffers();
+        }
+    }, [record, currentSchedule]);
+
+
 
     const handleSearchOffers = async () => {
         setLoading(true);
@@ -47,8 +88,23 @@ export const ScheduleList = () => {
         }
         setLoading(false);
     };
+    function mapOfferToTimelineFormat(offer) {
+        const loadingPlace = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING");
+        const unloadingPlace = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING");
 
-    if (!futureSchedules.length) return null;
+        const fromDate = loadingPlace?.earliestLoadingDate ? new Date(loadingPlace.earliestLoadingDate + "T00:00:00") : null;
+        const toDate = unloadingPlace?.latestLoadingDate ? new Date(unloadingPlace.latestLoadingDate + "T00:00:00") : null;
+
+        return {
+            id: offer.id,
+            from: fromDate,
+            to: toDate,
+            status: "hover",
+            fromCity: loadingPlace?.address?.city || "Nieznane",
+            toCity: unloadingPlace?.address?.city || "Nieznane",
+            details: offer.freightDescription || "Brak opisu"
+        };
+    }
 
     return (
         <Card>
@@ -75,17 +131,23 @@ export const ScheduleList = () => {
                     />
 
                     <CarPlanTimeline
-
-
+                        from={currentSchedule?.from}
+                        to={currentSchedule?.to}
+                        startCity={`${record?.baseAddress?.city} ${record?.baseAddress?.country}`}
+                        assignedOffers={assignedOffers}
+                        currentOffer={currentOfferMapped}
                     />
+
 
                     <Button variant="contained" onClick={handleSearchOffers} disabled={loading}>
                         {loading ? 'Szukam...' : 'Szukaj ofert'}
                     </Button>
 
                     {error && <Typography color="error">{error}</Typography>}
+                    {offers && offers.offers && (
+                        <OffersTable offers={offers} onSelectOffer={setSelectedOffer} selectedOffer={selectedOffer} />
+                    )}
 
-                    {offers && offers.offers && <OffersTable offers={offers} />}
 
                     {offers && (
                         <pre style={{background: '#f4f4f4', padding: '10px', whiteSpace: 'pre-wrap', overflow: 'auto', height: '600px'}}>

@@ -1,63 +1,60 @@
-import { Card, CardContent, Typography } from "@mui/material";
+import { Card, CardContent, Typography, Grid } from "@mui/material";
 import { TimelineBar } from "./Timeline/TimelineBar";
 import { format } from "date-fns";
 
-const data = {
-    futureSchedules: {
-        from: new Date("2025-05-20T00:00:00"),
-        to: new Date("2025-06-10T00:00:00"),
-        startCity: "Warszawa"
-    },
-    offers: [
-        {
-            id: 1,
-            from: new Date("2025-05-25"),
-            to: new Date("2025-05-26"),
-            status: "confirmed",
-            fromCity: "Warszawa",
-            toCity: "Berlin",
-            details: "Transport towarów do Berlina"
-        },
-        {
-            id: 2,
-            from: new Date("2025-05-28"),
-            to: new Date("2025-05-30"),
-            status: "pending",
-            fromCity: "Berlin",
-            toCity: "Praga",
-            details: "Oczekuje na zatwierdzenie"
-        },
-        {
-            id: 3,
-            from: new Date("2025-06-01"),
-            to: new Date("2025-06-02"),
-            status: "cancelled",
-            fromCity: "Praga",
-            toCity: "Wiedeń",
-            details: "Oferta anulowana"
-        }
-    ]
-};
+export const CarPlanTimeline = ({
+                                    from,
+                                    to,
+                                    startCity = "Nieznane",
+                                    assignedOffers = [],
+                                    currentOffer = null
+                                }) => {
+    if (!from || !to) return null;
 
-export const CarPlanTimeline = () => {
-    const { futureSchedules, offers } = data;
-    const totalDays = Math.round((futureSchedules.to.getTime() - futureSchedules.from.getTime()) / (1000 * 60 * 60 * 24));
+    const totalDays = Math.round((new Date(to).getTime() - new Date(from).getTime()) / (1000 * 60 * 60 * 24));
+
+    const mappedOffers = assignedOffers.map((offer) => ({
+        id: offer.id,
+        from: new Date(offer.fromDate),
+        to: new Date(offer.toDate),
+        status: offer.status,
+        fromCity: offer.fromAddress?.city || "Nieznane",
+        toCity: offer.toAddress?.city || "Nieznane",
+        details: offer.details?.freightDescription || "Brak opisu"
+    }));
+
+    if(currentOffer){
+        mappedOffers.push(currentOffer);
+    }
 
     return (
-        <Card sx={{ width: '100%' }}>
+        <Card sx={{ width: '100%', padding: '20px' }}>
             <CardContent>
-                <Typography variant="h6" gutterBottom>Plan samochodu</Typography>
-
                 <TimelineBar
-                    from={futureSchedules.from}
-                    to={futureSchedules.to}
-                    startCity={futureSchedules.startCity}
-                    offers={offers}
+                    from={new Date(from)}
+                    to={new Date(to)}
+                    startCity={startCity}
+                    offers={mappedOffers}
+                    currentOffer={currentOffer} // przewidziany parametr
                 />
 
-                <Typography variant="body2" mt={1} color="textSecondary">
-                    Zakres planu: {format(futureSchedules.from, "yyyy-MM-dd")} – {format(futureSchedules.to, "yyyy-MM-dd")} ({totalDays} dni)
-                </Typography>
+                <Grid container width="100%">
+                    <Grid item size={4} mt={4}>
+                        <Typography variant="body2" mt={1} color="textSecondary">
+                            {format(new Date(from), "yyyy-MM-dd")}
+                        </Typography>
+                    </Grid>
+                    <Grid item size={4} mt={4} textAlign="center">
+                        <Typography variant="body2" mt={1} color="textSecondary">
+                            {totalDays} dni
+                        </Typography>
+                    </Grid>
+                    <Grid item size={4} mt={4} textAlign="right">
+                        <Typography variant="body2" mt={1} color="textSecondary">
+                            {format(new Date(to), "yyyy-MM-dd")}
+                        </Typography>
+                    </Grid>
+                </Grid>
             </CardContent>
         </Card>
     );

@@ -1,7 +1,8 @@
 export const STATUS_COLORS: Record<string, string> = {
     confirmed: "#4caf50",
     pending: "#ff9800",
-    cancelled: "#f44336"
+    cancelled: "#f44336",
+    hover: "#AAAAAA"
 };
 
 export const getPercent = (date: Date, start: Date, end: Date) => {

@@ -28,7 +28,7 @@ export const TimelineDayLabel = ({ date, from, to }: Props) => {
             <Box
                 position="absolute"
                 left={`${left}%`}
-                top={50}
+                top={90}
                 sx={{
                     transform: "translateX(-50%)",
                     fontSize: 10,

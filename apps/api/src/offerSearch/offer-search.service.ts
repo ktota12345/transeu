@@ -294,6 +294,15 @@ export class OfferSearchService {
         page: number,
         limit: number,
     ): Promise<any[]> {
+        const exclusiveLeftLowerBoundDateTime = new Date(searchPeriodStartDate);
+        exclusiveLeftLowerBoundDateTime.setDate(exclusiveLeftLowerBoundDateTime.getDate() - 1);
+        const inclusiveRightUpperBoundDateTime = new Date(searchPeriodEndDate);
+        inclusiveRightUpperBoundDateTime.setDate(inclusiveRightUpperBoundDateTime.getDate() + 1);
+        let plannedLocationDate = new Date(carData.plannedLocation.date);
+        const dateNow =   new Date();
+        if(plannedLocationDate < dateNow){
+            plannedLocationDate = dateNow;
+        }
         const searchParams = {
             startLocation: {
                 objectType: 'areaSearch',
@@ -319,14 +328,12 @@ export class OfferSearchService {
                     size_km: searchArea,
                 },
             },
-            //inclusiveRightUpperBoundDateTime: searchPeriodStartDate.toISOString(),
-            //exclusiveLeftLowerBoundDateTime: searchPeriodEndDate.toISOString(),
-            exclusiveLeftLowerBoundDateTime: '2025-05-20T14:43:26.074Z',
-            inclusiveRightUpperBoundDateTime: '2025-05-27T14:43:26.074Z',
+            exclusiveLeftLowerBoundDateTime: exclusiveLeftLowerBoundDateTime.toISOString(),
+            inclusiveRightUpperBoundDateTime: inclusiveRightUpperBoundDateTime.toISOString(),
             loadingDate: {
                 objectType: "individualDates",
                 dates: [
-                    carData.plannedLocation.date.toISOString().slice(0, 10)
+                    plannedLocationDate.toISOString().slice(0, 10)
                     // {
                     //     //dateTime: carData.period.startDate?.toISOString().slice(0, 10),
                     //     //dateTime: carData.plannedLocation.date.toISOString().slice(0, 10),

@@ -44,6 +44,7 @@ export class TimocomApiService {
             }
         } catch (error) {
             this.logger.error('Błąd zapytania do TIMOCOM:', error?.response?.data || error.message);
+            this.logger.warn('parametry:', searchParams);
             return this.handleError(error);
         }
     }

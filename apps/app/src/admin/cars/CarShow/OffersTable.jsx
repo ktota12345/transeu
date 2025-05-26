@@ -15,9 +15,8 @@ import axiosNest from "../../../api/axiosNest";
 import {useState} from "react";
 import {useNotify} from "react-admin";
 import {CarPlanTimeline} from "./CarPlanTimeline";
+export const OffersTable = ({ offers, onSelectOffer, selectedOffer }) => {
 
-
-export const OffersTable = ({offers}) => {
     const [loadingOfferId, setLoadingOfferId] = useState(null);
 
     const notify = useNotify();
@@ -117,8 +116,13 @@ export const OffersTable = ({offers}) => {
                             const loading = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING");
                             const unloading = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING");
 
-                            return (
-                                <TableRow key={offer.id}>
+                            return (<TableRow
+                                    key={offer.id}
+                                    hover
+                                    selected={selectedOffer?.id === offer.id}
+                                    onClick={() => onSelectOffer(offer)}
+                                    sx={{ cursor: "pointer" }}
+                                >
                                     <TableCell>{offer.creationDateTime}</TableCell>
                                     <TableCell>{offer.freightDescription}</TableCell>
                                     <TableCell>{offer.distance_km}</TableCell>
