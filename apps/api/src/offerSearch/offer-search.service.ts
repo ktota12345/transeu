@@ -145,7 +145,7 @@ export class OfferSearchService {
                 body: car.bodies.map((bp) => bp.apiNameTimocom),
                 bodyProperty: car.bodyProperties.map((bp) => bp.apiNameTimocom),
                 equipment: car.vehicleEquipments.map((ve) => ve.apiNameTimocom),
-                loadSecuring: car.vehicleLoadSecurings.map((vls) => vls.apiNameTimocom),
+                loadSecuring: [],//car.vehicleLoadSecurings.map((vls) => vls.apiNameTimocom),
                 swapBody: car.swapBodies.map((sb) => sb.apiNameTimocom),
                 carId: car.id,
             },
@@ -413,7 +413,7 @@ export class OfferSearchService {
 
 
     public testTransEuApiFetchFreights() {
-        return this.transEuApiService.fetchOffers({});
+        return this.transEuApiService.test();
     }
     public async exchangeCodeForToken(code: string) {
         return this.transEuApiService.exchangeCodeForToken(code);
