@@ -97,6 +97,7 @@ export const OffersTable = ({ offers, onSelectOffer, selectedOffer }) => {
                     <TableHead>
                         <TableRow>
                             <TableCell>Data</TableCell>
+                            <TableCell>System</TableCell>
                             <TableCell>Opis ładunku</TableCell>
                             <TableCell>Odległość (km)</TableCell>
                             <TableCell>Waga (t)</TableCell>
@@ -124,6 +125,7 @@ export const OffersTable = ({ offers, onSelectOffer, selectedOffer }) => {
                                     sx={{ cursor: "pointer" }}
                                 >
                                     <TableCell>{offer.creationDateTime}</TableCell>
+                                    <TableCell>{offer.sourceSystem || 'timo'}</TableCell>
                                     <TableCell>{offer.freightDescription}</TableCell>
                                     <TableCell>{offer.distance_km}</TableCell>
                                     <TableCell>{offer.weight_t}</TableCell>

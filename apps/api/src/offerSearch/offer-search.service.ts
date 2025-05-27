@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {TimocomApiService} from './timocomApi/timocom-api.service';
+import {TransEuApiService}  from "./transeuApi/trans-eu-api.service";
 import {ExchangeRateService} from '../exchangeRate/exchange-rate.service';
 
 type CarSpecification = {
@@ -20,6 +21,7 @@ export class OfferSearchService {
         private prisma: PrismaService,
         private readonly timocomApiService: TimocomApiService,
         private readonly exchangeRateService: ExchangeRateService,
+        private readonly transEuApiService: TransEuApiService,
     ) {
     }
 
@@ -314,6 +316,8 @@ export class OfferSearchService {
                         city: start.name,
                     },
                     size_km: searchArea,
+                    latitude: start.latitude,
+                    longitude: start.longitude,
                 },
             },
             destinationLocation: {
@@ -326,6 +330,8 @@ export class OfferSearchService {
                         city: end.name,
                     },
                     size_km: searchArea,
+                    latitude: end.latitude,
+                    longitude: end.longitude,
                 },
             },
             exclusiveLeftLowerBoundDateTime: exclusiveLeftLowerBoundDateTime.toISOString(),
@@ -357,8 +363,14 @@ export class OfferSearchService {
             },
         };
 
-        const partialOffers = await this.timocomApiService.fetchOffers(searchParams);
-        return this.mapOffers(this.filterOffers(partialOffers?.data?.payload ?? []));
+        const partialTimocomOffers = await this.timocomApiService.fetchOffers(searchParams);
+        const timocomOffers = await this.mapOffers(this.filterOffers(partialTimocomOffers?.data?.payload ?? []));
+        //const timocomOffers = [];
+        //return timocomOffers;
+
+        const partialTransEuOffers = await this.transEuApiService.fetchOffers(searchParams);
+        const transEuOffers = await this.mapOffers(this.filterOffers(partialTransEuOffers?.data?.payload ?? []));
+        return [...timocomOffers, ...transEuOffers];
     }
     private filterOffers(offers: any[]): any[] {
         return offers.filter(offer =>
@@ -400,7 +412,12 @@ export class OfferSearchService {
     }
 
 
-
+    public testTransEuApiFetchFreights() {
+        return this.transEuApiService.fetchOffers({});
+    }
+    public async exchangeCodeForToken(code: string) {
+        return this.transEuApiService.exchangeCodeForToken(code);
+    }
 
 
 

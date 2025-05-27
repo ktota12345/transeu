@@ -1,7 +1,7 @@
 import {Box, Tooltip, Typography} from "@mui/material";
-import { format } from "date-fns";
-import { STATUS_COLORS, getPercent } from "./constants";
-import { Offer } from "./types";
+import {format} from "date-fns";
+import {STATUS_COLORS, getPercent} from "./constants";
+import {Offer} from "./types";
 
 type Props = {
     offer: Offer;
@@ -10,7 +10,7 @@ type Props = {
     index: number;
 };
 
-export const TimelineOfferBar = ({ offer, from, to, index }: Props) => {
+export const TimelineOfferBar = ({offer, from, to, index}: Props) => {
     const leftFrom = getPercent(offer.from, from, to);
     const leftLatestFrom = getPercent(offer.latestFrom || offer.from, from, to);
     const rightEarliestTo = getPercent(offer.earliestTo || offer.to, from, to);
@@ -30,9 +30,9 @@ export const TimelineOfferBar = ({ offer, from, to, index }: Props) => {
     const tooltipContent = (
 
         <>
-            <strong>Status:</strong> {offer.status}<br />
-            <strong>Miasta:</strong> {offer.fromCity} ({offer.fromCountry}) → {offer.toCity} ({offer.toCountry})<br />
-            <strong>Daty:</strong> {format(offer.from, "yyyy-MM-dd")} – {format(offer.to, "yyyy-MM-dd")}<br />
+            <strong>Status:</strong> {offer.status}<br/>
+            <strong>Miasta:</strong> {offer.fromCity} ({offer.fromCountry}) → {offer.toCity} ({offer.toCountry})<br/>
+            <strong>Daty:</strong> {format(offer.from, "yyyy-MM-dd")} – {format(offer.to, "yyyy-MM-dd")}<br/>
             {offer.details}
         </>
     );
@@ -49,7 +49,7 @@ export const TimelineOfferBar = ({ offer, from, to, index }: Props) => {
                         top={topPosition}
                         bgcolor={lightColor}
                         borderRadius={1}
-                        sx={{ cursor: "pointer" }}
+                        sx={{cursor: "pointer", whiteSpace: "nowrap"}}
                     />
                 </Tooltip>
             )}
@@ -64,7 +64,7 @@ export const TimelineOfferBar = ({ offer, from, to, index }: Props) => {
                         top={topPosition}
                         bgcolor={lightColor2}
                         borderRadius={1}
-                        sx={{ cursor: "pointer" }}
+                        sx={{cursor: "pointer", whiteSpace: "nowrap"}}
                     />
                 </Tooltip>
             )}
@@ -80,7 +80,14 @@ export const TimelineOfferBar = ({ offer, from, to, index }: Props) => {
                     top={topPosition}
                     bgcolor={baseColor}
                     borderRadius={1}
-                    sx={{ cursor: "pointer" }}
+                    sx={{
+                        cursor: "pointer",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                        paddingLeft: 1,
+                        paddingRight: 1,
+                        zIndex: 10
+                    }}
 
                 >
                     <Typography lineHeight={"24px"} align={"center"} color="#FFFFFF" fontSize={10}>{offer.toCity} ({offer.toCountry})</Typography>

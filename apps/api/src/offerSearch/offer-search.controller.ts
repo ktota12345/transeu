@@ -4,6 +4,7 @@ import {
     Param,
     Query,
     UseGuards,
+    Res,
 } from '@nestjs/common';
 import { OfferSearchService} from "./offer-search.service";
 import { TimocomApiService } from './timocomApi/timocom-api.service';
@@ -12,11 +13,10 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 const SEARCH_AREA = 50;
 
 @Controller('offerSearch')
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 export class OfferSearchController {
     constructor(
         private readonly offerSearchService: OfferSearchService,
-        private readonly timocomApiService: TimocomApiService
     ) {}
     @Get('car/:id')
     async car(
@@ -37,6 +37,23 @@ export class OfferSearchController {
         });
 
         return { id, car: carData, offers };
+    }
+
+    @Get('transeu')
+    async transeuOffers() {
+        return this.offerSearchService.testTransEuApiFetchFreights();
+    }
+
+
+    @Get('tokenauthexchange')
+    async handleTokenExchange(@Query('code') code: string, @Res() res: Response) {
+
+        try {
+            await this.offerSearchService.exchangeCodeForToken(code);
+            return 'Token access został pomyślnie uzyskany i zapisany.';
+        } catch (error) {
+            return 'Błąd wymiany kodu na token.';
+        }
     }
 
 
