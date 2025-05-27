@@ -7,7 +7,7 @@ export class TransEuApiService {
     private readonly logger = new Logger(TransEuApiService.name);
     private accessToken: string | null = null;
     private readonly MIN_DISTANCE = 200000;
-    private readonly MAX_DISTANCE = 3000000;
+    private readonly MAX_DISTANCE = 5000000;
 
     private getBearerToken(): string {
 
@@ -31,6 +31,7 @@ export class TransEuApiService {
             'Authorization': this.getBearerToken(),
             'Content-Type': 'application/json',
         };
+        const loadingDateFrom = new Date(searchParams.loadingDate.dates[0]);
         const mappedParams = {
             filter: {
                 loading_place: [
@@ -72,7 +73,10 @@ export class TransEuApiService {
                 // required_ways_of_loading: ["1_top", "2_side", "3_back"],
                 // available_ways_of_loading: ["1_top", "2_side", "3_back"],
                 places_matching_type: "cross",
-                exclude_suspended: true
+                exclude_suspended: true,
+                 loading_date:{
+                     from: loadingDateFrom.toISOString(),
+                 }
             },
             sort: {
                 field: "index",
