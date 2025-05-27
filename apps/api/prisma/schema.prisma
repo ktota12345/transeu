@@ -206,7 +206,7 @@ model SearchNotificationSetup {
   id     Int  @id @default(autoincrement())
 
   carId  Int  @unique
-  car    Car  @relation(fields: [carId], references: [id])
+  car    Car  @relation(fields: [carId], references: [id], onDelete: Cascade)
 
   users  User[]
   customEmails String[]
