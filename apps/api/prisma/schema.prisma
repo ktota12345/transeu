@@ -162,7 +162,7 @@ model Car {
   id                  Int                  @id @default(autoincrement())
   name                String
   registrationNumber  String
-  carType             String
+  carType             String?
   trailerType         String
   driverId            Int?
   driver              Driver?              @relation(fields: [driverId], references: [id])
