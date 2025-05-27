@@ -19,8 +19,8 @@ export const ScheduleList = () => {
     const [error, setError] = useState(null);
 
     const [numLoadingCities, setNumLoadingCities] = useState(3);
-    const [numUnloadingCities, setNumUnloadingCities] = useState(50);
-    const [searchArea, setSearchArea] = useState(50);
+    const [numUnloadingCities, setNumUnloadingCities] = useState(30);
+    const [searchArea, setSearchArea] = useState(200);
     const [perPage, setPerPage] = useState(100);
     const [assignedOffers, setAssignedOffers] = useState([]);
     const [selectedOffer, setSelectedOffer] = useState(null);

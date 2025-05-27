@@ -30,7 +30,6 @@ const CarList = (props) => {
                     }
                 />
                 <TextField source="registrationNumber" label="Nr rejestracyjny" />
-                <TextField source="carType" label="Typ samochodu" />
                 <TextField source="trailerType" label="Typ naczepy" />
                 <FunctionField
                     label="Kierowca"

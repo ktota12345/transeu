@@ -297,9 +297,9 @@ export class OfferSearchService {
         limit: number,
     ): Promise<any[]> {
         const exclusiveLeftLowerBoundDateTime = new Date(searchPeriodStartDate);
-        exclusiveLeftLowerBoundDateTime.setDate(exclusiveLeftLowerBoundDateTime.getDate() - 1);
+        exclusiveLeftLowerBoundDateTime.setDate(exclusiveLeftLowerBoundDateTime.getDate() - 2);
         const inclusiveRightUpperBoundDateTime = new Date(searchPeriodEndDate);
-        inclusiveRightUpperBoundDateTime.setDate(inclusiveRightUpperBoundDateTime.getDate() + 1);
+        inclusiveRightUpperBoundDateTime.setDate(inclusiveRightUpperBoundDateTime.getDate() + 2);
         let plannedLocationDate = new Date(carData.plannedLocation.date);
         const dateNow =   new Date();
         if(plannedLocationDate < dateNow){
@@ -365,6 +365,7 @@ export class OfferSearchService {
 
         const partialTimocomOffers = await this.timocomApiService.fetchOffers(searchParams);
         const timocomOffers = await this.mapOffers(this.filterOffers(partialTimocomOffers?.data?.payload ?? []));
+        console.log(timocomOffers.length, 'timocom offers found');
         //const timocomOffers = [];
         //return timocomOffers;
 
