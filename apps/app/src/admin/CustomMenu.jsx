@@ -73,6 +73,7 @@ export const CustomMenu = () => {
                                         primaryText="Ustawienia wyszukiwania"
                                         style={{ paddingLeft: 32 }}
                                     />
+                                <MenuItemLink to={`${process.env.REACT_APP_NEST_API_URL}/trans-eu/auth/redirect`} target="_blank" primaryText="TransEuToken" />
                             </List>
                     </Collapse>
             </Menu>

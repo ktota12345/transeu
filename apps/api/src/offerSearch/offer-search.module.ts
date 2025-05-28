@@ -3,13 +3,22 @@ import {OfferSearchService} from './offer-search.service';
 import {OfferSearchController} from './offer-search.controller';
 import {PrismaModule} from '../prisma/prisma.module';
 import {TimocomApiService} from './timocomApi/timocom-api.service';
-import {TransEuApiService} from "./transeuApi/trans-eu-api.service";
+import {TransEuApiAppService} from "./transeuApi/trans-eu-api-app.service";
+import {TransEuApiClientService} from "./transeuApi/trans-eu-api-client.service";
 import {ExchangeRateService} from '../exchangeRate/exchange-rate.service';
+import {TransEuAuthService} from '../transeu-auth/trans-eu-auth.service';
 
 @Module({
     imports: [PrismaModule],
     controllers: [OfferSearchController],
-    providers: [OfferSearchService, TimocomApiService, ExchangeRateService,TransEuApiService],
+    providers: [
+        OfferSearchService,
+        TimocomApiService,
+        ExchangeRateService,
+        TransEuApiAppService,
+        TransEuApiClientService,
+        TransEuAuthService,
+    ],
 })
 export class OfferSearchModule {
 }

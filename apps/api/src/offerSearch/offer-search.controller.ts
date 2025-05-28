@@ -45,17 +45,6 @@ export class OfferSearchController {
     }
 
 
-    @Get('tokenauthexchange')
-    async handleTokenExchange(@Query('code') code: string, @Res() res: Response) {
-
-        try {
-            await this.offerSearchService.exchangeCodeForToken(code);
-            return 'Token access został pomyślnie uzyskany i zapisany.';
-        } catch (error) {
-            return 'Błąd wymiany kodu na token.';
-        }
-    }
-
 
 
 

@@ -1,7 +1,8 @@
 import {Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {TimocomApiService} from './timocomApi/timocom-api.service';
-import {TransEuApiService}  from "./transeuApi/trans-eu-api.service";
+import {TransEuApiAppService}  from "./transeuApi/trans-eu-api-app.service";
+import {TransEuApiClientService} from "./transeuApi/trans-eu-api-client.service";
 import {ExchangeRateService} from '../exchangeRate/exchange-rate.service';
 
 type CarSpecification = {
@@ -21,7 +22,8 @@ export class OfferSearchService {
         private prisma: PrismaService,
         private readonly timocomApiService: TimocomApiService,
         private readonly exchangeRateService: ExchangeRateService,
-        private readonly transEuApiService: TransEuApiService,
+        private readonly transEuApiAppService: TransEuApiAppService,
+        private readonly transEuApiClientService: TransEuApiClientService,
     ) {
     }
 
@@ -366,10 +368,8 @@ export class OfferSearchService {
         const partialTimocomOffers = await this.timocomApiService.fetchOffers(searchParams);
         const timocomOffers = await this.mapOffers(this.filterOffers(partialTimocomOffers?.data?.payload ?? []));
         console.log(timocomOffers.length, 'timocom offers found');
-        //const timocomOffers = [];
-        //return timocomOffers;
 
-        const partialTransEuOffers = await this.transEuApiService.fetchOffers(searchParams);
+        const partialTransEuOffers = await this.transEuApiAppService.fetchOffers(searchParams);
         const transEuOffers = await this.mapOffers(this.filterOffers(partialTransEuOffers?.data?.payload ?? []));
         return [...timocomOffers, ...transEuOffers];
     }
@@ -414,12 +414,8 @@ export class OfferSearchService {
 
 
     public testTransEuApiFetchFreights() {
-        return this.transEuApiService.test();
+        return this.transEuApiClientService.test();
     }
-    public async exchangeCodeForToken(code: string) {
-        return this.transEuApiService.exchangeCodeForToken(code);
-    }
-
 
 
 

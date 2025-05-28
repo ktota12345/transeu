@@ -26,13 +26,14 @@ import {VehicleLoadSecuringModule} from "./car-attributes/vehicle-load-securing/
 import {VehicleEquipmentModule} from "./car-attributes/vehicle-equipment/vehicle-equipment.module";
 import {SwapBodyModule} from "./car-attributes/swap-body/swap-body.module";
 import {BodyPropertyModule} from "./car-attributes/body-property/body-property.module";
-import {UsersModule } from "./users/users.module";
+import {UsersModule} from "./users/users.module";
 import {OfferSearchModule} from "./offerSearch/offer-search.module";
 import {CountriesModule} from "./countries/countries.module";
-import { ExchangeRateModule } from './exchangeRate/exchange-rate.module';
+import {ExchangeRateModule} from './exchangeRate/exchange-rate.module';
+import {TransEuAuthModule} from './transeu-auth/trans-eu-auth.module';
 
 
-import { ScheduleModule } from '@nestjs/schedule';
+import {ScheduleModule} from '@nestjs/schedule';
 
 @Module({
     imports: [
@@ -61,6 +62,8 @@ import { ScheduleModule } from '@nestjs/schedule';
         ExchangeRateModule,
 
         ScheduleModule.forRoot(),
+
+        TransEuAuthModule
 
     ],
     controllers: [

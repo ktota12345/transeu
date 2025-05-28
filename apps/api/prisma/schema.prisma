@@ -343,3 +343,14 @@ model ExchangeRate {
   date      DateTime?
   createdAt DateTime @default(now())
 }
+
+model TransEuToken {
+  id           Int      @id @default(autoincrement())
+  accessToken  String
+  refreshToken String?
+  expiresAt    DateTime
+  tokenType    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
