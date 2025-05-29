@@ -8,7 +8,7 @@ import {
     Delete,
     Query,
     Res,
-    UseGuards,
+    UseGuards, Patch,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { CarScheduleOffersService } from './car-schedule-offers.service';
@@ -78,6 +78,10 @@ export class CarScheduleOffersController {
     @Post(':id/reject')
     async rejectOffer(@Param('id') id: string) {
         return this.offersService.update(+id, { status: 'rejected' });
+    }
+    @Patch(':id')
+    patch(@Param('id') id: string, @Body() body:any) {
+        return this.offersService.update(+id, body);
     }
 
 

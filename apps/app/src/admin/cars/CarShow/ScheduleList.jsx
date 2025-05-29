@@ -11,6 +11,8 @@ import {
 import {SearchParameters} from "./SearchParameters";
 import {OffersTable} from "./OffersTable";
 import {CarPlanTimeline} from "./CarPlanTimeline";
+import {OfferDetailsCard} from "./OfferDetailsCard";
+import {getUnloadingPlace} from "../../../data/helpers";
 
 export const ScheduleList = () => {
     const record = useRecordContext();
@@ -25,6 +27,7 @@ export const ScheduleList = () => {
     const [assignedOffers, setAssignedOffers] = useState([]);
     const [selectedOffer, setSelectedOffer] = useState(null);
     const [currentOfferMapped, setCurrentOfferMapped] = useState(null);
+    const [timelineMarkedOffer, setTimelineMarkedOffer] = useState(null);
 
 
     const futureSchedules = (record?.schedules || []).filter(schedule => {
@@ -55,6 +58,7 @@ export const ScheduleList = () => {
     useEffect(() => {
         if (selectedOffer) {
             setCurrentOfferMapped(mapOfferToTimelineFormat(selectedOffer));
+            setTimelineMarkedOffer(null);
         } else {
             setCurrentOfferMapped(null);
         }
@@ -66,12 +70,36 @@ export const ScheduleList = () => {
         }
     }, [record, currentSchedule]);
 
+    const changeOfferStatus = async (offerId, newStatus) => {
+        try {
+            await axiosNest.patch(`/car-schedule-offers/${offerId}`, { status: newStatus });
+            await fetchAssignedOffers(); // odświeżenie timeliny
+            if(timelineMarkedOffer && timelineMarkedOffer.id === offerId) {
+                setTimelineMarkedOffer(prev => ({ ...prev, status: newStatus }));
+            }
+        } catch (err) {
+            console.error("Błąd przy zmianie statusu:", err);
+        }
+    };
+    const handleSearchFromUnloading = (offer) => {
+        const unloading = getUnloadingPlace(offer.details || {});
+        if (!unloading || !unloading.address?.geoCoordinate) return;
+
+        const coords = unloading.address.geoCoordinate;
+        const plannedLocationOverride = {
+            lat: coords.latitude,
+            lng: coords.longitude
+        };
+
+        handleSearchOffers(plannedLocationOverride);
+    };
 
 
-    const handleSearchOffers = async () => {
+    const handleSearchOffers = async (plannedLocationOverride = null) => {
         setLoading(true);
         setError(null);
         setOffers(null);
+
         try {
             const params = {
                 numLoadingCities,
@@ -80,7 +108,11 @@ export const ScheduleList = () => {
                 perPage,
             };
 
-            const res = await axiosNest.get(`/offerSearch/car/${record.id}`, {params});
+            if (plannedLocationOverride) {
+                params.plannedLocationOverride = plannedLocationOverride;
+            }
+
+            const res = await axiosNest.get(`/offerSearch/car/${record.id}`, { params });
             setOffers(res.data);
         } catch (error) {
             setError("Błąd podczas pobierania ofert.");
@@ -88,6 +120,7 @@ export const ScheduleList = () => {
         }
         setLoading(false);
     };
+
     function mapOfferToTimelineFormat(offer) {
         const loadingPlace = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING");
         const unloadingPlace = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING");
@@ -112,7 +145,6 @@ export const ScheduleList = () => {
             toCountry: unloadingPlace?.address?.country || "Nieznane",
             details: offer.freightDescription || "Brak opisu"
         };
-        console.log(res);
         return res;
     }
 
@@ -146,7 +178,25 @@ export const ScheduleList = () => {
                         startCity={`${record?.baseAddress?.city} ${record?.baseAddress?.country}`}
                         assignedOffers={assignedOffers}
                         currentOffer={currentOfferMapped}
+                        selectedOfferId={timelineMarkedOffer?.id || null}
+                        onSelectOffer={(id) => {
+                            const found = assignedOffers.find(o => o.id === id);
+                            if(timelineMarkedOffer && timelineMarkedOffer?.id === id) {
+                                setTimelineMarkedOffer(null);
+                                return;
+                            }
+                            setTimelineMarkedOffer(found);
+                        }}
                     />
+                    {timelineMarkedOffer && (
+                        <OfferDetailsCard
+                            offer={timelineMarkedOffer}
+                            onChangeStatus={(newStatus) => changeOfferStatus(timelineMarkedOffer.id, newStatus)}
+                            onSearchFromUnloading={() => handleSearchFromUnloading(timelineMarkedOffer)}
+                        />
+                    )}
+
+
 
 
                     <Button variant="contained" onClick={handleSearchOffers} disabled={loading}>
@@ -155,7 +205,12 @@ export const ScheduleList = () => {
 
                     {error && <Typography color="error">{error}</Typography>}
                     {offers && offers.offers && (
-                        <OffersTable offers={offers} onSelectOffer={setSelectedOffer} selectedOffer={selectedOffer} />
+                        <OffersTable
+                            offers={offers}
+                            onSelectOffer={setSelectedOffer}
+                            selectedOffer={selectedOffer}
+                            fetchAssignedOffers={fetchAssignedOffers}
+                        />
                     )}
 
 

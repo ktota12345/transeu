@@ -7,7 +7,9 @@ export const CarPlanTimeline = ({
                                     to,
                                     startCity = "Nieznane",
                                     assignedOffers = [],
-                                    currentOffer = null
+                                    currentOffer = null,
+                                    selectedOfferId,
+                                    onSelectOffer
                                 }) => {
     if (!from || !to) return null;
 
@@ -54,7 +56,9 @@ export const CarPlanTimeline = ({
                     to={new Date(to)}
                     startCity={startCity}
                     offers={mappedOffers}
-                    currentOffer={currentOffer} // przewidziany parametr
+                    currentOffer={currentOffer}
+                    selectedOfferId={selectedOfferId}
+                    onSelectOffer={onSelectOffer}
                 />
 
                 <Grid container width="100%">

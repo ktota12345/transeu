@@ -38,3 +38,9 @@ export const googleMapsRouteLink = (points: Coordinate[]): string => {
 
     return url;
 };
+
+export const getLoadingPlace = (offerOrDetails) =>
+    offerOrDetails?.loadingPlaces?.find(lp => lp.loadingType === "LOADING") || null;
+
+export const getUnloadingPlace = (offerOrDetails) =>
+    offerOrDetails?.loadingPlaces?.find(lp => lp.loadingType === "UNLOADING") || null;

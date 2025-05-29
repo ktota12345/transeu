@@ -1,7 +1,15 @@
-export const STATUS_COLORS: Record<string, string> = {
+export type OfferStatus = "confirmed" | "rejected" | "pending";
+
+export const OFFER_STATUSES: { value: OfferStatus; label: string }[] = [
+    { value: "confirmed", label: "Akceptuj" },
+    { value: "rejected", label: "Odrzuć" },
+    { value: "pending", label: "Oczekuje" }
+];
+
+export const STATUS_COLORS: Record<OfferStatus | "hover", string> = {
     confirmed: "#4caf50",
     pending: "#ff9800",
-    cancelled: "#f44336",
+    rejected: "#f44336",
     hover: "#888888"
 };
 

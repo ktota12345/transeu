@@ -12,12 +12,13 @@ import {
     CircularProgress
 } from "@mui/material";
 
-import {dateFormat, formatPrice, googleMapsLink, googleMapsRouteLink} from '../../../data/helpers';
+import {dateFormat, formatPrice, getLoadingPlace, getUnloadingPlace, googleMapsLink, googleMapsRouteLink} from '../../../data/helpers';
 import axiosNest from "../../../api/axiosNest";
 import {useState} from "react";
 import {useNotify} from "react-admin";
+import PlaceInfoCell from "./PlaceInfoCell";
 
-export const OffersTable = ({offers, onSelectOffer, selectedOffer}) => {
+export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssignedOffers}) => {
 
     const [loadingOfferId, setLoadingOfferId] = useState(null);
 
@@ -53,8 +54,22 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer}) => {
 
             await axiosNest.post("/car-schedule-offers/assign", payload);
             notify("Oferta została przypisana", {type: "success"});
+            fetchAssignedOffers();
         } catch (error) {
             notify("Błąd podczas przypisywania oferty", {type: "error"});
+            console.error(error);
+        } finally {
+            setLoadingOfferId(null);
+        }
+    };
+    const handleRejectOffer = async (offer) => {
+        try {
+            setLoadingOfferId(offer.id);
+            await axiosNest.post(`/car-schedule-offers/${offer.id}/reject`);
+            notify("Oferta została odrzucona", {type: "info"});
+            fetchAssignedOffers();
+        } catch (error) {
+            notify("Błąd podczas odrzucania oferty", {type: "error"});
             console.error(error);
         } finally {
             setLoadingOfferId(null);
@@ -105,8 +120,8 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer}) => {
                             <TableCell>Załadunek</TableCell>
                             <TableCell>Rozładunek</TableCell>
                             <TableCell>Cena</TableCell>
+                            <TableCell>Cena za km (bez dojazdu)</TableCell>
                             <TableCell>Cena za km</TableCell>
-                            <TableCell>Cena za km (brutto)</TableCell>
                             <TableCell>Trasa</TableCell>
                             <TableCell>Oferta</TableCell>
                             <TableCell>Dodaj</TableCell>
@@ -114,8 +129,8 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer}) => {
                     </TableHead>
                     <TableBody>
                         {offers.offers.map((offer) => {
-                            const loading = offer.loadingPlaces.find(lp => lp.loadingType === "LOADING");
-                            const unloading = offer.loadingPlaces.find(lp => lp.loadingType === "UNLOADING");
+                            const loading = getLoadingPlace(offer);
+                            const unloading = getUnloadingPlace(offer);
 
                             return (<TableRow
                                     key={offer.id}
@@ -142,29 +157,10 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer}) => {
                                         <b>{offer.totalDistance} km</b>
                                     </TableCell>
                                     <TableCell>
-                                        {loading?.address.city || '-'}
-
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary"
-                                            fontSize={'0.8rem'}
-                                            sx={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}
-                                        >
-                                            {dateFormat(loading.earliestLoadingDate) || '-'} {loading.startTime || ''}<br/>
-                                            {dateFormat(loading.latestLoadingDate) || '-'} {loading.endTime || ''}
-                                        </Typography>
+                                        <PlaceInfoCell place={loading} />
                                     </TableCell>
                                     <TableCell>
-                                        {unloading?.address.city || '-'}
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary"
-                                            fontSize={'0.8rem'}
-                                            sx={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}
-                                        >
-                                            {dateFormat(unloading.earliestLoadingDate) || '-'} {unloading.startTime || ''}<br/>
-                                            {dateFormat(unloading.latestLoadingDate) || '-'} {unloading.endTime || ''}
-                                        </Typography>
+                                        <PlaceInfoCell place={unloading} />
                                     </TableCell>
                                     <TableCell>
                                         {formatPrice(offer.price.amount, offer.price.currency)}
@@ -176,11 +172,11 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer}) => {
                                             variant="outlined"
                                             size="small"
                                             href={googleMapsRouteLink([
-                                                {lat: offers.car.plannedLocation.address.location[0], lng: offers.car.plannedLocation.address.location[1]},
-                                                {lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude},
-                                                {lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude}
-                                            ]
-                                        )} target="_blank" rel="noopener noreferrer">Trasa</Button>
+                                                    {lat: offers.car.plannedLocation.address.location[0], lng: offers.car.plannedLocation.address.location[1]},
+                                                    {lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude},
+                                                    {lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude}
+                                                ]
+                                            )} target="_blank" rel="noopener noreferrer">Trasa</Button>
                                     </TableCell>
                                     <TableCell>
                                         <Button
@@ -188,7 +184,15 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer}) => {
                                     </TableCell>
                                     <TableCell>
                                         {offer.alreadySaved ? (
-                                            <Typography variant="body2" color="textSecondary">Oferta już przypisana</Typography>
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                color="error"
+                                                onClick={() => handleRejectOffer(offer)}
+                                                disabled={loadingOfferId === offer.id}
+                                            >
+                                                {loadingOfferId === offer.id ? <CircularProgress size={16}/> : "Odrzuć"}
+                                            </Button>
                                         ) : (
                                             <Button
                                                 variant="contained"
