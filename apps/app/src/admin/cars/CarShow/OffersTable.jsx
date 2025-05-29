@@ -108,6 +108,7 @@ export const OffersTable = ({ offers, onSelectOffer, selectedOffer }) => {
                             <TableCell>Cena</TableCell>
                             <TableCell>Cena za km</TableCell>
                             <TableCell>Cena za km EUR</TableCell>
+                            <TableCell>Cena za km EUR (brutto)</TableCell>
                             <TableCell>Link</TableCell>
                             <TableCell>Dodaj ofertę</TableCell>
                         </TableRow>
@@ -127,7 +128,7 @@ export const OffersTable = ({ offers, onSelectOffer, selectedOffer }) => {
                                     <TableCell>{offer.creationDateTime}</TableCell>
                                     <TableCell>{offer.sourceSystem || 'timo'}</TableCell>
                                     <TableCell>{offer.freightDescription}</TableCell>
-                                    <TableCell>{offer.distance_km}</TableCell>
+                                    <TableCell>{offer.distance_km} + {offer.startAccessDistance} = {offer.totalDistance}</TableCell>
                                     <TableCell>{offer.weight_t}</TableCell>
                                     <TableCell>{loading?.address.city || '-'}</TableCell>
                                     <TableCell>
@@ -148,6 +149,7 @@ export const OffersTable = ({ offers, onSelectOffer, selectedOffer }) => {
                                     <TableCell>{offer.price ? `${offer.price.amount} ${offer.price.currency}` : 'Brak danych'}</TableCell>
                                     <TableCell>{offer.pricePerKm}</TableCell>
                                     <TableCell>{offer.pricePerKmEur}</TableCell>
+                                    <TableCell>{offer.pricePerKmEurGross}</TableCell>
                                     <TableCell>
                                         <Link href={offer.deeplink} target="_blank" rel="noopener noreferrer">Zobacz</Link>
                                     </TableCell>

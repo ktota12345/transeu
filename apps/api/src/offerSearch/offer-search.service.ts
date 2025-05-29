@@ -366,11 +366,13 @@ export class OfferSearchService {
         };
 
         const partialTimocomOffers = await this.timocomApiService.fetchOffers(searchParams);
-        const timocomOffers = await this.mapOffers(this.filterOffers(partialTimocomOffers?.data?.payload ?? []));
+        const timocomOffers = await this.mapOffers(this.filterOffers(partialTimocomOffers?.data?.payload ?? []),
+            carData.plannedLocation.address);
         console.log(timocomOffers.length, 'timocom offers found');
 
         const partialTransEuOffers = await this.transEuApiAppService.fetchOffers(searchParams);
-        const transEuOffers = await this.mapOffers(this.filterOffers(partialTransEuOffers?.data?.payload ?? []));
+        const transEuOffers = await this.mapOffers(this.filterOffers(partialTransEuOffers?.data?.payload ?? []),
+            carData.plannedLocation.address);
         return [...timocomOffers, ...transEuOffers];
     }
     private filterOffers(offers: any[]): any[] {
@@ -383,29 +385,61 @@ export class OfferSearchService {
             offer.price.amount != null
         );
     }
-    private async mapOffers(offers: any[]): Promise<any[]> {
+    private async mapOffers(offers: any[], plannedLocation: { location: [number, number] }): Promise<any[]> {
         return Promise.all(offers.map(async offer => {
             const price = offer?.price?.amount;
             const distance = offer?.distance_km;
 
-            if (typeof price === 'number' && typeof distance === 'number' && distance > 0) {
-                const pricePerKm = Number((price / distance).toFixed(2));
-                const converted =  await this.exchangeRateService.convertToEUR(price / distance, offer.price.currency);
-                const pricePerKmEur = Number((converted ?? 0).toFixed(2));
-                return {
-                    ...offer,
-                    pricePerKm,
-                    pricePerKmEur
-                };
+
+            const loading = offer.loadingPlaces.find((p) => p.loadingType === 'LOADING');
+            const startLat = loading?.address?.geoCoordinate?.latitude;
+            const startLng = loading?.address?.geoCoordinate?.longitude;
+
+            let startAccessDistance = 0;
+            if (typeof startLat === 'number' && typeof startLng === 'number') {
+                startAccessDistance = Math.round( this.calculateDistance(
+                    plannedLocation.location[0],
+                    plannedLocation.location[1],
+                    startLat,
+                    startLng
+                ));
+
             }
 
-            return offer;
+            const totalDistance = typeof distance === 'number' ? distance + startAccessDistance : null;
+
+            let pricePerKm: number | null = null;
+            let pricePerKmEur: number | null = null;
+            let pricePerKmEurGross: number | null = null;
+
+
+            if (typeof price === 'number' && typeof distance === 'number' && distance > 0) {
+                pricePerKm = Number((price / distance).toFixed(2));
+                const converted = await this.exchangeRateService.convertToEUR(price / distance, offer.price.currency);
+                pricePerKmEur = Number((converted ?? 0).toFixed(2));
+            }
+
+            if (typeof price === 'number' && typeof totalDistance === 'number' && totalDistance > 0) {
+                const convertedGross = await this.exchangeRateService.convertToEUR(price / totalDistance, offer.price.currency);
+                pricePerKmEurGross = Number((convertedGross ?? 0).toFixed(2));
+            }
+
+            return {
+                ...offer,
+                pricePerKm,
+                pricePerKmEur,
+                startAccessDistance,
+                totalDistance,
+                pricePerKmEurGross
+            };
         }));
     }
+
+
     private sortOffers(offers: any[]): any[] {
         return offers.sort((a, b) => {
-            const priceA = parseFloat(a.pricePerKmEur);
-            const priceB = parseFloat(b.pricePerKmEur);
+            const priceA = parseFloat(a.pricePerKmEurGross);
+            const priceB = parseFloat(b.pricePerKmEurGross);
 
 
             return  priceB - priceA;
@@ -417,6 +451,22 @@ export class OfferSearchService {
         return this.transEuApiClientService.test();
     }
 
+    private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+        const ROUTE_MULTIPLIER = 1.3;
+        const R = 6371; // promień Ziemi w kilometrach
+        const dLat = this.deg2rad(lat2 - lat1);
+        const dLon = this.deg2rad(lon2 - lon1);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c * ROUTE_MULTIPLIER;
+    }
+
+    private deg2rad(deg: number): number {
+        return deg * (Math.PI / 180);
+    }
 
 
 }
