@@ -17,19 +17,21 @@ export class TransEuApiAppService {
         });
 
         if (!tokenRecord) {
-            this.logger.warn('Brak  tokenu Trans.eu w bazie danych.');
+            this.logger.warn('Brak tokenu Trans.eu w bazie danych.');
             return '';
         }
 
-        const isExpired = new Date() >= tokenRecord.expiresAt || new Date(0);
+        const bufferMs = 30 * 1000; // bufor 30s
+        const isExpired = new Date().getTime() + bufferMs >= tokenRecord.expiresAt.getTime();
 
         if (isExpired) {
-            this.logger.warn('Token Trans.eu wygasł.');
+            this.logger.warn('Token Trans.eu wygasł lub wkrótce wygaśnie.');
             return '';
         }
 
         return `Bearer ${tokenRecord.accessToken}`;
     }
+
 
 
 
