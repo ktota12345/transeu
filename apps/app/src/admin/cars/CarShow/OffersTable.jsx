@@ -11,11 +11,13 @@ import {
     Button,
     CircularProgress
 } from "@mui/material";
+
+import {dateFormat, formatPrice, googleMapsLink, googleMapsRouteLink} from '../../../data/helpers';
 import axiosNest from "../../../api/axiosNest";
 import {useState} from "react";
 import {useNotify} from "react-admin";
-import {CarPlanTimeline} from "./CarPlanTimeline";
-export const OffersTable = ({ offers, onSelectOffer, selectedOffer }) => {
+
+export const OffersTable = ({offers, onSelectOffer, selectedOffer}) => {
 
     const [loadingOfferId, setLoadingOfferId] = useState(null);
 
@@ -50,9 +52,9 @@ export const OffersTable = ({ offers, onSelectOffer, selectedOffer }) => {
             };
 
             await axiosNest.post("/car-schedule-offers/assign", payload);
-            notify("Oferta została przypisana", { type: "success" });
+            notify("Oferta została przypisana", {type: "success"});
         } catch (error) {
-            notify("Błąd podczas przypisywania oferty", { type: "error" });
+            notify("Błąd podczas przypisywania oferty", {type: "error"});
             console.error(error);
         } finally {
             setLoadingOfferId(null);
@@ -98,19 +100,16 @@ export const OffersTable = ({ offers, onSelectOffer, selectedOffer }) => {
                         <TableRow>
                             <TableCell>Data</TableCell>
                             <TableCell>System</TableCell>
-                            <TableCell>Opis ładunku</TableCell>
-                            <TableCell>Odległość (km)</TableCell>
-                            <TableCell>Waga (t)</TableCell>
+                            <TableCell>Ładunek</TableCell>
+                            <TableCell>Dystans</TableCell>
                             <TableCell>Załadunek</TableCell>
-                            <TableCell>Data</TableCell>
                             <TableCell>Rozładunek</TableCell>
-                            <TableCell>Data</TableCell>
                             <TableCell>Cena</TableCell>
                             <TableCell>Cena za km</TableCell>
-                            <TableCell>Cena za km EUR</TableCell>
-                            <TableCell>Cena za km EUR (brutto)</TableCell>
-                            <TableCell>Link</TableCell>
-                            <TableCell>Dodaj ofertę</TableCell>
+                            <TableCell>Cena za km (brutto)</TableCell>
+                            <TableCell>Trasa</TableCell>
+                            <TableCell>Oferta</TableCell>
+                            <TableCell>Dodaj</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -123,47 +122,81 @@ export const OffersTable = ({ offers, onSelectOffer, selectedOffer }) => {
                                     hover
                                     selected={selectedOffer?.id === offer.id}
                                     onClick={() => onSelectOffer(offer)}
-                                    sx={{ cursor: "pointer" }}
+                                    sx={{cursor: "pointer"}}
                                 >
-                                    <TableCell>{offer.creationDateTime}</TableCell>
+                                    <TableCell>{dateFormat(offer.creationDateTime)}</TableCell>
                                     <TableCell>{offer.sourceSystem || 'timo'}</TableCell>
-                                    <TableCell>{offer.freightDescription}</TableCell>
-                                    <TableCell>{offer.distance_km} + {offer.startAccessDistance} = {offer.totalDistance}</TableCell>
-                                    <TableCell>{offer.weight_t}</TableCell>
-                                    <TableCell>{loading?.address.city || '-'}</TableCell>
-                                    <TableCell>
-                                        {loading.earliestLoadingDate || '-'}
-                                        <TableCell>{loading.startTime || ''}</TableCell>
-                                        {loading.latestLoadingDate || '-'}
-                                        <TableCell>{loading.endTime || ''}</TableCell>
+                                    <TableCell>waga: {offer.weight_t} t
+                                        <Typography
+                                            variant="body2"
+                                            color="textSecondary">
+                                            {offer.freightDescription}
+                                        </Typography>
                                     </TableCell>
-                                    <TableCell>{unloading?.address.city || '-'}</TableCell>
                                     <TableCell>
-                                        {unloading?.earliestLoadingDate || '-'}
-                                        <Typography>{unloading?.startTime || ''}</Typography>
-
-                                        {unloading?.latestLoadingDate || '-'}
-                                        <Typography>{unloading?.endTime || ''}</Typography>
-
+                                        <Typography
+                                            variant="body2"
+                                            color="textSecondary"
+                                            sx={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}
+                                        >{offer.startAccessDistance} + {offer.distance_km}</Typography>
+                                        <b>{offer.totalDistance} km</b>
                                     </TableCell>
-                                    <TableCell>{offer.price ? `${offer.price.amount} ${offer.price.currency}` : 'Brak danych'}</TableCell>
-                                    <TableCell>{offer.pricePerKm}</TableCell>
-                                    <TableCell>{offer.pricePerKmEur}</TableCell>
-                                    <TableCell>{offer.pricePerKmEurGross}</TableCell>
                                     <TableCell>
-                                        <Link href={offer.deeplink} target="_blank" rel="noopener noreferrer">Zobacz</Link>
+                                        {loading?.address.city || '-'}
+
+                                        <Typography
+                                            variant="body2"
+                                            color="textSecondary"
+                                            fontSize={'0.8rem'}
+                                            sx={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}
+                                        >
+                                            {dateFormat(loading.earliestLoadingDate) || '-'} {loading.startTime || ''}<br/>
+                                            {dateFormat(loading.latestLoadingDate) || '-'} {loading.endTime || ''}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        {unloading?.address.city || '-'}
+                                        <Typography
+                                            variant="body2"
+                                            color="textSecondary"
+                                            fontSize={'0.8rem'}
+                                            sx={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}
+                                        >
+                                            {dateFormat(unloading.earliestLoadingDate) || '-'} {unloading.startTime || ''}<br/>
+                                            {dateFormat(unloading.latestLoadingDate) || '-'} {unloading.endTime || ''}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        {formatPrice(offer.price.amount, offer.price.currency)}
+                                    </TableCell>
+                                    <TableCell>{formatPrice(offer.pricePerKmEur, 'EUR')}</TableCell>
+                                    <TableCell>{formatPrice(offer.pricePerKmEurGross, 'EUR')}</TableCell>
+                                    <TableCell>
+                                        <Button
+                                            variant="outlined"
+                                            size="small"
+                                            href={googleMapsRouteLink([
+                                                {lat: offers.car.plannedLocation.address.location[0], lng: offers.car.plannedLocation.address.location[1]},
+                                                {lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude},
+                                                {lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude}
+                                            ]
+                                        )} target="_blank" rel="noopener noreferrer">Trasa</Button>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Button
+                                            variant="outlined" size="small" href={offer.deeplink} target="_blank" rel="noopener noreferrer">Oferta</Button>
                                     </TableCell>
                                     <TableCell>
                                         {offer.alreadySaved ? (
                                             <Typography variant="body2" color="textSecondary">Oferta już przypisana</Typography>
                                         ) : (
                                             <Button
-                                                variant="outlined"
+                                                variant="contained"
                                                 size="small"
                                                 onClick={() => handleAddOffer(offer)}
                                                 disabled={loadingOfferId === offer.id}
                                             >
-                                                {loadingOfferId === offer.id ? <CircularProgress size={16}/> : "Dodaj ofertę"}
+                                                {loadingOfferId === offer.id ? <CircularProgress size={16}/> : "Dodaj"}
                                             </Button>
                                         )}
                                     </TableCell>
