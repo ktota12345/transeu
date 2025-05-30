@@ -51,6 +51,7 @@ export const ScheduleList = () => {
             });
 
             setAssignedOffers(res.data); // ← pełna lista obiektów
+            setCurrentOfferMapped(null); // resetuj aktualną ofertę
         } catch (e) {
             console.error("Błąd podczas pobierania assignedOffers", e);
         }
@@ -69,6 +70,18 @@ export const ScheduleList = () => {
             fetchAssignedOffers();
         }
     }, [record, currentSchedule]);
+    const handleDeleteOffer = async (offerId) => {
+        const confirmed = window.confirm("Czy na pewno chcesz usunąć tę ofertę?");
+        if (!confirmed) return;
+
+        try {
+            await axiosNest.delete(`/car-schedule-offers/${offerId}`);
+            await fetchAssignedOffers(); // odśwież listę
+            setTimelineMarkedOffer(null); // odznacz usuniętą ofertę
+        } catch (err) {
+            console.error("Błąd podczas usuwania oferty:", err);
+        }
+    };
 
     const changeOfferStatus = async (offerId, newStatus) => {
         try {
@@ -199,6 +212,7 @@ export const ScheduleList = () => {
                             offer={timelineMarkedOffer}
                             onChangeStatus={(newStatus) => changeOfferStatus(timelineMarkedOffer.id, newStatus)}
                             onSearchFromUnloading={() => handleSearchFromUnloading(timelineMarkedOffer)}
+                            onDelete={() => handleDeleteOffer(timelineMarkedOffer.id)}
                         />
                     )}
 

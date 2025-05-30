@@ -4,7 +4,7 @@ import PlaceInfoCell from "./PlaceInfoCell";
 import { Button } from "react-admin";
 import { OFFER_STATUSES } from "./Timeline/constants";
 
-export const OfferDetailsCard = ({ offer, onChangeStatus, onSearchFromUnloading }) => {
+export const OfferDetailsCard = ({ offer, onChangeStatus, onSearchFromUnloading, onDelete  }) => {
     if (!offer) return null;
     const details = offer.details || {};
 
@@ -81,6 +81,16 @@ export const OfferDetailsCard = ({ offer, onChangeStatus, onSearchFromUnloading 
                                 {label}
                             </Button>
                         ))}
+                    </Box>
+                    <Box display="flex" flexDirection="column" gap={1}>
+                        <Button
+                            size="small"
+                            variant="contained"
+                            color="error"
+                            onClick={onDelete}
+                        >
+                            Usuń
+                        </Button>
                     </Box>
                 </Grid>
             </CardContent>
