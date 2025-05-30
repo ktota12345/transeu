@@ -194,7 +194,9 @@ export const ScheduleList = () => {
                     <CarPlanSummary
                         from={currentSchedule?.from}
                         to={currentSchedule?.to}
-                        offers={assignedOffers} />
+                        offers={assignedOffers}
+                        baseAddress={record?.baseAddress}
+                    />
 
                     <CarPlanTimeline
                         from={currentSchedule?.from}
