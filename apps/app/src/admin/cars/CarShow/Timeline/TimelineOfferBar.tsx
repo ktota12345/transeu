@@ -45,7 +45,6 @@ export const TimelineOfferBar = ({
             {offer.details}
         </>
     );
-    console.log(offer);
     const isOverlap = offer.latestFrom && offer.latestFrom >= offer.to;
 
     //const isOverlap = true;

@@ -25,16 +25,29 @@ export class OfferSearchController {
         @Query('numUnloadingCities') numUnloadingCities?: string,
         @Query('searchArea') searchArea?: string,
         @Query('perPage') perPage?: string,
+        @Query('plannedLocationOverride') plannedLocationOverride?: any,
     ) {
         const carData = await this.offerSearchService.getCarForSearch(parseInt(id),{
             numLoadingCities: numLoadingCities ? parseInt(numLoadingCities) : 0,
             numUnloadingCities: numUnloadingCities ? parseInt(numUnloadingCities) : 0,
         });
 
+        const plannedLocationOverrideParsed = plannedLocationOverride ? JSON.parse(plannedLocationOverride) : null;
+
+        if (plannedLocationOverrideParsed?.lat && plannedLocationOverrideParsed?.lng && plannedLocationOverrideParsed?.date) {
+            carData.plannedLocation = {
+                latitude: parseFloat(plannedLocationOverrideParsed.lat),
+                longitude: parseFloat(plannedLocationOverrideParsed.lng),
+                date: new Date(plannedLocationOverrideParsed.date),
+                address: plannedLocationOverrideParsed.address || '',
+            };
+        }
+
         const offers = await this.offerSearchService.searchOffersBetweenCities(carData, {
             searchArea: searchArea ? parseInt(searchArea) : SEARCH_AREA,
             perPage: perPage ? parseInt(perPage) : 100,
         });
+        //const offers = [];
 
         return { id, car: carData, offers };
     }

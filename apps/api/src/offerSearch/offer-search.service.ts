@@ -274,16 +274,6 @@ export class OfferSearchService {
         return this.sortOffers(offersWithStatus);
     }
 
-    private removeDuplicateOffers(offers: any[]): any[] {
-        const seen = new Set<string>();
-        return offers.filter(offer => {
-            if (!offer.id) return true; // zachowaj oferty bez externalId
-            if (seen.has(offer.id)) return false;
-            seen.add(offer.id);
-            return true;
-        });
-    }
-
     private async searchOffersBetweenTwoCities(
         start: any,
         end: any,
@@ -374,6 +364,19 @@ export class OfferSearchService {
         const transEuOffers = await this.mapOffers(this.filterOffers(partialTransEuOffers?.data?.payload ?? []),
             carData.plannedLocation.address);
         return [...timocomOffers, ...transEuOffers];
+    }
+
+
+
+
+    private removeDuplicateOffers(offers: any[]): any[] {
+        const seen = new Set<string>();
+        return offers.filter(offer => {
+            if (!offer.id) return true; // zachowaj oferty bez externalId
+            if (seen.has(offer.id)) return false;
+            seen.add(offer.id);
+            return true;
+        });
     }
     private filterOffers(offers: any[]): any[] {
         return offers.filter(offer =>

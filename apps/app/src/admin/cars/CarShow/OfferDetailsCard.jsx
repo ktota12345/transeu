@@ -55,13 +55,13 @@ export const OfferDetailsCard = ({ offer, onChangeStatus, onSearchFromUnloading 
                             rel="noopener noreferrer"
                         >
                             Oferta
-                        </Button><br />
+                        </Button>
                         <Button
                             variant="outlined"
                             size="small"
                             href={googleMapsRouteLink([
-                                { lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude },
-                                { lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude }
+                                {lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude},
+                                {lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude}
                             ])}
                             target="_blank"
                             rel="noopener noreferrer"

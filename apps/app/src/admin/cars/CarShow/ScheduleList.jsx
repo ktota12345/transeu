@@ -21,8 +21,8 @@ export const ScheduleList = () => {
     const [error, setError] = useState(null);
 
     const [numLoadingCities, setNumLoadingCities] = useState(3);
-    const [numUnloadingCities, setNumUnloadingCities] = useState(30);
-    const [searchArea, setSearchArea] = useState(200);
+    const [numUnloadingCities, setNumUnloadingCities] = useState(10);
+    const [searchArea, setSearchArea] = useState(100);
     const [perPage, setPerPage] = useState(100);
     const [assignedOffers, setAssignedOffers] = useState([]);
     const [selectedOffer, setSelectedOffer] = useState(null);
@@ -84,14 +84,19 @@ export const ScheduleList = () => {
     const handleSearchFromUnloading = (offer) => {
         const unloading = getUnloadingPlace(offer.details || {});
         if (!unloading || !unloading.address?.geoCoordinate) return;
-
         const coords = unloading.address.geoCoordinate;
         const plannedLocationOverride = {
             lat: coords.latitude,
-            lng: coords.longitude
+            lng: coords.longitude,
+            date: unloading.latestLoadingDate,
+            address:{
+                city: unloading.address.city || "Nieznane",
+                country: unloading.address.country || "Nieznane",
+                location:[coords.latitude, coords.longitude]
+            }
         };
 
-        handleSearchOffers(plannedLocationOverride);
+        handleSearchOffers(JSON.stringify(plannedLocationOverride));
     };
 
 
@@ -111,6 +116,7 @@ export const ScheduleList = () => {
             if (plannedLocationOverride) {
                 params.plannedLocationOverride = plannedLocationOverride;
             }
+            console.log(params);
 
             const res = await axiosNest.get(`/offerSearch/car/${record.id}`, { params });
             setOffers(res.data);
@@ -199,7 +205,7 @@ export const ScheduleList = () => {
 
 
 
-                    <Button variant="contained" onClick={handleSearchOffers} disabled={loading}>
+                    <Button variant="contained" onClick={()=>handleSearchOffers(null)} disabled={loading}>
                         {loading ? 'Szukam...' : 'Szukaj ofert'}
                     </Button>
 
