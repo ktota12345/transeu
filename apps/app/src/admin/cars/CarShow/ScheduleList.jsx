@@ -13,6 +13,7 @@ import {OffersTable} from "./OffersTable";
 import {CarPlanTimeline} from "./CarPlanTimeline";
 import {OfferDetailsCard} from "./OfferDetailsCard";
 import {getUnloadingPlace} from "../../../data/helpers";
+import {CarPlanSummary} from "./CarPlanSummary";
 
 export const ScheduleList = () => {
     const record = useRecordContext();
@@ -190,6 +191,10 @@ export const ScheduleList = () => {
                         perPage={perPage}
                         setPerPage={setPerPage}
                     />
+                    <CarPlanSummary
+                        from={currentSchedule?.from}
+                        to={currentSchedule?.to}
+                        offers={assignedOffers} />
 
                     <CarPlanTimeline
                         from={currentSchedule?.from}
