@@ -27,11 +27,15 @@ export class OfferSearchController {
         @Query('perPage') perPage?: string,
         @Query('plannedLocationOverride') plannedLocationOverride?: any,
         @Query('searchServices') searchServices?: string,
+        @Query('useDestinationCityService') useDestinationCityService?: string,
+
     ) {
         const carData = await this.offerSearchService.getCarForSearch(parseInt(id),{
             numLoadingCities: numLoadingCities ? parseInt(numLoadingCities) : 0,
             numUnloadingCities: numUnloadingCities ? parseInt(numUnloadingCities) : 0,
         });
+
+
 
         const plannedLocationOverrideParsed = plannedLocationOverride ? JSON.parse(plannedLocationOverride) : null;
 
@@ -44,6 +48,37 @@ export class OfferSearchController {
             };
         }
 
+        if (useDestinationCityService === '1') {
+            try {
+                    const body = {
+                        latitude: carData.plannedLocation.address.location[0],
+                        longitude: carData.plannedLocation.address.location[1],
+                        banned_countries: carData.bannedCountries || [],
+                        allowed_countries: carData.allowedCountries || [],
+                    };
+                    console.log(body);
+
+                    const response = await fetch('http://routealgorithm.onrender.com/analyze-route', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(body),
+                    });
+
+                    const result = await response.json();
+
+                    const destinationCities = result.statistics?.destinations?.map((d) => ({
+                        name: d.city,
+                        latitude: d.latitude,
+                        longitude: d.longitude,
+                    })) || [];
+
+                    carData.furthestCities = destinationCities;
+            } catch (error) {
+                console.error('Błąd pobierania danych z analyze-route:', error);
+            }
+        }
         const servicesArray = searchServices
             ? JSON.parse(searchServices)
             : ['timocom', 'transEu', 'smartsearch'];

@@ -126,6 +126,16 @@ export class OfferSearchService {
 
         const allowedCountries = (car?.driver?.allowedCountries?.length) ? car.driver.allowedCountries.map(c => c.code) : [];
 
+        const allCountries = await this.prisma.country.findMany({
+            select: {
+                code: true,
+            },
+        }).then(countries => countries.map(c => c.code));
+
+        const bannedCountries = allCountries.filter(c => !allowedCountries.includes(c));
+
+
+
         const closeCities = await this.getClosestCities(
             plannedLocation.address.location[0],
             plannedLocation.address.location[1],
@@ -156,7 +166,9 @@ export class OfferSearchService {
             },
             plannedLocation,
             closeCities,
-            furthestCities
+            furthestCities,
+            bannedCountries,
+            allowedCountries
 
         };
     }
@@ -177,10 +189,10 @@ export class OfferSearchService {
                               )
                        ) AS distance
             FROM "City"
-            WHERE country IN (${allowedCountries.map(c => `'${c}'`).join(',')})
             ORDER BY distance ASC
             LIMIT ${limit};
         `);
+        //    #             WHERE country IN (${allowedCountries.map(c => `'${c}'`).join(',')})
     }
 
     async getFurthestCities(lat: number, lng: number, limit: number = 5, allowedCountries: string[] = []) {
@@ -319,7 +331,7 @@ export class OfferSearchService {
                 area: {
                     address: {
                         objectType: 'address',
-                        country: end.country,
+                        country: end.country || 'DE',
                         postalCode: end.postalCode,
                         city: end.name,
                     },

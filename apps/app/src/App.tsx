@@ -37,7 +37,7 @@ function App() {
                         <Routes>
                             <Route path="/login" element={<LoginForm onLoginSuccess={() => window.location.replace('/admin')}/>}/>
 
-                            <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
+                            <Route path="/" element={<AdminApp />} />
                             {/*<Route path="/agents" element={<RequireAuth><AgentsList /></RequireAuth>} />*/}
                             {/*<Route path="/agent/new" element={<RequireAuth><AgentForm*/}
                             {/*    initialData={{}}*/}
