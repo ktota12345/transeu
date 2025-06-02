@@ -32,12 +32,13 @@ import {VehicleLoadSecuringEdit, VehicleLoadSecuringCreate} from './vehicleLoadS
 import VehicleBodyList from "./vehicleBody/VehicleBodyList";
 import VehicleBodyEdit from "./vehicleBody/VehicleBodyEdit";
 
+
+
 const AdminApp = () => (
     <Admin
         dataProvider={dataProvider}
         layout={CustomLayout}
         basename={process.env.REACT_APP_ADMIN_PREFIX}
-
     >
         <Resource
             name="cars"

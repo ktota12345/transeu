@@ -35,7 +35,7 @@ function App() {
             <ChakraProvider>
                 <Router>
                         <Routes>
-                            <Route path="/login" element={<LoginForm onLoginSuccess={() => window.location.replace('/')}/>}/>
+                            <Route path="/login" element={<LoginForm onLoginSuccess={() => window.location.replace('/admin')}/>}/>
 
                             <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             {/*<Route path="/agents" element={<RequireAuth><AgentsList /></RequireAuth>} />*/}
