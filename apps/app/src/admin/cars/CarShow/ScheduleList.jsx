@@ -20,6 +20,7 @@ export const ScheduleList = () => {
     const [offers, setOffers] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [searchServices, setSearchServices] = useState(['timocom', 'transEu', 'smartsearch']);
 
     const [numLoadingCities, setNumLoadingCities] = useState(3);
     const [numUnloadingCities, setNumUnloadingCities] = useState(10);
@@ -29,6 +30,8 @@ export const ScheduleList = () => {
     const [selectedOffer, setSelectedOffer] = useState(null);
     const [currentOfferMapped, setCurrentOfferMapped] = useState(null);
     const [timelineMarkedOffer, setTimelineMarkedOffer] = useState(null);
+    const [useDestinationCityService, setUseDestinationCityService] = useState(false);
+
 
 
     const futureSchedules = (record?.schedules || []).filter(schedule => {
@@ -125,11 +128,14 @@ export const ScheduleList = () => {
                 numUnloadingCities,
                 searchArea,
                 perPage,
+                searchServices: JSON.stringify(searchServices),
             };
 
             if (plannedLocationOverride) {
                 params.plannedLocationOverride = plannedLocationOverride;
             }
+            params.useDestinationCityService = useDestinationCityService?1:0;
+
             console.log(params);
 
             const res = await axiosNest.get(`/offerSearch/car/${record.id}`, { params });
@@ -190,6 +196,10 @@ export const ScheduleList = () => {
                         setSearchArea={setSearchArea}
                         perPage={perPage}
                         setPerPage={setPerPage}
+                        searchServices={searchServices}
+                        setSearchServices={setSearchServices}
+                        useDestinationCityService={useDestinationCityService}
+                        setUseDestinationCityService={setUseDestinationCityService}
                     />
                     <CarPlanSummary
                         from={currentSchedule?.from}

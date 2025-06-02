@@ -26,6 +26,7 @@ export class OfferSearchController {
         @Query('searchArea') searchArea?: string,
         @Query('perPage') perPage?: string,
         @Query('plannedLocationOverride') plannedLocationOverride?: any,
+        @Query('searchServices') searchServices?: string,
     ) {
         const carData = await this.offerSearchService.getCarForSearch(parseInt(id),{
             numLoadingCities: numLoadingCities ? parseInt(numLoadingCities) : 0,
@@ -43,19 +44,19 @@ export class OfferSearchController {
             };
         }
 
+        const servicesArray = searchServices
+            ? JSON.parse(searchServices)
+            : ['timocom', 'transEu', 'smartsearch'];
         const offers = await this.offerSearchService.searchOffersBetweenCities(carData, {
             searchArea: searchArea ? parseInt(searchArea) : SEARCH_AREA,
             perPage: perPage ? parseInt(perPage) : 100,
+            searchServices: servicesArray,
         });
         //const offers = [];
 
         return { id, car: carData, offers };
     }
 
-    @Get('transeu')
-    async transeuOffers() {
-        return this.offerSearchService.testTransEuApiFetchFreights();
-    }
 
 
 

@@ -7,6 +7,7 @@ import {TransEuApiAppService} from "./transeuApi/trans-eu-api-app.service";
 import {TransEuApiClientService} from "./transeuApi/trans-eu-api-client.service";
 import {ExchangeRateService} from '../exchangeRate/exchange-rate.service';
 import {TransEuAuthService} from '../transeu-auth/trans-eu-auth.service';
+import {TransEuHelperService} from './transeuApi/trans-eu-helper.service';
 
 @Module({
     imports: [PrismaModule],
@@ -18,6 +19,7 @@ import {TransEuAuthService} from '../transeu-auth/trans-eu-auth.service';
         TransEuApiAppService,
         TransEuApiClientService,
         TransEuAuthService,
+        TransEuHelperService,
     ],
 })
 export class OfferSearchModule {

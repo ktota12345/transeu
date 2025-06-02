@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {TimocomApiService} from './timocomApi/timocom-api.service';
-import {TransEuApiAppService}  from "./transeuApi/trans-eu-api-app.service";
+import {TransEuApiAppService} from "./transeuApi/trans-eu-api-app.service";
 import {TransEuApiClientService} from "./transeuApi/trans-eu-api-client.service";
 import {ExchangeRateService} from '../exchangeRate/exchange-rate.service';
 
@@ -27,7 +27,7 @@ export class OfferSearchService {
     ) {
     }
 
-    async getCarForSearch(carId: number,{
+    async getCarForSearch(carId: number, {
         numLoadingCities = 1,
         numUnloadingCities = 1,
     }: {
@@ -41,7 +41,7 @@ export class OfferSearchService {
                 id: carId,
             },
             include: {
-                bodies:true,
+                bodies: true,
                 vehicleTypes: true,
                 vehicleLoadSecurings: true,
                 vehicleEquipments: true,
@@ -86,7 +86,7 @@ export class OfferSearchService {
                     fromAddress: true,
                     toAddress: true,
                 },
-                orderBy:{
+                orderBy: {
                     toDate: 'desc',
                 }
             });
@@ -140,7 +140,6 @@ export class OfferSearchService {
         );
 
 
-
         return {
             carSpecification: {
                 type: car.vehicleTypes.map((vt) => vt.apiNameTimocom),
@@ -184,7 +183,7 @@ export class OfferSearchService {
         `);
     }
 
-    async getFurthestCities(lat: number, lng: number, limit: number = 5,allowedCountries: string[] = []) {
+    async getFurthestCities(lat: number, lng: number, limit: number = 5, allowedCountries: string[] = []) {
         return this.prisma.$queryRawUnsafe<any>(`
             SELECT id,
                    name,
@@ -214,14 +213,15 @@ export class OfferSearchService {
             closeCities: any[];
             furthestCities: any[];
             plannedLocation: any;
-        },{
+        }, {
             searchArea,
             perPage,
+            searchServices,
         }: {
             searchArea: number;
             perPage: number;
+            searchServices: string[];
         },
-
     ) {
         const offers: any[] = [];
 
@@ -239,6 +239,7 @@ export class OfferSearchService {
                     searchArea,
                     1,
                     perPage,
+                    searchServices
                 );
 
                 offers.push(...partialOffers);
@@ -287,14 +288,15 @@ export class OfferSearchService {
         searchArea: number,
         page: number,
         limit: number,
+        searchServices: string[],
     ): Promise<any[]> {
         const exclusiveLeftLowerBoundDateTime = new Date(searchPeriodStartDate);
         exclusiveLeftLowerBoundDateTime.setDate(exclusiveLeftLowerBoundDateTime.getDate() - 2);
         const inclusiveRightUpperBoundDateTime = new Date(searchPeriodEndDate);
         inclusiveRightUpperBoundDateTime.setDate(inclusiveRightUpperBoundDateTime.getDate() + 2);
         let plannedLocationDate = new Date(carData.plannedLocation.date);
-        const dateNow =   new Date();
-        if(plannedLocationDate < dateNow){
+        const dateNow = new Date();
+        if (plannedLocationDate < dateNow) {
             plannedLocationDate = dateNow;
         }
         const searchParams = {
@@ -355,18 +357,42 @@ export class OfferSearchService {
             },
         };
 
-        const partialTimocomOffers = await this.timocomApiService.fetchOffers(searchParams);
-        const timocomOffers = await this.mapOffers(this.filterOffers(partialTimocomOffers?.data?.payload ?? []),
-            carData.plannedLocation.address);
-        console.log(timocomOffers.length, 'timocom offers found');
+        const allOffers: any[] = [];
 
-        const partialTransEuOffers = await this.transEuApiAppService.fetchOffers(searchParams);
-        const transEuOffers = await this.mapOffers(this.filterOffers(partialTransEuOffers?.data?.payload ?? []),
-            carData.plannedLocation.address);
-        return [...timocomOffers, ...transEuOffers];
+        if (searchServices.includes('timocom')) {
+            const partialTimocomOffers = await this.timocomApiService.fetchOffers(searchParams);
+            const timocomOffers = await this.mapOffers(this.filterOffers(partialTimocomOffers?.data?.payload ?? []),
+                carData.plannedLocation.address);
+            if(partialTimocomOffers?.data?.payload.length > 0) {
+                console.log(partialTimocomOffers?.data?.payload.length, 'timocom before filter offers found');
+                console.log(timocomOffers.length, 'timocom after filter offers found');
+            }
+            allOffers.push(...timocomOffers);
+        }
+        if (searchServices.includes('transEu')) {
+            const partialTransEuOffers = await this.transEuApiAppService.fetchOffers(searchParams);
+            const transEuOffers = await this.mapOffers(this.filterOffers(partialTransEuOffers?.data?.payload ?? []),
+                carData.plannedLocation.address);
+            if (partialTransEuOffers?.data?.payload?.length > 0) {
+                console.log(partialTransEuOffers?.data?.payload?.length, 'transEu before filter offers found');
+                console.log(transEuOffers.length, 'transEu after filter offers found');
+            }
+            allOffers.push(...transEuOffers);
+        }
+        if (searchServices.includes('smartsearch')) {
+            const partialTransEuSmartSearchOffers = await this.transEuApiClientService.fetchOffers(searchParams);
+            const transEuSmartSearchOffers = await this.mapOffers(this.filterOffers(partialTransEuSmartSearchOffers?.data?.payload ?? []),
+                carData.plannedLocation.address);
+            if(partialTransEuSmartSearchOffers?.data?.payload?.length > 0) {
+                console.log(partialTransEuSmartSearchOffers?.data?.payload?.length, 'smartsearch before filter offers found');
+                console.log(transEuSmartSearchOffers.length, 'smartsearch after filter offers found');
+            }
+            allOffers.push(...transEuSmartSearchOffers);
+        }
+
+
+        return allOffers;
     }
-
-
 
 
     private removeDuplicateOffers(offers: any[]): any[] {
@@ -378,6 +404,7 @@ export class OfferSearchService {
             return true;
         });
     }
+
     private filterOffers(offers: any[]): any[] {
         return offers.filter(offer =>
             offer &&
@@ -388,6 +415,7 @@ export class OfferSearchService {
             offer.price.amount != null
         );
     }
+
     private async mapOffers(offers: any[], plannedLocation: { location: [number, number] }): Promise<any[]> {
         return Promise.all(offers.map(async offer => {
             const price = offer?.price?.amount;
@@ -400,7 +428,7 @@ export class OfferSearchService {
 
             let startAccessDistance = 0;
             if (typeof startLat === 'number' && typeof startLng === 'number') {
-                startAccessDistance = Math.round( this.calculateDistance(
+                startAccessDistance = Math.round(this.calculateDistance(
                     plannedLocation.location[0],
                     plannedLocation.location[1],
                     startLat,
@@ -445,14 +473,10 @@ export class OfferSearchService {
             const priceB = parseFloat(b.pricePerKmEurGross);
 
 
-            return  priceB - priceA;
+            return priceB - priceA;
         });
     }
 
-
-    public testTransEuApiFetchFreights() {
-        return this.transEuApiClientService.test();
-    }
 
     private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
         const ROUTE_MULTIPLIER = 1.3;
