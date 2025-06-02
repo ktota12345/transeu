@@ -72,7 +72,9 @@ export class OfferSearchController {
                         name: d.city,
                         latitude: d.latitude,
                         longitude: d.longitude,
+                        country:d.country || 'DE',
                     })) || [];
+                    console.log(result);
 
                     carData.furthestCities = destinationCities;
             } catch (error) {
