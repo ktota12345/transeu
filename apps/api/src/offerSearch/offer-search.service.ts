@@ -4,6 +4,7 @@ import {TimocomApiService} from './timocomApi/timocom-api.service';
 import {TransEuApiAppService} from "./transeuApi/trans-eu-api-app.service";
 import {TransEuApiClientService} from "./transeuApi/trans-eu-api-client.service";
 import {ExchangeRateService} from '../exchangeRate/exchange-rate.service';
+import {TransEuHelperService} from "./transeuApi/trans-eu-helper.service";
 
 type CarSpecification = {
     type: string[];
@@ -24,6 +25,7 @@ export class OfferSearchService {
         private readonly exchangeRateService: ExchangeRateService,
         private readonly transEuApiAppService: TransEuApiAppService,
         private readonly transEuApiClientService: TransEuApiClientService,
+        private readonly transEuHelperService: TransEuHelperService,
     ) {
     }
 
@@ -449,7 +451,7 @@ export class OfferSearchService {
 
             let startAccessDistance = 0;
             if (typeof startLat === 'number' && typeof startLng === 'number') {
-                startAccessDistance = Math.round(this.calculateDistance(
+                startAccessDistance = Math.round(this.transEuHelperService.calculateDistance(
                     plannedLocation.location[0],
                     plannedLocation.location[1],
                     startLat,
@@ -499,22 +501,6 @@ export class OfferSearchService {
     }
 
 
-    private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-        const ROUTE_MULTIPLIER = 1.3;
-        const R = 6371; // promień Ziemi w kilometrach
-        const dLat = this.deg2rad(lat2 - lat1);
-        const dLon = this.deg2rad(lon2 - lon1);
-        const a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c * ROUTE_MULTIPLIER;
-    }
-
-    private deg2rad(deg: number): number {
-        return deg * (Math.PI / 180);
-    }
 
 
 }
