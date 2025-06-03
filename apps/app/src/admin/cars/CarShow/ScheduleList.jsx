@@ -25,7 +25,7 @@ export const ScheduleList = () => {
     const [numLoadingCities, setNumLoadingCities] = useState(3);
     const [numUnloadingCities, setNumUnloadingCities] = useState(10);
     const [searchArea, setSearchArea] = useState(100);
-    const [perPage, setPerPage] = useState(100);
+    const [perPage, setPerPage] = useState(50);
     const [assignedOffers, setAssignedOffers] = useState([]);
     const [selectedOffer, setSelectedOffer] = useState(null);
     const [currentOfferMapped, setCurrentOfferMapped] = useState(null);

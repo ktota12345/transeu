@@ -371,6 +371,15 @@ export class OfferSearchService {
 
         const allOffers: any[] = [];
 
+        console.log(`
+        Searching offers from ${start.name} (${start.country}) 
+        to ${end.name} (${end.country}) 
+        loading date: (${plannedLocationDate.toISOString().slice(0, 10)})
+        search area: ${searchArea}km
+        search services: ${searchServices.join(', ')}
+        car type: ${carData.carSpecification.type.join(', ')}
+        `);
+
         if (searchServices.includes('timocom')) {
             const partialTimocomOffers = await this.timocomApiService.fetchOffers(searchParams);
             const timocomOffers = await this.mapOffers(this.filterOffers(partialTimocomOffers?.data?.payload ?? []),
