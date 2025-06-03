@@ -50,13 +50,14 @@ export class OfferSearchController {
 
         if (useDestinationCityService === '1') {
             try {
+                const timeNow = new Date();
                     const body = {
                         latitude: carData.plannedLocation.address.location[0],
                         longitude: carData.plannedLocation.address.location[1],
                         banned_countries: carData.bannedCountries || [],
                         allowed_countries: carData.allowedCountries || [],
                     };
-                    console.log(body);
+                    console.log("Ask for routing:",body);
 
                     const response = await fetch('http://routealgorithm.onrender.com/analyze-route', {
                         method: 'POST',
@@ -65,8 +66,10 @@ export class OfferSearchController {
                         },
                         body: JSON.stringify(body),
                     });
+                const routingResponseTimeS = (new Date().getTime() - timeNow.getTime()) / 1000;
 
                     const result = await response.json();
+                console.log("routing result:", result, 'time:', routingResponseTimeS, 's');
 
                     const destinationCities = result.statistics?.destinations?.map((d) => ({
                         name: d.city,
