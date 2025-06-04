@@ -9,6 +9,7 @@ export class TransEuApiAppService {
     private accessToken: string | null = null;
     private readonly MIN_DISTANCE = 200000;
     private readonly MAX_DISTANCE = 5000000;
+    private readonly MIN_PRICE = 100;
     constructor(private prisma: PrismaService,
                 private transEuHelperService: TransEuHelperService) {}
 
@@ -79,7 +80,7 @@ export class TransEuApiAppService {
                     to:     this.MAX_DISTANCE
                 },
                 price: {
-                    from: 1
+                    from: this.MIN_PRICE,
                 },
                 //price_currency: "1_eur",
                 // required_ways_of_loading: ["1_top", "2_side", "3_back"],

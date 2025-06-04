@@ -28,6 +28,7 @@ type CityLocation = {
 
 @Injectable()
 export class OfferSearchService {
+    private readonly MIN_PRICE = 100;
     constructor(
         private prisma: PrismaService,
         private readonly timocomApiService: TimocomApiService,
@@ -447,7 +448,9 @@ export class OfferSearchService {
             'price' in offer &&
             offer.price &&
             typeof offer.price === 'object' &&
-            offer.price.amount != null
+            offer.price.amount != null &&
+            typeof offer.price.amount === 'number' &&
+            offer.price.amount >= this.MIN_PRICE
         );
     }
 

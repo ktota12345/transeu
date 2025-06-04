@@ -6,8 +6,7 @@ import {TransEuAuthService} from '../../transeu-auth/trans-eu-auth.service';
 
 @Injectable()
 export class TransEuApiClientService implements OnModuleInit {
-    private readonly MIN_DISTANCE = 200000;
-    private readonly MAX_DISTANCE = 5000000;
+    private readonly MIN_PRICE = 100;
     private readonly logger = new Logger(TransEuApiClientService.name);
 
     constructor(
@@ -70,7 +69,7 @@ export class TransEuApiClientService implements OnModuleInit {
                 //     to: this.MAX_DISTANCE
                 // },
                  price: {
-                     from: 1
+                     from: this.MIN_PRICE,
                  },
                 // places_matching_type: "cross",
                 // exclude_suspended: true,

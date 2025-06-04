@@ -52,21 +52,21 @@ export const General = () => {
                 <Typography variant="h6" gutterBottom>Adres bazowy</Typography>
                 <Grid container spacing={1}>
                     <Grid item xs={4}>
-                        <Typography variant="body2" color="textSecondary">Kraj</Typography>
+                        <Typography color="textSecondary">Kraj</Typography>
                     </Grid>
                     <Grid item xs={8}>
                         <TextField source="baseAddress.country"/>
                     </Grid>
 
                     <Grid item xs={4}>
-                        <Typography variant="body2" color="textSecondary">Kod pocztowy</Typography>
+                        <Typography color="textSecondary">Kod</Typography>
                     </Grid>
                     <Grid item xs={8}>
                         <TextField source="baseAddress.postalCode"/>
                     </Grid>
 
                     <Grid item xs={4}>
-                        <Typography variant="body2" color="textSecondary">Miasto</Typography>
+                        <Typography color="textSecondary">Miasto</Typography>
                     </Grid>
                     <Grid item xs={8}>
                         <TextField source="baseAddress.city"/>
