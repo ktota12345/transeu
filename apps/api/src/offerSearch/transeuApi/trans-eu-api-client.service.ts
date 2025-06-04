@@ -56,8 +56,8 @@ export class TransEuApiClientService implements OnModuleInit {
                     }
                 ,
 
-                required_vehicle_size: [searchParams.vehicleProperties.typeTransEu[0] || 'any_size'],
-                required_truck_body: [searchParams.vehicleProperties.bodyTransEu[0] || 'curtainsider'],
+                required_vehicle_size: [searchParams.vehicleProperties.typeTransEu.join('_')],
+                required_truck_body: [searchParams.vehicleProperties.bodyTransEu.join('_')],
                 transport_type: ["ftl"],
                 load_weight: {
                     from: 1,
