@@ -9,6 +9,8 @@ import {TransEuHelperService} from "./transeuApi/trans-eu-helper.service";
 type CarSpecification = {
     type: string[];
     body: string[];
+    typeTransEu: string[];
+    bodyTransEu: string[];
     bodyProperty: string[];
     equipment: string[];
     loadSecuring: string[];
@@ -73,6 +75,7 @@ export class OfferSearchService {
         if (!car) {
             throw new Error(`Car with ID ${carId} not found.`);
         }
+
 
         const schedule = car.schedules[0];
 
@@ -156,6 +159,8 @@ export class OfferSearchService {
             carSpecification: {
                 type: car.vehicleTypes.map((vt) => vt.apiNameTimocom),
                 body: car.bodies.map((bp) => bp.apiNameTimocom),
+                typeTransEu: car.vehicleTypes.flatMap((vt) => vt.transEuMapping || []),
+                bodyTransEu: car.bodies.flatMap((bp) => bp.transEuMapping || []),
                 bodyProperty: car.bodyProperties.map((bp) => bp.apiNameTimocom),
                 equipment: car.vehicleEquipments.map((ve) => ve.apiNameTimocom),
                 loadSecuring: [],//car.vehicleLoadSecurings.map((vls) => vls.apiNameTimocom),
@@ -358,6 +363,8 @@ export class OfferSearchService {
             vehicleProperties: {
                 type: carData.carSpecification.type,
                 body: carData.carSpecification.body,
+                typeTransEu: carData.carSpecification.typeTransEu,
+                bodyTransEu: carData.carSpecification.bodyTransEu,
                 bodyProperty: carData.carSpecification.bodyProperty,
                 equipment: carData.carSpecification.equipment,
                 loadSecuring: carData.carSpecification.loadSecuring,

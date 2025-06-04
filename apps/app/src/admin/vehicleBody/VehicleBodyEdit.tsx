@@ -1,12 +1,9 @@
-import { Edit, SimpleForm, TextInput } from 'react-admin';
+import {Edit, SimpleForm, TextInput} from 'react-admin';
+import {AttributeForm} from "../commons/AttributeForm";
 
 const VehicleBodyEdit = () => (
     <Edit>
-        <SimpleForm>
-            <TextInput source="id" disabled />
-            <TextInput source="name" />
-            <TextInput source="apiNameTimocom" />
-        </SimpleForm>
+        <AttributeForm/>
     </Edit>
 );
 

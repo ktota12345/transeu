@@ -56,8 +56,8 @@ export class TransEuApiClientService implements OnModuleInit {
                     }
                 ,
 
-                required_vehicle_size: ["any_size"],
-                required_truck_body: ["curtainsider","cooler","standard-tent", "box", "open-box","isotherm","meathanging","tanker","other","car-transporter"],
+                required_vehicle_size: [searchParams.vehicleProperties.typeTransEu[0] || 'any_size'],
+                required_truck_body: [searchParams.vehicleProperties.bodyTransEu[0] || 'curtainsider'],
                 transport_type: ["ftl"],
                 load_weight: {
                     from: 1,
@@ -76,12 +76,11 @@ export class TransEuApiClientService implements OnModuleInit {
                 // exclude_suspended: true,
                  loading_date: {
                      from: loadingDateFrom.toISOString(),
-                     to: "2026-01-01T00:00:00Z" // Ustawiamy na przyszłość, aby nie ograniczać daty
+                     //to: "2026-01-01T00:00:00Z" // Ustawiamy na przyszłość, aby nie ograniczać daty
                  }
             },
         };
         try {
-            console.log(JSON.stringify(mappedParams, null, 2));
             const res = await axiosTranseu.get(baseUrl, {
                 params: mappedParams,
                 paramsSerializer: params => {
@@ -91,7 +90,7 @@ export class TransEuApiClientService implements OnModuleInit {
                 }
 
             });
-            console.log(JSON.stringify(res.data), null, 2);
+            console.log(JSON.stringify(mappedParams.filter), null, 2);
 
             if (res.status >= 200 && res.status < 300 && res.data) {
                 //this.logger.log(`Otrzymano ${res.data?.offers?.length ?? 0} wyników ze SmartSearch.`);
@@ -185,20 +184,20 @@ export class TransEuApiClientService implements OnModuleInit {
             trackable: false,
             useMessenger: false,
             vehicleProperties: {
-                body: ["CURTAIN_SIDER"], // mapuj dynamicznie jeśli potrzeba
+                body: [],
                 bodyProperty: [],
                 equipment: [],
                 loadSecuring: [],
                 swapBody: [],
-                type: ["TRAILER", "WAGGON_AND_DRAG"], // można dodać logikę na podstawie vehicle_size
+                type: [],
             },
             acceptQuotes: false,
             additionalInformation: [],
             distance_km: distanceKm,
-            freightDescription: requirements.shipping_remarks || "standard",
+            freightDescription: requirements.shipping_remarks || "",
             length_m: freight.loading_meters || null,
             loadingPlaces: spots.map(spot => {
-                const opType = spot.operations?.[0]?.type || "loading";
+                const opType = spot.operations?.[0]?.type || "";
                 return convertSpot(spot, opType);
             }),
             paymentDueWithinDays: period.days || null,

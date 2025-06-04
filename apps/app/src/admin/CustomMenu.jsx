@@ -71,6 +71,12 @@ export const CustomMenu = () => {
                         style={{ paddingLeft: open?32:16 }}
                     />
                     <MenuItemLink
+                        to={`${process.env.REACT_APP_ADMIN_PREFIX}vehicle-body`}
+                        primaryText="Typy zabudowy"
+                        leftIcon={<TypeIcon />}
+                        style={{ paddingLeft: open?32:16 }}
+                    />
+                    <MenuItemLink
                         to={`${process.env.REACT_APP_ADMIN_PREFIX}vehicle-load-securing`}
                         primaryText="Zabezpieczenia ładunku"
                         leftIcon={<SecuringIcon />}
