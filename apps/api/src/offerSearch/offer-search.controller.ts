@@ -21,7 +21,6 @@ export class OfferSearchController {
     @Get('car/:id')
     async car(
         @Param('id') id: string,
-        @Query('numLoadingCities') numLoadingCities?: string,
         @Query('numUnloadingCities') numUnloadingCities?: string,
         @Query('searchArea') searchArea?: string,
         @Query('perPage') perPage?: string,
@@ -31,7 +30,6 @@ export class OfferSearchController {
 
     ) {
         const carData = await this.offerSearchService.getCarForSearch(parseInt(id),{
-            numLoadingCities: numLoadingCities ? parseInt(numLoadingCities) : 0,
             numUnloadingCities: numUnloadingCities ? parseInt(numUnloadingCities) : 0,
         });
 

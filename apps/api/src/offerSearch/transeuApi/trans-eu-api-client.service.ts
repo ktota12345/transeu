@@ -90,7 +90,7 @@ export class TransEuApiClientService implements OnModuleInit {
                 }
 
             });
-            console.log(JSON.stringify(mappedParams.filter), null, 2);
+            console.log(JSON.stringify(mappedParams.filter, null, 2));
 
             if (res.status >= 200 && res.status < 300 && res.data) {
                 //this.logger.log(`Otrzymano ${res.data?.offers?.length ?? 0} wyników ze SmartSearch.`);

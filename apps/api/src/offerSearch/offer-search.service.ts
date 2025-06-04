@@ -17,6 +17,13 @@ type CarSpecification = {
     swapBody: string[];
     carId: number;
 };
+type CityLocation = {
+    name: string;
+    postalCode: string;
+    country: string;
+    latitude: number;
+    longitude: number;
+};
 
 
 @Injectable()
@@ -32,10 +39,8 @@ export class OfferSearchService {
     }
 
     async getCarForSearch(carId: number, {
-        numLoadingCities = 1,
         numUnloadingCities = 1,
     }: {
-        numLoadingCities: number;
         numUnloadingCities: number;
     }) {
         const now = new Date();
@@ -141,12 +146,6 @@ export class OfferSearchService {
 
 
 
-        const closeCities = await this.getClosestCities(
-            plannedLocation.address.location[0],
-            plannedLocation.address.location[1],
-            numLoadingCities,
-            allowedCountries
-        );
         const furthestCities = await this.getFurthestCities(
             plannedLocation.address.location[0],
             plannedLocation.address.location[1],
@@ -172,7 +171,6 @@ export class OfferSearchService {
                 endDate: schedule?.to ?? null,
             },
             plannedLocation,
-            closeCities,
             furthestCities,
             bannedCountries,
             allowedCountries
@@ -229,7 +227,6 @@ export class OfferSearchService {
         carData: {
             carSpecification: CarSpecification;
             period: { startDate: Date | null; endDate: Date | null };
-            closeCities: any[];
             furthestCities: any[];
             plannedLocation: any;
         }, {
@@ -247,7 +244,15 @@ export class OfferSearchService {
         const searchPeriodStartDate = new Date();
         const searchPeriodEndDate = new Date(searchPeriodStartDate.getTime() - 24 * 60 * 60 * 1000);
 
-        for (const start of carData.closeCities) {
+        for (const start of [
+            {
+                name:carData.plannedLocation.address.city,
+                postalCode: carData.plannedLocation.address.postalCode,
+                country: carData.plannedLocation.address.country,
+                latitude: carData.plannedLocation.address.location[0],
+                longitude: carData.plannedLocation.address.location[1],
+
+            }]) {
             for (const end of carData.furthestCities) {
                 const partialOffers = await this.searchOffersBetweenTwoCities(
                     start,
@@ -295,8 +300,8 @@ export class OfferSearchService {
     }
 
     private async searchOffersBetweenTwoCities(
-        start: any,
-        end: any,
+        start: CityLocation,
+        end: CityLocation,
         carData: {
             carSpecification: CarSpecification;
             period: { startDate: Date | null; endDate: Date | null };

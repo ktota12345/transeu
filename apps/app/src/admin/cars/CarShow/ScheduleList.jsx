@@ -22,7 +22,6 @@ export const ScheduleList = () => {
     const [error, setError] = useState(null);
     const [searchServices, setSearchServices] = useState(['timocom', 'transEu', 'smartsearch']);
 
-    const [numLoadingCities, setNumLoadingCities] = useState(3);
     const [numUnloadingCities, setNumUnloadingCities] = useState(10);
     const [searchArea, setSearchArea] = useState(100);
     const [perPage, setPerPage] = useState(50);
@@ -124,7 +123,6 @@ export const ScheduleList = () => {
 
         try {
             const params = {
-                numLoadingCities,
                 numUnloadingCities,
                 searchArea,
                 perPage,
@@ -188,8 +186,6 @@ export const ScheduleList = () => {
                     ))}
 
                     <SearchParameters
-                        numLoadingCities={numLoadingCities}
-                        setNumLoadingCities={setNumLoadingCities}
                         numUnloadingCities={numUnloadingCities}
                         setNumUnloadingCities={setNumUnloadingCities}
                         searchArea={searchArea}

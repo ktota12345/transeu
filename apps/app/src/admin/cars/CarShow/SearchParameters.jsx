@@ -3,8 +3,6 @@ import {Checkbox, FormControlLabel, FormGroup, Grid, TextField, Typography} from
 const availableSearchServices = ['timocom', 'transEu', 'smartsearch'];
 
 export const SearchParameters = ({
-                                     numLoadingCities,
-                                     setNumLoadingCities,
                                      numUnloadingCities,
                                      setNumUnloadingCities,
                                      searchArea,
@@ -26,16 +24,6 @@ export const SearchParameters = ({
 
     return (
         <Grid container spacing={2} mb={4} alignItems="stretch">
-            <Grid item xs={12} md={3}>
-                <TextField
-                    label="Liczba miast początkowych"
-                    type="number"
-                    value={numLoadingCities}
-                    onChange={(e) => setNumLoadingCities(e.target.value)}
-                    size="small"
-                    fullWidth
-                />
-            </Grid>
             <Grid item xs={12} md={3}>
                 <TextField
                     label="Liczba miast końcowych"
