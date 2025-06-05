@@ -5,6 +5,14 @@ import {TransEuApiAppService} from "./transeuApi/trans-eu-api-app.service";
 import {TransEuApiClientService} from "./transeuApi/trans-eu-api-client.service";
 import {ExchangeRateService} from '../exchangeRate/exchange-rate.service';
 import {TransEuHelperService} from "./transeuApi/trans-eu-helper.service";
+import {CostCalculationService} from "./costCalculation/cost-calculation.service";
+
+const getLoadingPlace = (offerOrDetails) =>
+    offerOrDetails?.loadingPlaces?.find(lp => lp.loadingType === "LOADING") || null;
+
+const getUnloadingPlace = (offerOrDetails) =>
+    offerOrDetails?.loadingPlaces?.find(lp => lp.loadingType === "UNLOADING") || null;
+
 
 type CarSpecification = {
     type: string[];
@@ -36,6 +44,7 @@ export class OfferSearchService {
         private readonly transEuApiAppService: TransEuApiAppService,
         private readonly transEuApiClientService: TransEuApiClientService,
         private readonly transEuHelperService: TransEuHelperService,
+        private readonly costCalculationService: CostCalculationService,
     ) {
     }
 
@@ -297,7 +306,8 @@ export class OfferSearchService {
             };
         });
 
-        return this.sortOffers(offersWithStatus);
+        const enchancedOffers = await this.enhanceOffers(offersWithStatus, 3);
+        return this.sortOffers(enchancedOffers);
     }
 
     private async searchOffersBetweenTwoCities(
@@ -515,6 +525,32 @@ export class OfferSearchService {
         });
     }
 
+
+    async enhanceOffers(offers: any[], limit: number = 3): Promise<any[]> {
+        const enhancedOffers = await Promise.all(
+            offers.slice(0, limit).map(async (offer) => {
+                const loading = getLoadingPlace(offer);
+                const unloading = getUnloadingPlace(offer);
+
+                const tollCost = await this.costCalculationService.getTollCost(
+                    { lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude},
+                    { lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude}
+                );
+
+                return {
+                    ...offer,
+                    tollCostHere: tollCost,
+                };
+            })
+        );
+
+        const restOffers = offers.slice(limit).map((offer) => ({
+            ...offer,
+            tollCost: null,
+        }));
+
+        return [...enhancedOffers, ...restOffers];
+    }
 
 
 
