@@ -9,6 +9,8 @@ import {ExchangeRateService} from '../exchangeRate/exchange-rate.service';
 import {TransEuAuthService} from '../transeu-auth/trans-eu-auth.service';
 import {TransEuHelperService} from './transeuApi/trans-eu-helper.service';
 import {CostCalculationService} from "./costCalculation/cost-calculation.service";
+import {TollGuruCostCalculationService} from "./costCalculation/tollguru-cost-calculation.service";
+import {TomTomCostCalculationService} from "./costCalculation/tomtom-cost-calculation.service";
 
 @Module({
     imports: [PrismaModule],
@@ -22,6 +24,8 @@ import {CostCalculationService} from "./costCalculation/cost-calculation.service
         TransEuAuthService,
         TransEuHelperService,
         CostCalculationService,
+        TollGuruCostCalculationService,
+        TomTomCostCalculationService,
     ],
 })
 export class OfferSearchModule {

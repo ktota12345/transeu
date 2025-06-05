@@ -9,7 +9,7 @@ export class CostCalculationService {
     private readonly logger = new Logger(CostCalculationService.name);
     private readonly hereApiKey = process.env.HERE_API_KEY; // Upewnij się, że klucz API jest ustawiony w zmiennych środowiskowych
 
-    async getTollCost(start: { lat: number; lng: number }, end: { lat: number; lng: number }): Promise<number | null> {
+    async getTollCost(start: { lat: number; lng: number }, end: { lat: number; lng: number }): Promise<{ value: number | null, allInfo: any }> {
         const url = 'https://router.hereapi.com/v8/routes';
         const params = {
             transportMode: 'truck',
@@ -23,11 +23,18 @@ export class CostCalculationService {
         };
         try {
             const response = await axios.get(url, { params });
-            const tollCost = response.data.routes?.[0].sections?.[0]?.summary?.tolls?.total?.value;
-            return tollCost ?? null;
+            const tollCost = response.data.routes?.[0].sections?.[0]?.summary?.tolls?.total?.value || 0;
+            return {
+                value: tollCost,
+                allInfo: response.data
+            };
+
         } catch (error) {
             this.logger.error('Błąd podczas pobierania opłat drogowych z API Here', error);
-            return null;
+            return {
+                value: null,
+                allInfo: null
+            };
         }
     }
 }

@@ -117,7 +117,7 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssigned
                             <TableCell>Cena</TableCell>
                             <TableCell>Cena za km (bez dojazdu)</TableCell>
                             <TableCell>Cena za km</TableCell>
-                            <TableCell>Koszty Here</TableCell>
+                            <TableCell>Koszty dodatkowe</TableCell>
                             <TableCell>Trasa</TableCell>
                             <TableCell>Oferta</TableCell>
                             <TableCell>Dodaj</TableCell>
@@ -163,7 +163,10 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssigned
                                     </TableCell>
                                     <TableCell>{formatPrice(offer.pricePerKmEur, 'EUR')}</TableCell>
                                     <TableCell>{formatPrice(offer.pricePerKmEurGross, 'EUR')}</TableCell>
-                                    <TableCell>{formatPrice(offer.tollCostHere, 'EUR')}</TableCell>
+                                    <TableCell>
+                                        here: {formatPrice(offer.tollCostHere, 'EUR')},
+                                        tollguru: {formatPrice(offer.tollCostTollguru, 'EUR')}
+                                    </TableCell>
                                     <TableCell>
                                         <Button
                                             variant="outlined"
