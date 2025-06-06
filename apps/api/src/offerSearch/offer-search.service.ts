@@ -321,7 +321,8 @@ export class OfferSearchService {
             };
         });
 
-        const enchancedOffers = await this.enhanceOffers(offersWithStatus, 3);
+        const firstSortedOffers = this.sortOffers(offersWithStatus);
+        const enchancedOffers = await this.enhanceOffers(firstSortedOffers, 3);
         return this.sortOffers(enchancedOffers);
     }
 
