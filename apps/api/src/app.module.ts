@@ -31,10 +31,7 @@ import {OfferSearchModule} from "./offerSearch/offer-search.module";
 import {CountriesModule} from "./countries/countries.module";
 import {ExchangeRateModule} from './exchangeRate/exchange-rate.module';
 import {TransEuAuthModule} from './transeu-auth/trans-eu-auth.module';
-
-
 import {ScheduleModule} from '@nestjs/schedule';
-import {CacheModule} from "@nestjs/cache-manager";
 
 @Module({
     imports: [
@@ -65,11 +62,6 @@ import {CacheModule} from "@nestjs/cache-manager";
         ScheduleModule.forRoot(),
 
         TransEuAuthModule,
-        CacheModule.register({
-            ttl: 300, // 5 minut
-            max: 1000,
-            isGlobal: true,
-        })
 
     ],
     controllers: [

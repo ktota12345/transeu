@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import axios from 'axios';
-import {TransEuHelperService} from "./trans-eu-helper.service";
+import * as crypto from 'crypto';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import { TransEuHelperService } from "./trans-eu-helper.service";
 
 @Injectable()
 export class TransEuApiAppService {
@@ -10,12 +13,43 @@ export class TransEuApiAppService {
     private readonly MIN_DISTANCE = 200000;
     private readonly MAX_DISTANCE = 5000000;
     private readonly MIN_PRICE = 100;
+    private readonly ttlSeconds = 300; // 5 min
+    private readonly cacheDir = path.resolve(__dirname, '../../../cache');
+
     constructor(private prisma: PrismaService,
-                private transEuHelperService: TransEuHelperService) {}
+                private transEuHelperService: TransEuHelperService) {
+        fs.mkdir(this.cacheDir, { recursive: true }).catch((err) => {
+            this.logger.error('Nie udało się utworzyć folderu cache:', err.message);
+        });
+    }
+
+    private async readCache(key: string): Promise<any | null> {
+        const filePath = path.join(this.cacheDir, key + '.json');
+        try {
+            const stats = await fs.stat(filePath);
+            const now = Date.now();
+            if ((now - stats.mtimeMs) / 1000 > this.ttlSeconds) {
+                return null;
+            }
+            const content = await fs.readFile(filePath, 'utf-8');
+            return JSON.parse(content);
+        } catch {
+            return null;
+        }
+    }
+
+    private async writeCache(key: string, data: any): Promise<void> {
+        const filePath = path.join(this.cacheDir, key + '.json');
+        try {
+            await fs.writeFile(filePath, JSON.stringify(data), 'utf-8');
+        } catch (err) {
+            this.logger.warn(`Nie udało się zapisać cache: ${filePath}`, err.message);
+        }
+    }
 
     private async getBearerToken(): Promise<string> {
         const tokenRecord = await this.prisma.transEuAppToken.findFirst({
-            orderBy: { createdAt: 'desc' }, // najnowszy
+            orderBy: { createdAt: 'desc' },
         });
 
         if (!tokenRecord) {
@@ -23,7 +57,7 @@ export class TransEuApiAppService {
             return '';
         }
 
-        const bufferMs = 30 * 1000; // bufor 30s
+        const bufferMs = 30 * 1000;
         const isExpired = new Date().getTime() + bufferMs >= tokenRecord.expiresAt.getTime();
 
         if (isExpired) {
@@ -34,10 +68,16 @@ export class TransEuApiAppService {
         return `Bearer ${tokenRecord.accessToken}`;
     }
 
-
-
-
     async fetchOffers(searchParams: any): Promise<any> {
+        const hash = crypto.createHash('md5').update(JSON.stringify(searchParams)).digest('hex');
+        const cacheKey = `transeu_app_${hash}`;
+
+        const cached = await this.readCache(cacheKey);
+        if (cached) {
+            this.logger.debug(`Zwracam z lokalnego cache: ${cacheKey}`);
+            return cached;
+        }
+
         const baseUrl = 'https://api-platform.trans.eu/app/exchange/api/rest/v2/freight-offers';
         const bearerToken = await this.getBearerToken();
         const headers = {
@@ -45,51 +85,43 @@ export class TransEuApiAppService {
             'Content-Type': 'application/json',
         };
         const loadingDateFrom = new Date(searchParams.loadingDate.dates[0]);
+
         const mappedParams = {
             filter: {
-                loading_place: [
-                    {
-                         address: {
-                             //country: ["47_poland"],
-                             locality: searchParams.startLocation.area.address.city,
-                             postal_code: searchParams.startLocation.area.address.postalCode
-                         },
-                        coordinates: {
-                            latitude: searchParams.startLocation.area.latitude,
-                            longitude: searchParams.startLocation.area.longitude,
-                            range: searchParams.startLocation.area.range
-                        }
+                loading_place: [{
+                    address: {
+                        locality: searchParams.startLocation.area.address.city,
+                        postal_code: searchParams.startLocation.area.address.postalCode
+                    },
+                    coordinates: {
+                        latitude: searchParams.startLocation.area.latitude,
+                        longitude: searchParams.startLocation.area.longitude,
+                        range: searchParams.startLocation.area.range
                     }
-                ],
-                unloading_place: [
-                    {
-                        address: {
-                            //country: ["47_poland"],
-                            locality: searchParams.destinationLocation.area.address.city,
-                            postal_code: searchParams.destinationLocation.area.address.postalCode
-                        },
-                        coordinates: {
-                            latitude: searchParams.destinationLocation.area.latitude,
-                            longitude: searchParams.destinationLocation.area.longitude,
-                            range: searchParams.destinationLocation.area.range
-                        }
+                }],
+                unloading_place: [{
+                    address: {
+                        locality: searchParams.destinationLocation.area.address.city,
+                        postal_code: searchParams.destinationLocation.area.address.postalCode
+                    },
+                    coordinates: {
+                        latitude: searchParams.destinationLocation.area.latitude,
+                        longitude: searchParams.destinationLocation.area.longitude,
+                        range: searchParams.destinationLocation.area.range
                     }
-                ],
+                }],
                 route_distance: {
                     from: this.MIN_DISTANCE,
-                    to:     this.MAX_DISTANCE
+                    to: this.MAX_DISTANCE
                 },
                 price: {
                     from: this.MIN_PRICE,
                 },
-                //price_currency: "1_eur",
-                // required_ways_of_loading: ["1_top", "2_side", "3_back"],
-                // available_ways_of_loading: ["1_top", "2_side", "3_back"],
                 places_matching_type: "cross",
                 exclude_suspended: true,
-                 loading_date:{
-                     from: loadingDateFrom.toISOString(),
-                 }
+                loading_date: {
+                    from: loadingDateFrom.toISOString(),
+                }
             },
             sort: {
                 field: "index",
@@ -112,12 +144,19 @@ export class TransEuApiAppService {
             });
 
             if (res.status >= 200 && res.status < 300 && res.data) {
-                //this.logger.log(`Otrzymano ${res.data?._embedded['freight-offers']?.length ?? 0} wyników z Trans.eu.`);
-                const offers = res.data?._embedded['freight-offers']?.map((offer: any) => this.transEuHelperService.convertToTimocomOffer(offer, 'transEU')) || [];
+                const offers = res.data?._embedded['freight-offers']?.map((offer: any) =>
+                    this.transEuHelperService.convertToTimocomOffer(offer, 'transEU')
+                ) || [];
 
-                return { success: true, data:  {
-                        payload:offers
-                    }};
+                const result = {
+                    success: true,
+                    data: { payload: offers }
+                };
+
+                await this.writeCache(cacheKey, result);
+                this.logger.debug(`Zapisano do cache: ${cacheKey}`);
+
+                return result;
             } else {
                 const msg = `Nieoczekiwany format odpowiedzi Trans.eu: ${res.status}`;
                 this.logger.warn(msg);
@@ -125,11 +164,9 @@ export class TransEuApiAppService {
             }
         } catch (error) {
             this.logger.error('Błąd zapytania do Trans.eu:', error?.response?.data || error.message);
-            //this.logger.warn('parametry:', searchParams);
             return this.handleError(error);
         }
     }
-
 
     private handleError(error: any): any {
         return {
@@ -138,8 +175,6 @@ export class TransEuApiAppService {
         };
     }
 
-
-    // 2. Funkcja do wymiany code na access token
     async exchangeCodeForToken(code: string): Promise<void> {
         const clientId = process.env.TRANSEU_CLIENT_ID;
         const clientSecret = process.env.TRANSEU_CLIENT_SECRET;
@@ -176,6 +211,4 @@ export class TransEuApiAppService {
             throw new Error('Nie udało się uzyskać tokenu dostępu');
         }
     }
-
-
 }

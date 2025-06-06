@@ -1,6 +1,7 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { Cache } from 'cache-manager';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as crypto from 'crypto';
 
 import { TransEuHelperService } from './trans-eu-helper.service';
 import axiosTranseu, { setupAxiosTranseu } from './axios-transeu';
@@ -10,22 +11,56 @@ import { TransEuAuthService } from '../../transeu-auth/trans-eu-auth.service';
 export class TransEuApiClientService implements OnModuleInit {
     private readonly MIN_PRICE = 100;
     private readonly logger = new Logger(TransEuApiClientService.name);
+    private readonly cacheDir = path.resolve(__dirname, '../../../cache');
+    private readonly ttlSeconds = 300; // 5 minut TTL
 
     constructor(
         private transEuAuthService: TransEuAuthService,
         private transEuHelperService: TransEuHelperService,
-        @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    ) {}
+    ) {
+        fs.mkdir(this.cacheDir, { recursive: true }).catch((err) => {
+            this.logger.error('Nie udało się utworzyć folderu cache:', err.message);
+        });
+    }
 
     onModuleInit() {
         setupAxiosTranseu(this.transEuAuthService);
     }
 
+    private async readCache(key: string): Promise<any | null> {
+        const filePath = path.join(this.cacheDir, key + '.json');
+        try {
+            const stats = await fs.stat(filePath);
+            const now = Date.now();
+            const modified = stats.mtimeMs;
+
+            if ((now - modified) / 1000 > this.ttlSeconds) {
+                return null; // przeterminowany
+            }
+
+            const content = await fs.readFile(filePath, 'utf-8');
+            return JSON.parse(content);
+        } catch {
+            return null;
+        }
+    }
+
+    private async writeCache(key: string, data: any): Promise<void> {
+        const filePath = path.join(this.cacheDir, key + '.json');
+        try {
+            await fs.writeFile(filePath, JSON.stringify(data), 'utf-8');
+        } catch (err) {
+            this.logger.warn(`Nie udało się zapisać cache: ${filePath}`, err.message);
+        }
+    }
+
     async fetchOffers(searchParams: any): Promise<any> {
-        const cacheKey = `transeu:${JSON.stringify(searchParams)}`;
-        const cached = await this.cacheManager.get(cacheKey);
+        const hash = crypto.createHash('md5').update(JSON.stringify(searchParams)).digest('hex');
+        const cacheKey = `transeu_${hash}`;
+
+        const cached = await this.readCache(cacheKey);
         if (cached) {
-            this.logger.debug(`Zwracam z cache dla klucza: ${cacheKey}`);
+            this.logger.debug(`Zwracam z lokalnego cache: ${cacheKey}`);
             return cached;
         }
 
@@ -75,22 +110,19 @@ export class TransEuApiClientService implements OnModuleInit {
         try {
             const res = await axiosTranseu.get(baseUrl, {
                 params: mappedParams,
-                paramsSerializer: (params) => new URLSearchParams({
-                    filter: JSON.stringify(params.filter)
-                }).toString(),
+                paramsSerializer: (params) =>
+                    new URLSearchParams({ filter: JSON.stringify(params.filter) }).toString(),
             });
 
             if (res.status >= 200 && res.status < 300 && res.data) {
                 const offers = res.data?.offers?.map((offer: any) => this.convertToTimocomOffer(offer, 'smartsearch')) || [];
                 const result = {
                     success: true,
-                    data: {
-                        payload: offers
-                    }
+                    data: { payload: offers }
                 };
 
-                await this.cacheManager.set(cacheKey, result, 300); // TTL 5 minut
-                this.logger.debug(`Dodano do cache: ${cacheKey}`);
+                await this.writeCache(cacheKey, result);
+                this.logger.debug(`Zapisano do cache: ${cacheKey}`);
 
                 return result;
             } else {

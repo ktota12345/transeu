@@ -13,6 +13,7 @@ __metadata:
     "@nestjs/schedule": "npm:^6.0.0"
     "@types/md5": "npm:^2.3.5"
     cache-manager: "npm:^6.4.3"
+    cache-manager-fs-hash: "npm:^2.0.0"
     concurrently: "npm:^9.1.2"
     cors: "npm:^2.8.5"
     json-server: "npm:^1.0.0-beta.3"
@@ -7219,6 +7220,7 @@ __metadata:
     bcrypt: "npm:^5.1.1"
     bcryptjs: "npm:^3.0.2"
     cache-manager: "npm:^6.4.3"
+    cache-manager-fs-hash: "npm:^2.0.0"
     class-validator: "npm:^0.14.2"
     csv-parser: "npm:^3.2.0"
     eslint: "npm:^9.18.0"
@@ -8158,6 +8160,15 @@ __metadata:
     tar: "npm:^7.4.3"
     unique-filename: "npm:^4.0.0"
   checksum: 10c0/01f2134e1bd7d3ab68be851df96c8d63b492b1853b67f2eecb2c37bb682d37cb70bb858a16f2f0554d3c0071be6dfe21456a1ff6fa4b7eed996570d6a25ffe9c
+  languageName: node
+  linkType: hard
+
+"cache-manager-fs-hash@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "cache-manager-fs-hash@npm:2.0.0"
+  dependencies:
+    lockfile: "npm:^1.0.4"
+  checksum: 10c0/fce7033cd58cef807bb57cc3f50988b6f196fb0c3b0c9bb018172e903eb9e064acd8ef4df9479dc6e8616660e9294106cf5d5134b5ded8288d7f4a7f3f8f3987
   languageName: node
   linkType: hard
 
@@ -14796,6 +14807,15 @@ __metadata:
   dependencies:
     p-locate: "npm:^5.0.0"
   checksum: 10c0/d3972ab70dfe58ce620e64265f90162d247e87159b6126b01314dd67be43d50e96a50b517bce2d9452a79409c7614054c277b5232377de50416564a77ac7aad3
+  languageName: node
+  linkType: hard
+
+"lockfile@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "lockfile@npm:1.0.4"
+  dependencies:
+    signal-exit: "npm:^3.0.2"
+  checksum: 10c0/80b7777ceb43105d9e588733c3efc2514653a5e3a0dae3e61347a1f5381da34dcaa2caaa60c39ed5d4ad31c1735a4831e5639a0ba1c508bfea8dbc9c89777b37
   languageName: node
   linkType: hard
 
