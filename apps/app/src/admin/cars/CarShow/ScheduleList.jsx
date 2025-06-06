@@ -127,6 +127,7 @@ export const ScheduleList = () => {
         setOffers(null);
         setProgress("Rozpoczynam wyszukiwanie...");
         setFound(0);
+        setProgressPercent(0);
 
         try {
             const params = new URLSearchParams({

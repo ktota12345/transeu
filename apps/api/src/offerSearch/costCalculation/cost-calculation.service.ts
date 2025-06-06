@@ -39,7 +39,7 @@ export class CostCalculationService {
         });
 
         if (cached) {
-            this.logger.log('Zwracam wynik z cache (zaokrąglony)');
+            //this.logger.log('Zwracam wynik z cache (zaokrąglony)');
             return {
                 value: cached.costValue ?? null,
                 allInfo: cached.allInfo

@@ -34,6 +34,7 @@ import {TransEuAuthModule} from './transeu-auth/trans-eu-auth.module';
 
 
 import {ScheduleModule} from '@nestjs/schedule';
+import {CacheModule} from "@nestjs/cache-manager";
 
 @Module({
     imports: [
@@ -63,7 +64,12 @@ import {ScheduleModule} from '@nestjs/schedule';
 
         ScheduleModule.forRoot(),
 
-        TransEuAuthModule
+        TransEuAuthModule,
+        CacheModule.register({
+            ttl: 300, // 5 minut
+            max: 1000,
+            isGlobal: true,
+        })
 
     ],
     controllers: [

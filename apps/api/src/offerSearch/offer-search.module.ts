@@ -1,4 +1,4 @@
-import {Module} from '@nestjs/common';
+import {Module } from '@nestjs/common';
 import {OfferSearchService} from './offer-search.service';
 import {OfferSearchController} from './offer-search.controller';
 import {PrismaModule} from '../prisma/prisma.module';
@@ -13,7 +13,8 @@ import {TollGuruCostCalculationService} from "./costCalculation/tollguru-cost-ca
 import {TomTomCostCalculationService} from "./costCalculation/tomtom-cost-calculation.service";
 
 @Module({
-    imports: [PrismaModule],
+    imports: [
+        PrismaModule],
     controllers: [OfferSearchController],
     providers: [
         OfferSearchService,

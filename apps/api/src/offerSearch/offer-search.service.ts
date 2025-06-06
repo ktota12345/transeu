@@ -376,8 +376,8 @@ export class OfferSearchService {
                     longitude: end.longitude,
                 },
             },
-            exclusiveLeftLowerBoundDateTime: exclusiveLeftLowerBoundDateTime.toISOString(),
-            inclusiveRightUpperBoundDateTime: inclusiveRightUpperBoundDateTime.toISOString(),
+            exclusiveLeftLowerBoundDateTime: exclusiveLeftLowerBoundDateTime.toISOString().slice(0, 10) + 'T00:00:00.000Z',
+            inclusiveRightUpperBoundDateTime: inclusiveRightUpperBoundDateTime.toISOString().slice(0, 10) + 'T23:59:59.999Z',
             loadingDate: {
                 objectType: "individualDates",
                 dates: [

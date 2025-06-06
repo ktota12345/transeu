@@ -1,4 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import axios, { AxiosInstance } from 'axios';
 
 @Injectable()
@@ -6,7 +9,9 @@ export class TimocomApiService {
     private readonly logger = new Logger(TimocomApiService.name);
     private readonly client: AxiosInstance;
 
-    constructor() {
+    constructor(
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    ) {
         const username = process.env.TIMOCOM_USERNAME;
         const password = process.env.TIMOCOM_PASSWORD;
         const baseURL = process.env.TIMOCOM_API_URL || 'https://api.timocom.com';
@@ -30,28 +35,15 @@ export class TimocomApiService {
         });
     }
 
-    // async fetchOffers(searchParams: any): Promise<any> {
-    //     //this.logger.debug('Wysyłam zapytanie do TIMOCOM /freight-offers/search', searchParams);
-    //     try {
-    //         const res = await this.client.post('/freight-offers/search', searchParams);
-    //         if (res.status >= 200 && res.status < 300 && res.data) {
-    //             //this.logger.log(`Otrzymano ${res.data.payload?.length ?? 0} wyników z TIMOCOM.`);
-    //             return { success: true, data: res.data };
-    //         } else {
-    //             const msg = `Nieoczekiwany format odpowiedzi TIMOCOM: ${res.status}`;
-    //             this.logger.warn(msg);
-    //             return { success: false, data: res.data, error: msg };
-    //         }
-    //     } catch (error) {
-    //         this.logger.error('Błąd zapytania do TIMOCOM:', error?.response?.data || error.message);
-    //         this.logger.warn('parametry:', searchParams);
-    //         return this.handleError(error);
-    //     }
-    // }
-
-
-
     async fetchOffers(searchParams: any): Promise<any> {
+        const cacheKey = `timocom:${JSON.stringify(searchParams)}`;
+        const cached = await this.cacheManager.get(cacheKey);
+
+        if (cached) {
+            this.logger.debug(`Zwracam z cache dla klucza: ${cacheKey}`);
+            return cached;
+        }
+
         try {
             const limit = searchParams.paging?.limit ?? 30;
             const perPage = 30; // Timocom max na stronę
@@ -86,12 +78,22 @@ export class TimocomApiService {
                 page++;
             }
 
-            return {
+            const result = {
                 success: true,
                 data: {
-                    payload: allOffers.slice(0, limit) // przytnij na wypadek przekroczenia
+                    payload: allOffers.slice(0, limit)
                 }
             };
+
+            await this.cacheManager.set(cacheKey, result, 3000); // TTL 5 minut (w sekundach)
+            this.logger.debug(`Dodano do cache: ${cacheKey}`);
+
+            const cached = await this.cacheManager.get(cacheKey);
+            return cached;
+
+
+
+            return result;
 
         } catch (error) {
             this.logger.error('Błąd zapytania do TIMOCOM:', error?.response?.data || error.message);
@@ -99,8 +101,6 @@ export class TimocomApiService {
             return this.handleError(error);
         }
     }
-
-
 
     private handleError(error: any) {
         const response = error.response;

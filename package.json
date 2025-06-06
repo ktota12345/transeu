@@ -26,8 +26,10 @@
     "turbo": "^2.5.3"
   },
   "dependencies": {
+    "@nestjs/cache-manager": "^3.0.1",
     "@nestjs/schedule": "^6.0.0",
     "@types/md5": "^2.3.5",
+    "cache-manager": "^6.4.3",
     "cors": "^2.8.5",
     "jwt-decode": "^4.0.0",
     "md5": "^2.3.0",

@@ -1,8 +1,10 @@
-import {Injectable, Logger, OnModuleInit} from '@nestjs/common';
-import {TransEuHelperService} from "./trans-eu-helper.service";
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 
-import axiosTranseu, {setupAxiosTranseu} from './axios-transeu';
-import {TransEuAuthService} from '../../transeu-auth/trans-eu-auth.service';
+import { TransEuHelperService } from './trans-eu-helper.service';
+import axiosTranseu, { setupAxiosTranseu } from './axios-transeu';
+import { TransEuAuthService } from '../../transeu-auth/trans-eu-auth.service';
 
 @Injectable()
 export class TransEuApiClientService implements OnModuleInit {
@@ -11,102 +13,93 @@ export class TransEuApiClientService implements OnModuleInit {
 
     constructor(
         private transEuAuthService: TransEuAuthService,
-        private transEuHelperService: TransEuHelperService
-    ) {
-    }
+        private transEuHelperService: TransEuHelperService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    ) {}
 
     onModuleInit() {
         setupAxiosTranseu(this.transEuAuthService);
     }
 
-
     async fetchOffers(searchParams: any): Promise<any> {
+        const cacheKey = `transeu:${JSON.stringify(searchParams)}`;
+        const cached = await this.cacheManager.get(cacheKey);
+        if (cached) {
+            this.logger.debug(`Zwracam z cache dla klucza: ${cacheKey}`);
+            return cached;
+        }
+
         const baseUrl = '/ext/offers-api/v2/offers';
         const loadingDateFrom = new Date(searchParams.loadingDate.dates[0]);
         const maxRange = 75;
-        const searchRange = searchParams.startLocation.area.size_km > maxRange ? maxRange : searchParams.startLocation.area.size_km;
+        const searchRange = Math.min(searchParams.startLocation.area.size_km, maxRange);
+
         const mappedParams = {
             filter: {
-                loading_place:
-                    {
-                        address: {
-                            country: searchParams.startLocation.area.address.country,
-                            postal_code: searchParams.startLocation.area.address.postalCode,
-                            range:searchRange
-                        },
-                        coordinates: {
-                            latitude: searchParams.startLocation.area.latitude,
-                            longitude: searchParams.startLocation.area.longitude,
-                            range:searchRange
-                        },
+                loading_place: {
+                    address: {
+                        country: searchParams.startLocation.area.address.country,
+                        postal_code: searchParams.startLocation.area.address.postalCode,
+                        range: searchRange,
                     },
-                unloading_place:
-                    {
-                        address: {
-                            country: searchParams.destinationLocation.area.address.country,
-                            postal_code: searchParams.destinationLocation.area.address.postalCode,
-                            range:searchRange
-                        },
-                        coordinates: {
-                            latitude: searchParams.destinationLocation.area.latitude,
-                            longitude: searchParams.destinationLocation.area.longitude,
-                            range:searchRange,
-                        },
-                    }
-                ,
-
+                    coordinates: {
+                        latitude: searchParams.startLocation.area.latitude,
+                        longitude: searchParams.startLocation.area.longitude,
+                        range: searchRange,
+                    },
+                },
+                unloading_place: {
+                    address: {
+                        country: searchParams.destinationLocation.area.address.country,
+                        postal_code: searchParams.destinationLocation.area.address.postalCode,
+                        range: searchRange,
+                    },
+                    coordinates: {
+                        latitude: searchParams.destinationLocation.area.latitude,
+                        longitude: searchParams.destinationLocation.area.longitude,
+                        range: searchRange,
+                    },
+                },
                 required_vehicle_size: [searchParams.vehicleProperties.typeTransEu.join('_')],
                 required_truck_body: [searchParams.vehicleProperties.bodyTransEu.join('_')],
-                transport_type: ["ftl"],
-                load_weight: {
-                    from: 1,
-                    to: 99
-                },
+                transport_type: ['ftl'],
+                load_weight: { from: 1, to: 99 },
                 minimal_rating: 0,
-                //is_quick_pay: true,
-                // route_distance: {
-                //     from: this.MIN_DISTANCE,
-                //     to: this.MAX_DISTANCE
-                // },
-                 price: {
-                     from: this.MIN_PRICE,
-                 },
-                // places_matching_type: "cross",
-                // exclude_suspended: true,
-                 loading_date: {
-                     from: loadingDateFrom.toISOString(),
-                     //to: "2026-01-01T00:00:00Z" // Ustawiamy na przyszłość, aby nie ograniczać daty
-                 }
+                price: { from: this.MIN_PRICE },
+                loading_date: {
+                    from: loadingDateFrom.toISOString(),
+                },
             },
         };
+
         try {
             const res = await axiosTranseu.get(baseUrl, {
                 params: mappedParams,
-                paramsSerializer: params => {
-                    return new URLSearchParams({
-                        filter: JSON.stringify(params.filter)
-                    }).toString();
-                }
-
+                paramsSerializer: (params) => new URLSearchParams({
+                    filter: JSON.stringify(params.filter)
+                }).toString(),
             });
-            console.log(JSON.stringify(mappedParams.filter, null, 2));
 
             if (res.status >= 200 && res.status < 300 && res.data) {
-                //this.logger.log(`Otrzymano ${res.data?.offers?.length ?? 0} wyników ze SmartSearch.`);
-                const offers = res.data?.offers?.map((offer: any) => this.convertToTimocomOffer(offer,'smartsearch')) || [];
-                return {
-                    success: true, data: {
+                const offers = res.data?.offers?.map((offer: any) => this.convertToTimocomOffer(offer, 'smartsearch')) || [];
+                const result = {
+                    success: true,
+                    data: {
                         payload: offers
                     }
                 };
+
+                await this.cacheManager.set(cacheKey, result, 300); // TTL 5 minut
+                this.logger.debug(`Dodano do cache: ${cacheKey}`);
+
+                return result;
             } else {
                 const msg = `Nieoczekiwany format odpowiedzi SmartSearch: ${res.status}`;
                 this.logger.warn(msg);
-                return {success: false, data: res.data, error: msg};
+                return { success: false, data: res.data, error: msg };
             }
         } catch (error) {
             this.logger.error('Błąd zapytania do SmartSearch:', error?.response?.data || error.message);
-            //this.logger.warn('parametry:', searchParams);
             return this.handleError(error);
         }
     }
@@ -118,9 +111,7 @@ export class TransEuApiClientService implements OnModuleInit {
         };
     }
 
-
-
-    private  convertToTimocomOffer(offer: any, source): any {
+    private convertToTimocomOffer(offer: any, source: string): any {
         const freight = offer.freight || {};
         const spots = freight.spots || [];
         const requirements = freight.requirements || {};
@@ -128,8 +119,6 @@ export class TransEuApiClientService implements OnModuleInit {
         const price = offer.payment.price || {};
         const period = freight.period || {};
 
-
-        // Funkcja do mapowania miejsc (załadunku/rozładunku)
         const convertSpot = (spot: any, type: string) => {
             const address = spot.place.address;
             const coords = spot.place.coordinates;
@@ -140,7 +129,7 @@ export class TransEuApiClientService implements OnModuleInit {
             return {
                 loadingType: type.toUpperCase(),
                 address: {
-                    objectType: "address",
+                    objectType: 'address',
                     city: address?.locality || null,
                     country: address?.country.toUpperCase(),
                     geoCoordinate: {
@@ -157,19 +146,18 @@ export class TransEuApiClientService implements OnModuleInit {
             };
         };
 
-        //const distanceKm = route.distance ? Math.round(route.distance / 1000) : null;
         const distanceKm = Math.round(this.transEuHelperService.calculateDistance(
             spots[0].place.coordinates.latitude,
             spots[0].place.coordinates.longitude,
             spots[1].place.coordinates.latitude,
-            spots[1].place.coordinates.longitude
+            spots[1].place.coordinates.longitude,
         ));
 
         const amount = price.value || null;
-        const currency = price.currency.toUpperCase() || 'EUR';
+        const currency = price.currency?.toUpperCase() || 'EUR';
 
         return {
-            objectType: "freightOffer",
+            objectType: 'freightOffer',
             closedFreightExchangeSetting: null,
             contactPerson: null,
             creationDateTime: offer.created_at,
@@ -193,10 +181,10 @@ export class TransEuApiClientService implements OnModuleInit {
             acceptQuotes: false,
             additionalInformation: [],
             distance_km: distanceKm,
-            freightDescription: requirements.shipping_remarks || "",
+            freightDescription: requirements.shipping_remarks || '',
             length_m: freight.loading_meters || null,
-            loadingPlaces: spots.map(spot => {
-                const opType = spot.operations?.[0]?.type || "";
+            loadingPlaces: spots.map((spot) => {
+                const opType = spot.operations?.[0]?.type || '';
                 return convertSpot(spot, opType);
             }),
             paymentDueWithinDays: period.days || null,
@@ -208,7 +196,7 @@ export class TransEuApiClientService implements OnModuleInit {
             pricePerKm: distanceKm && amount ? +(amount / distanceKm).toFixed(2) : null,
             pricePerKmEur: distanceKm && amount ? +(amount / distanceKm).toFixed(2) : null,
             alreadySaved: false,
-            sourceSystem: source
+            sourceSystem: source,
         };
     }
 }
