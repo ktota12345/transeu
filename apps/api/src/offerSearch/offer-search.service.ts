@@ -530,6 +530,9 @@ export class OfferSearchService {
 
     private sortOffers(offers: any[]): any[] {
         return offers.sort((a, b) => {
+            if(a.pricePerKmEurGrossCorrected !== undefined && b.pricePerKmEurGrossCorrected !== undefined) {
+                return b.pricePerKmEurGrossCorrected - a.pricePerKmEurGrossCorrected;
+            }
             const priceA = parseFloat(a.pricePerKmEurGross);
             const priceB = parseFloat(b.pricePerKmEurGross);
 
@@ -549,13 +552,21 @@ export class OfferSearchService {
                     { lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude},
                     { lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude}
                 );
+
+                //decrease // pricePerKmEurGross by tollCost
+                const tollCostPerKm = tollCost.value ? Number((tollCost.value / offer.totalDistance).toFixed(2)) : null;
+
                 return {
                     ...offer,
-                    tollCostHere: tollCost.value,
-                    tollCostHereAllInfo: tollCost.allInfo,
+                    tollCost: tollCost.value,
+                    tollCostPerKm: tollCostPerKm,
+                    pricePerKmEurGrossCorrected: offer.pricePerKmEurGross - (tollCostPerKm ?? 0),
+                    tollCostAllInfo: tollCost.allInfo,
                 };
             })
         );
+
+
 
         const restOffers = offers.slice(limit).map((offer) => ({
             ...offer,
