@@ -14,6 +14,8 @@ import {CarPlanTimeline} from "./CarPlanTimeline";
 import {OfferDetailsCard} from "./OfferDetailsCard";
 import {getUnloadingPlace} from "../../../data/helpers";
 import {CarPlanSummary} from "./CarPlanSummary";
+import AxiosNest from "../../../api/axiosNest";
+import { ProgressBar } from "./ProgressBar";
 
 export const ScheduleList = () => {
     const record = useRecordContext();
@@ -21,6 +23,10 @@ export const ScheduleList = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [searchServices, setSearchServices] = useState(['timocom', 'transEu', 'smartsearch']);
+    const [progress, setProgress] = useState("");
+    const [progressPercent, setProgressPercent] = useState(0);
+    const [found, setFound] = useState(0);
+
 
     const [numUnloadingCities, setNumUnloadingCities] = useState(10);
     const [searchArea, setSearchArea] = useState(100);
@@ -115,8 +121,78 @@ export const ScheduleList = () => {
         handleSearchOffers(JSON.stringify(plannedLocationOverride));
     };
 
-
     const handleSearchOffers = async (plannedLocationOverride = null) => {
+        setLoading(true);
+        setError(null);
+        setOffers(null);
+        setProgress("Rozpoczynam wyszukiwanie...");
+        setFound(0);
+
+        try {
+            const params = new URLSearchParams({
+                numUnloadingCities,
+                searchArea,
+                perPage,
+                searchServices: JSON.stringify(searchServices),
+                useDestinationCityService: useDestinationCityService ? "1" : "0",
+            });
+
+            if (plannedLocationOverride) {
+                params.append("plannedLocationOverride", JSON.stringify(plannedLocationOverride));
+            }
+
+            const NEST_API_URL = process.env.REACT_APP_NEST_API_URL || 'https://transeu-dev.onrender.com';
+            const url = `${NEST_API_URL}/offerSearch/car/${record.id}?${params.toString()}`;
+
+            const eventSource = new EventSource(url);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.error) {
+                    setError(data.error);
+                    eventSource.close();
+                    setLoading(false);
+                    return;
+                }
+
+                if (data.done) {
+                    setOffers(data);
+                    setFound(data.offers.length || 0);
+                    setProgressPercent(100);
+                    if(data.offers.length > 0) {
+                        setProgress(`Znaleziono ${data.offers.length} ofert.`);
+                    } else {
+                        setProgress("Nie znaleziono ofert. Spróbuj zmienić parametry wyszukiwania.");
+                    }
+                    eventSource.close();
+                    setLoading(false);
+                } else {
+                    setProgress(data.status || "Postęp wyszukiwania...");
+                    if (data.current && data.total) {
+                        const percent = Math.round((data.current / data.total) * 100);
+                        setProgressPercent(percent);
+                        setFound(data.found);
+                    }
+                }
+
+            };
+
+            eventSource.onerror = (err) => {
+                console.error("Błąd SSE:", err);
+                setError("Błąd połączenia SSE.");
+                eventSource.close();
+                setLoading(false);
+            };
+        } catch (error) {
+            console.error(error);
+            setError("Błąd podczas pobierania ofert.");
+            setOffers(null);
+            setLoading(false);
+        }
+    };
+
+    const handleSearchOffersOld = async (plannedLocationOverride = null) => {
         setLoading(true);
         setError(null);
         setOffers(null);
@@ -137,6 +213,7 @@ export const ScheduleList = () => {
             console.log(params);
 
             const res = await axiosNest.get(`/offerSearch/car/${record.id}`, { params });
+            console.log(res.data.progress);
             setOffers(res.data);
         } catch (error) {
             setError("Błąd podczas pobierania ofert.");
@@ -236,6 +313,7 @@ export const ScheduleList = () => {
                         {loading ? 'Szukam...' : 'Szukaj ofert'}
                     </Button>
 
+                    <ProgressBar progress={progress} percent={progressPercent} loading={loading} found={found} />
                     {error && <Typography color="error">{error}</Typography>}
                     {offers && offers.offers && (
                         <OffersTable

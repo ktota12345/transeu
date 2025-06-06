@@ -243,7 +243,8 @@ export class OfferSearchService {
             period: { startDate: Date | null; endDate: Date | null };
             furthestCities: any[];
             plannedLocation: any;
-        }, {
+        },
+        {
             searchArea,
             perPage,
             searchServices,
@@ -252,22 +253,32 @@ export class OfferSearchService {
             perPage: number;
             searchServices: string[];
         },
+        onProgress?: (progress: { current: number; total: number; found: number; }) => void,
     ) {
         const offers: any[] = [];
 
         const searchPeriodStartDate = new Date();
         const searchPeriodEndDate = new Date(searchPeriodStartDate.getTime() - 24 * 60 * 60 * 1000);
 
-        for (const start of [
+        const startLocations = [
             {
-                name:carData.plannedLocation.address.city,
+                name: carData.plannedLocation.address.city,
                 postalCode: carData.plannedLocation.address.postalCode,
                 country: carData.plannedLocation.address.country,
                 latitude: carData.plannedLocation.address.location[0],
                 longitude: carData.plannedLocation.address.location[1],
+            },
+        ];
 
-            }]) {
+        const totalPairs = startLocations.length * carData.furthestCities.length;
+        let currentPair = 0;
+
+        for (const start of startLocations) {
             for (const end of carData.furthestCities) {
+                currentPair++;
+                // Emituj progres
+                onProgress?.({ current: currentPair, total: totalPairs, found: offers.length });
+
                 const partialOffers = await this.searchOffersBetweenTwoCities(
                     start,
                     end,
@@ -288,7 +299,7 @@ export class OfferSearchService {
 
         const externalIds = uniqueOffers
             .map(o => o.id)
-            .filter((id): id is string => !!id); // tylko nie-null
+            .filter((id): id is string => !!id);
 
         const existingOffers = await this.prisma.carScheduleOffer.findMany({
             where: {
@@ -306,13 +317,14 @@ export class OfferSearchService {
             return {
                 ...offer,
                 alreadySaved: !!match,
-                savedOffer: match
+                savedOffer: match,
             };
         });
 
         const enchancedOffers = await this.enhanceOffers(offersWithStatus, 3);
         return this.sortOffers(enchancedOffers);
     }
+
 
     private async searchOffersBetweenTwoCities(
         start: CityLocation,
