@@ -164,8 +164,7 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssigned
                                     <TableCell>{formatPrice(offer.pricePerKmEur, 'EUR')}</TableCell>
                                     <TableCell>{formatPrice(offer.pricePerKmEurGross, 'EUR')}</TableCell>
                                     <TableCell>
-                                        here: {formatPrice(offer.tollCostHere, 'EUR')},
-                                        tollguru: {formatPrice(offer.tollCostTollguru, 'EUR')}
+                                        {formatPrice(offer.tollCostHere, 'EUR')},
                                     </TableCell>
                                     <TableCell>
                                         <Button

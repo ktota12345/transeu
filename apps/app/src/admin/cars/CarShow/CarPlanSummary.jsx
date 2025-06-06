@@ -95,7 +95,6 @@ export const CarPlanSummary = ({ offers, from, to, baseAddress }) => {
                                         href={googleMapsUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        sx={{ mt: 2 }}
                                     >
                                         Pokaż trasę
                                     </Button>

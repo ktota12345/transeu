@@ -6,8 +6,6 @@ import {TransEuApiClientService} from "./transeuApi/trans-eu-api-client.service"
 import {ExchangeRateService} from '../exchangeRate/exchange-rate.service';
 import {TransEuHelperService} from "./transeuApi/trans-eu-helper.service";
 import {CostCalculationService} from "./costCalculation/cost-calculation.service";
-import {TollGuruCostCalculationService} from "./costCalculation/tollguru-cost-calculation.service";
-import {TomTomCostCalculationService} from "./costCalculation/tomtom-cost-calculation.service";
 
 const getLoadingPlace = (offerOrDetails) =>
     offerOrDetails?.loadingPlaces?.find(lp => lp.loadingType === "LOADING") || null;
@@ -47,8 +45,6 @@ export class OfferSearchService {
         private readonly transEuApiClientService: TransEuApiClientService,
         private readonly transEuHelperService: TransEuHelperService,
         private readonly costCalculationService: CostCalculationService,
-        private readonly tollGuruCostCalculationService: TollGuruCostCalculationService,
-        private readonly tomTomCostCalculationService: TomTomCostCalculationService,
     ) {
     }
 
@@ -322,7 +318,7 @@ export class OfferSearchService {
         });
 
         const firstSortedOffers = this.sortOffers(offersWithStatus);
-        const enchancedOffers = await this.enhanceOffers(firstSortedOffers, 3);
+        const enchancedOffers = await this.enhanceOffers(firstSortedOffers, 10);
         return this.sortOffers(enchancedOffers);
     }
 
@@ -553,24 +549,10 @@ export class OfferSearchService {
                     { lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude},
                     { lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude}
                 );
-
-                const tollGuruCost = await this.tollGuruCostCalculationService.getTollCost(
-                    { lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude },
-                    { lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude }
-                );
-                const tomTomCost = await this.tomTomCostCalculationService.getTollCost(
-                    { lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude },
-                    { lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude }
-                );
-
                 return {
                     ...offer,
                     tollCostHere: tollCost.value,
                     tollCostHereAllInfo: tollCost.allInfo,
-                    tollCostTollguru: tollGuruCost.value,
-                    tollCostTollguruAllInfo: tollGuruCost.allInfo,
-                    tollCostTomTom: tomTomCost.value,
-                    tollCostTomTomAllInfo: tomTomCost.allInfo,
                 };
             })
         );

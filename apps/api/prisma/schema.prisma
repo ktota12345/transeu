@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -14,340 +8,305 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Agent {
-  id                        Int       @id @default(autoincrement())
-  name                      String
-  description               String
-  isActive                  Boolean   @default(true)
-  createdAt                 DateTime  @default(now())
-  updatedAt                 DateTime  @updatedAt
-  priority                  Int?
-  operator                  String?
-  tags                      String[]
-  specializations           String[]
-  priorityClients           String[]
-  preferredCargoTypes       String[]
-  unwantedCargoTypes        String[]
-  cargoTypes                String[]
-  additionalServices        String[]
-  preferredRoutes           String[]
-  regionsToAvoid            String[]
-  vehicleBases              String[]
-  selectedLogisticsBase     Int?
-  selectedGermanDestinations String[]
-  customLogisticsPoint      Json?
-  maxOperatingRadius        Int?
-  preferredCountries        String[]
-  unwantedCountries         String[]
-  roadPreferences           String[]
-  timocomSettings           Json?
-  minRatePerKm              Decimal?  @default(0.0)
-  targetRatePerKm           Decimal?  @default(0.0)
-  minOrderValue             Decimal?  @default(0.0)
-  preferredPaymentTerms     String[]
-  currencies                String[]
-  additionalFees            Json?
-  emptyKmCost               Decimal?  @default(0.0)
-  minProfitMargin           Float?    @default(0.0)
-  availabilityQueryParams   Json?
-  minAvailabilityBuffer     Int?
-  preferredDays             String[]
-  preferredHours            Json?
-  maxExecutionTime          Int?
-  timeBuffer                Int?
-  availabilityUpdateFrequency String?
-  checkPriority             String?
-  trailerTypes              String[]
-  liftCapacityRange         Json?
-  specialEquipment          String[]
-  certificates              String[]
-  cargoParameters           Json?
-  specialRequirements       String?
-  negotiationAggressiveness Int?      @default(0)
-  maxCounterOffers          Int?
-  minResponseTime           Int?
-  maxResponseTime           Int?
-  negotiationStrategiesSelected String[]
-  negotiationInstructions   String?
-  priceThreshold            Float?
-  unusualClientRequirements String[]
-  keywordTriggers           String[]
-  emotionDetectionLevel     Int?
+  id                              Int      @id @default(autoincrement())
+  name                            String
+  description                     String
+  isActive                        Boolean  @default(true)
+  createdAt                       DateTime @default(now())
+  updatedAt                       DateTime @updatedAt
+  specializations                 String[]
+  priorityClients                 String[]
+  additionalServices              String[]
+  destinationCity                 String?
+  searchRadius                    Int?
+  cargoParameters                 Json?
+  checkFrequency                  String?
+  liftCapacityRange               Json?
+  negotiationInstructions         String?
+  workingHours                    Json?
+  additionalFees                  Json?
+  availabilityQueryParams         Json?
+  availabilityUpdateFrequency     String?
+  certificates                    String[]
+  checkPriority                   String?
+  currencies                      String[]
+  customCheckInterval             Int?
+  customLogisticsPoint            Json?
+  isDraft                         Boolean  @default(false)
+  keywordTriggers                 String[]
+  maxConcurrentNegotiations       Int?
+  maxExecutionTime                Int?
+  maxOperatingRadius              Int?
+  minAvailabilityBuffer           Int?
+  negotiationAggressiveness       Int?     @default(0)
   negotiationStagesRequiringHuman String[]
-  maxClientIdleTime         Int?
-  checkFrequency            String?
-  customCheckInterval       Int?
-  workingHours              Json?
-  workingDays               String[]
-  scheduleExceptions        Json?
-  workIntensity             String?
-  maxConcurrentNegotiations Int?
-  isDraft                   Boolean   @default(false)
-  destinationCity           String?
-  searchRadius              Int?
+  negotiationStrategiesSelected   String[]
+  operator                        String?
+  preferredCargoTypes             String[]
+  preferredCountries              String[]
+  preferredDays                   String[]
+  preferredHours                  Json?
+  preferredPaymentTerms           String[]
+  preferredRoutes                 String[]
+  priority                        Int?
+  regionsToAvoid                  String[]
+  roadPreferences                 String[]
+  scheduleExceptions              Json?
+  selectedGermanDestinations      String[]
+  selectedLogisticsBase           Int?
+  specialEquipment                String[]
+  specialRequirements             String?
+  tags                            String[]
+  timeBuffer                      Int?
+  timocomSettings                 Json?
+  trailerTypes                    String[]
+  unusualClientRequirements       String[]
+  unwantedCargoTypes              String[]
+  unwantedCountries               String[]
+  vehicleBases                    String[]
+  workIntensity                   String?
+  workingDays                     String[]
+  emotionDetectionLevel           Int?
+  emptyKmCost                     Decimal? @default(0.0)
+  maxClientIdleTime               Int?
+  maxCounterOffers                Int?
+  maxResponseTime                 Int?
+  minOrderValue                   Decimal? @default(0.0)
+  minProfitMargin                 Float?   @default(0.0)
+  minRatePerKm                    Decimal? @default(0.0)
+  minResponseTime                 Int?
+  priceThreshold                  Float?
+  targetRatePerKm                 Decimal? @default(0.0)
+  cargoTypes                      String[]
 }
 
-
-
-
 model User {
-  id                 Int       @id @default(autoincrement())
-  email              String    @unique
-  username           String    @unique
-  password           String
-  role               Role      @default(USER)
-  resetToken         String?   @db.VarChar(255)
-  resetTokenExpiry   DateTime?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-
-  companyId          Int?
-  company            Company?  @relation(fields: [companyId], references: [id])
-  searchNotificationSetups SearchNotificationSetup[]
+  id                       Int                       @id @default(autoincrement())
+  email                    String                    @unique
+  username                 String                    @unique
+  password                 String
+  role                     Role                      @default(USER)
+  resetToken               String?                   @db.VarChar(255)
+  resetTokenExpiry         DateTime?
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  companyId                Int?
+  company                  Company?                  @relation(fields: [companyId], references: [id])
+  searchNotificationSetups SearchNotificationSetup[] @relation("SearchNotificationSetupToUser")
 }
 
 model Company {
-  id          Int      @id @default(autoincrement())
-  name        String
-  users       User[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-enum Role {
-  ADMIN
-  USER
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
 }
 
 model Carrier {
-  id                 Int       @id @default(autoincrement())
-  type               String
-  name               String
-  postalCode         String
-  city               String
-  address            String
-  region             String
-  licenseNumber      String
-  licenseExpiryDate  DateTime?
-
-  contacts           CarrierContact[]
-
-  cars        Car[]      @relation("CarrierCars")
-  drivers     Driver[]   @relation("CarrierDrivers")
+  id                Int              @id @default(autoincrement())
+  type              String
+  name              String
+  postalCode        String
+  city              String
+  address           String
+  region            String
+  licenseNumber     String
+  licenseExpiryDate DateTime?
+  cars              Car[]            @relation("CarrierCars")
+  contacts          CarrierContact[]
+  drivers           Driver[]         @relation("CarrierDrivers")
 }
 
 model CarrierContact {
-  id         Int     @id @default(autoincrement())
-  carrierId  Int
-  name       String?
-  email      String?
-  phone      String?
-  source     String?
-  details    Json?
-
-  carrier    Carrier @relation(fields: [carrierId], references: [id], onDelete: Cascade)
+  id        Int     @id @default(autoincrement())
+  carrierId Int
+  name      String?
+  email     String?
+  phone     String?
+  source    String?
+  details   Json?
+  carrier   Carrier @relation(fields: [carrierId], references: [id], onDelete: Cascade)
 }
 
 model SearchScheduleSetup {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   name      String
-  isDefault Boolean  @default(false)
+  isDefault Boolean @default(false)
   schedule  Json
-
-  cars      Car[]    @relation("CarSearchSchedules")
+  cars      Car[]   @relation("CarSearchSchedules")
 }
 
 model Car {
-  id                  Int                  @id @default(autoincrement())
-  name                String
-  registrationNumber  String
-  carType             String?
-  trailerType         String
-  driverId            Int?
-  driver              Driver?              @relation(fields: [driverId], references: [id])
-
-
-  carrierId   Int?
-  carrier     Carrier?  @relation("CarrierCars", fields: [carrierId], references: [id])
-
-  schedules           CarSchedule[]
-  offers              CarScheduleOffer[]
-
-  searchSchedules     SearchScheduleSetup[] @relation("CarSearchSchedules")
-
-  vehicleTypes         VehicleType[]         @relation("CarVehicleTypes")
-  vehicleLoadSecurings VehicleLoadSecuring[] @relation("CarVehicleLoadSecurings")
-  vehicleEquipments    VehicleEquipment[]    @relation("CarVehicleEquipments")
-  swapBodies           SwapBody[]            @relation("CarSwapBodies")
-  bodyProperties       BodyProperty[]        @relation("CarBodyProperties")
+  id                      Int                      @id @default(autoincrement())
+  name                    String
+  registrationNumber      String
+  carType                 String?
+  trailerType             String
+  driverId                Int?
+  carrierId               Int?
+  baseAddressId           Int?                     @unique
+  baseAddress             Address?                 @relation(fields: [baseAddressId], references: [id])
+  carrier                 Carrier?                 @relation("CarrierCars", fields: [carrierId], references: [id])
+  driver                  Driver?                  @relation(fields: [driverId], references: [id])
+  schedules               CarSchedule[]
+  offers                  CarScheduleOffer[]
   searchNotificationSetup SearchNotificationSetup?
-  bodies             VehicleBody[]         @relation("CarVehicleBodies")
-
-
-  baseAddressId       Int?       @unique
-  baseAddress         Address?   @relation(fields: [baseAddressId], references: [id])
+  bodyProperties          BodyProperty[]           @relation("CarBodyProperties")
+  searchSchedules         SearchScheduleSetup[]    @relation("CarSearchSchedules")
+  swapBodies              SwapBody[]               @relation("CarSwapBodies")
+  bodies                  VehicleBody[]            @relation("CarVehicleBodies")
+  vehicleEquipments       VehicleEquipment[]       @relation("CarVehicleEquipments")
+  vehicleLoadSecurings    VehicleLoadSecuring[]    @relation("CarVehicleLoadSecurings")
+  vehicleTypes            VehicleType[]            @relation("CarVehicleTypes")
 }
 
 model Address {
-  id          Int     @id @default(autoincrement())
-  country     String
-  postalCode  String
-  city        String
-  latitude    Float
-  longitude   Float
-  car         Car?    @relation
-  offerFrom   CarScheduleOffer[] @relation("OfferFromAddress")
-  offerTo     CarScheduleOffer[] @relation("OfferToAddress")
+  id         Int                @id @default(autoincrement())
+  country    String
+  postalCode String
+  city       String
+  latitude   Float
+  longitude  Float
+  car        Car?
+  offerFrom  CarScheduleOffer[] @relation("OfferFromAddress")
+  offerTo    CarScheduleOffer[] @relation("OfferToAddress")
 }
-
 
 model SearchNotificationSetup {
-  id     Int  @id @default(autoincrement())
-
-  carId  Int  @unique
-  car    Car  @relation(fields: [carId], references: [id], onDelete: Cascade)
-
-  users  User[]
+  id           Int      @id @default(autoincrement())
+  carId        Int      @unique
   customEmails String[]
+  car          Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  users        User[]   @relation("SearchNotificationSetupToUser")
 }
 
-
 model Driver {
-  id       Int     @id @default(autoincrement())
-  name     String
-  surname  String
-  phone    String
-  email    String
-  cars     Car[]
-  offers   CarScheduleOffer[]
-
-  allowedCountries Country[] @relation("AllowedCountries")
-
-  carrierId   Int?
-  carrier     Carrier?  @relation("CarrierDrivers", fields: [carrierId], references: [id])
+  id               Int                @id @default(autoincrement())
+  name             String
+  surname          String
+  phone            String
+  email            String
+  carrierId        Int?
+  cars             Car[]
+  offers           CarScheduleOffer[]
+  carrier          Carrier?           @relation("CarrierDrivers", fields: [carrierId], references: [id])
+  allowedCountries Country[]          @relation("AllowedCountries")
 }
 
 model CarSchedule {
   id        Int                @id @default(autoincrement())
   carId     Int
-  car       Car                @relation(fields: [carId], references: [id], onDelete: Cascade)
   from      DateTime
   to        DateTime
-  status    String             // np. 'available', 'unavailable', 'maintenance'
-  offers    CarScheduleOffer[]
+  status    String
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
+  car       Car                @relation(fields: [carId], references: [id], onDelete: Cascade)
+  offers    CarScheduleOffer[]
 }
 
 model CarScheduleOffer {
-  id              Int       @id @default(autoincrement())
-  fromDate        DateTime
-  toDate          DateTime
-  fromAddressId   Int?
-  fromAddress     Address?   @relation("OfferFromAddress", fields: [fromAddressId], references: [id])
-
-  toAddressId     Int?
-  toAddress       Address?   @relation("OfferToAddress", fields: [toAddressId], references: [id])
-
-  externalId       String?   @unique
-  externalLink     String?
-  sourceSystem     String?
-
-  status          String    // np. 'pending', 'confirmed', 'rejected'
-  carId           Int?
-  car             Car?       @relation(fields: [carId], references: [id])
-  driverId        Int?
-  driver          Driver?    @relation(fields: [driverId], references: [id])
-  carScheduleId   Int?
-  carSchedule     CarSchedule? @relation(fields: [carScheduleId], references: [id])
-  details         Json
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id            Int          @id @default(autoincrement())
+  fromDate      DateTime
+  toDate        DateTime
+  status        String
+  carId         Int?
+  driverId      Int?
+  carScheduleId Int?
+  details       Json
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  fromAddressId Int?
+  toAddressId   Int?
+  externalId    String?      @unique
+  externalLink  String?
+  sourceSystem  String?
+  car           Car?         @relation(fields: [carId], references: [id])
+  carSchedule   CarSchedule? @relation(fields: [carScheduleId], references: [id])
+  driver        Driver?      @relation(fields: [driverId], references: [id])
+  fromAddress   Address?     @relation("OfferFromAddress", fields: [fromAddressId], references: [id])
+  toAddress     Address?     @relation("OfferToAddress", fields: [toAddressId], references: [id])
 }
 
 model VehicleType {
-  id             Int    @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   name           String
-  apiNameTimocom String @unique
+  apiNameTimocom String   @unique
   transEuMapping String[] @default([])
-
-  cars           Car[]   @relation("CarVehicleTypes")
+  cars           Car[]    @relation("CarVehicleTypes")
 }
+
 model VehicleLoadSecuring {
-  id               Int    @id @default(autoincrement())
-  name             String
-  apiNameTimocom   String @unique
+  id             Int      @id @default(autoincrement())
+  name           String
+  apiNameTimocom String   @unique
   transEuMapping String[] @default([])
-
-  cars           Car[]   @relation("CarVehicleLoadSecurings")
+  cars           Car[]    @relation("CarVehicleLoadSecurings")
 }
+
 model VehicleEquipment {
-  id             Int    @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   name           String
-  apiNameTimocom String @unique
+  apiNameTimocom String   @unique
   transEuMapping String[] @default([])
-
-  cars           Car[]   @relation("CarVehicleEquipments")
+  cars           Car[]    @relation("CarVehicleEquipments")
 }
+
 model SwapBody {
-  id             Int    @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   name           String
-  apiNameTimocom String @unique
+  apiNameTimocom String   @unique
   transEuMapping String[] @default([])
-
-  cars           Car[]   @relation("CarSwapBodies")
+  cars           Car[]    @relation("CarSwapBodies")
 }
-model BodyProperty {
-  id             Int    @id @default(autoincrement())
-  name           String
-  apiNameTimocom String @unique
-  transEuMapping String[] @default([])
 
-  cars           Car[]   @relation("CarBodyProperties")
+model BodyProperty {
+  id             Int      @id @default(autoincrement())
+  name           String
+  apiNameTimocom String   @unique
+  transEuMapping String[] @default([])
+  cars           Car[]    @relation("CarBodyProperties")
 }
 
 model City {
-  id          Int     @id @default(autoincrement())
-  name        String  // np. "Warszawa"
-  postalCode  String  // np. "00-001"
-  country     String  // np. "PL"
-  latitude    Float   // np. 52.2297
-  longitude   Float   // np. 21.0122
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-
-  countryRel  Country @relation(fields: [country], references: [code], onDelete: Cascade)
+  id         Int      @id @default(autoincrement())
+  name       String
+  postalCode String
+  country    String
+  latitude   Float
+  longitude  Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  countryRel Country  @relation(fields: [country], references: [code], onDelete: Cascade)
 
   @@index([country, name])
   @@index([postalCode])
 }
 
 model Country {
-    id         Int      @default(autoincrement())
-  code        String   @id // np. "PL"
-  name        String
-  cities      City[]
+  code             String   @id
+  name             String
+  id               Int      @default(autoincrement())
+  cities           City[]
   allowedByDrivers Driver[] @relation("AllowedCountries")
-
 }
 
 model VehicleBody {
-  id             Int    @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   name           String
-  apiNameTimocom String @unique
+  apiNameTimocom String   @unique
   transEuMapping String[] @default([])
-
-  cars           Car[]   @relation("CarVehicleBodies")
+  cars           Car[]    @relation("CarVehicleBodies")
 }
 
 model ExchangeRate {
-  id        Int      @id @default(autoincrement())
-  currency  String   @unique
-  rate      Float    // kurs względem EUR
+  id        Int       @id @default(autoincrement())
+  currency  String    @unique
+  rate      Float
   date      DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 }
 
 model TransEuToken {
@@ -360,11 +319,42 @@ model TransEuToken {
   updatedAt    DateTime @updatedAt
 }
 
-model TransEuAppToken{
-    id           Int      @id @default(autoincrement())
-    accessToken  String
-    expiresAt    DateTime
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+model TransEuAppToken {
+  id          Int      @id @default(autoincrement())
+  accessToken String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
+model offers {
+  id                                   Int       @id @default(autoincrement())
+  starting_center                      String?
+  starting_center_latitude             Decimal?  @db.Decimal
+  starting_center_longitude            Decimal?  @db.Decimal
+  destination_center                   String?
+  destination_center_latitude          Decimal?  @db.Decimal
+  destination_center_longitude         Decimal?  @db.Decimal
+  enlistment_date                      DateTime? @db.Date
+  trailer_avg_price_per_km             Decimal?  @db.Decimal
+  vehicle_up_to_3_5_t_avg_price_per_km Decimal?  @db.Decimal
+  vehicle_up_to_12_t_avg_price_per_km  Decimal?  @db.Decimal
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+model TollCostCache {
+  id            String   @id @default(uuid())
+  startLat      Float
+  startLng      Float
+  endLat        Float
+  endLng        Float
+  costValue     Float?
+  allInfo       Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([startLat, startLng, endLat, endLng])
+}
