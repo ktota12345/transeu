@@ -5,14 +5,13 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "dev:all": "concurrently \"yarn workspace transeu-agent start\" \"yarn workspace api start:dev\" \"node server.js\"",
+    "dev:all": "concurrently \"yarn workspace transeu-agent start\" \"yarn workspace api start:dev\" ",
     "lint": "turbo lint",
     "type-check": "turbo run type-check",
     "clean": "turbo clean",
     "clean:install": "yarn cleaning && rm -rf yarn.lock && yarn install",
     "clean:parcel": "rm -rf .parcel-cache",
-    "cleaning": "yarn clean:parcel && find . \\( -name '.next' -o -name 'node_modules' -o -name 'dist' \\) -type d -prune -print -exec rm -rf '{}' \\;",
-    "server": "node server.js"
+    "cleaning": "yarn clean:parcel && find . \\( -name '.next' -o -name 'node_modules' -o -name 'dist' \\) -type d -prune -print -exec rm -rf '{}' \\;"
   },
   "workspaces": {
     "packages": [
