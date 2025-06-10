@@ -35,7 +35,7 @@ export const ScheduleList = () => {
     const [selectedOffer, setSelectedOffer] = useState(null);
     const [currentOfferMapped, setCurrentOfferMapped] = useState(null);
     const [timelineMarkedOffer, setTimelineMarkedOffer] = useState(null);
-    const [useDestinationCityService, setUseDestinationCityService] = useState(false);
+    const [useDestinationCityService, setUseDestinationCityService] = useState(true);
 
 
 

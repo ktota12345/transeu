@@ -52,7 +52,7 @@ export class OfferSearchController {
                     allowed_countries: carData.allowedCountries || [],
                 };
 
-                const response = await fetch('http://routealgorithm.onrender.com/analyze-route', {
+                const response = await fetch('http://routealgorithm.onrender.com/suggest-top-destinations', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
