@@ -48,11 +48,13 @@ export class OfferSearchController {
                 const body = {
                     latitude: carData.plannedLocation.address.location[0],
                     longitude: carData.plannedLocation.address.location[1],
-                    banned_countries: carData.bannedCountries || [],
                     allowed_countries: carData.allowedCountries || [],
+                    vehicle_type:["trailer"]
                 };
 
-                const response = await fetch('http://routealgorithm.onrender.com/suggest-top-destinations', {
+
+
+                const response = await fetch('https://topoffersfromdb.onrender.com/suggest-top-destinations', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
