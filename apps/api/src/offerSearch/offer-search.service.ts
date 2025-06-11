@@ -37,6 +37,31 @@ type CityLocation = {
 @Injectable()
 export class OfferSearchService {
     private readonly MIN_PRICE = 100;
+    private readonly NON_EU_COUNTRIES =  [
+        "ALB", // Albania
+        "ARM", // Armenia
+        "AZE", // Azerbaijan
+        "BIH", // Bosnia and Herzegovina
+        "BLR", // Belarus
+        "CHE", // Switzerland
+        "GEO", // Georgia
+        "ISL", // Iceland
+        "LIE", // Liechtenstein
+        "MDA", // Moldova
+        "MNE", // Montenegro
+        "MKD", // North Macedonia
+        "MCO", // Monaco
+        "NOR", // Norway
+        "SRB", // Serbia
+        "RUS", // Russia
+        "SMR", // San Marino
+        "TUR", // Turkey
+        "UKR", // Ukraine
+        "GBR", // United Kingdom
+        "VAT", // Vatican City
+        //"XKX"  // Kosovo (unofficial but commonly used)
+    ];
+
     constructor(
         private prisma: PrismaService,
         private readonly timocomApiService: TimocomApiService,
@@ -550,17 +575,64 @@ export class OfferSearchService {
 
                 const tollCost = await this.costCalculationService.getTollCost(
                     { lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude},
-                    { lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude}
+                    { lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude},
                 );
 
-                //decrease // pricePerKmEurGross by tollCost
-                const tollCostPerKm = tollCost.value ? Number((tollCost.value / offer.totalDistance).toFixed(2)) : null;
+                const tolls = tollCost.allInfo.routes?.[0].sections?.[0]?.tolls;
+                const hasNonEuCountries = tolls?.some(toll => this.NON_EU_COUNTRIES.includes(toll.countryCode));
+                const nonEuCountryCodes = hasNonEuCountries ? tolls?.filter(toll => this.NON_EU_COUNTRIES.includes(toll.countryCode)).map(toll => toll.countryCode) : null;
+
+
+
+                const tollCostEUOnly = (hasNonEuCountries) ? await this.costCalculationService.getTollCost(
+                    { lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude},
+                    { lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude},
+                    this.NON_EU_COUNTRIES
+                ):{
+                    value: tollCost.value,
+                    allInfo: tollCost.allInfo,
+                    distance: tollCost.distance,
+                    duration: tollCost.duration,
+                    baseDuration: tollCost.baseDuration
+                };
+
+                const distance = tollCost.distance ? (tollCost.distance / 1000) : offer.totalDistance;
+                const distanceEuOnly = tollCostEUOnly.distance ? (tollCostEUOnly.distance / 1000) : offer.totalDistance;
+
+                const startAccessDistance = offer.startAccessDistance;
+                const offerTotalPriceEur = await this.exchangeRateService.convertToEUR(offer.price.amount, offer.price.currency);
+
+
+                const tollCostPerKm = tollCost.value ? Number((tollCost.value / distance).toFixed(2)) : null;
+                const tollCostPerKmEUOnly = tollCostEUOnly.value ? Number((tollCostEUOnly.value / distanceEuOnly).toFixed(2)) : null;
+
+
+                const pricePerKmEurGrossCorrected =((offerTotalPriceEur??0) / (distance + startAccessDistance)) - (tollCostPerKm ?? 0);
+                const pricePerKmEurGrossCorrectedEuOnly = ((offerTotalPriceEur??0) / (distanceEuOnly + startAccessDistance)) - (tollCostPerKmEUOnly ?? 0);
 
                 return {
                     ...offer,
-                    tollCost: tollCost.value,
-                    tollCostPerKm: tollCostPerKm,
-                    pricePerKmEurGrossCorrected: offer.pricePerKmEurGross - (tollCostPerKm ?? 0),
+                    tollCost: {
+                        hasNonEuCountries: hasNonEuCountries,
+                        nonEuCountryCodes: nonEuCountryCodes,
+                        general: {
+                            value: tollCost.value,
+                            perKm:  tollCostPerKm,
+                            distance: tollCost.distance,
+                            duration: tollCost.duration,
+                            baseDuration: tollCost.baseDuration,
+                        },
+                        eu:{
+                            value: tollCostEUOnly.value,
+                            perKm: tollCostPerKmEUOnly,
+                            distance: tollCostEUOnly.distance,
+                            duration: tollCostEUOnly.duration,
+                            baseDuration: tollCostEUOnly.baseDuration,
+                        },
+                    },
+
+                    pricePerKmEurGrossCorrected: pricePerKmEurGrossCorrected,
+                    pricePerKmEurGrossCorrectedEuOnly: pricePerKmEurGrossCorrectedEuOnly,
                     tollCostAllInfo: tollCost.allInfo,
                 };
             })

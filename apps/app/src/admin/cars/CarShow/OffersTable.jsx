@@ -12,7 +12,7 @@ import {
     CircularProgress
 } from "@mui/material";
 
-import {dateFormat, formatPrice, getLoadingPlace, getUnloadingPlace, googleMapsLink, googleMapsRouteLink} from '../../../data/helpers';
+import {dateFormat, formatDistance, formatPrice, getLoadingPlace, getUnloadingPlace, googleMapsLink, googleMapsRouteLink} from '../../../data/helpers';
 import axiosNest from "../../../api/axiosNest";
 import {useState} from "react";
 import {useNotify} from "react-admin";
@@ -164,10 +164,20 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssigned
                                     </TableCell>
                                     <TableCell>{formatPrice(offer.pricePerKmEur, 'EUR')}</TableCell>
                                     <TableCell>{formatPrice(offer.pricePerKmEurGross, 'EUR')}</TableCell>
-                                    <TableCell>
-                                        {formatPrice(offer.tollCost, 'EUR')},
+                                    <TableCell style={{whiteSpace:'nowrap'}}>
+                                        {offer.tollCost?.hasNonEuCountries && (
+                                            <span>{offer.tollCost?.nonEuCountryCodes.join(', ')}: </span>
+                                        )}
+                                        {formatPrice(offer.tollCost?.general?.value, 'EUR')} <br />
+                                        {offer.tollCost?.hasNonEuCountries && (<Typography style={{whiteSpace:'nowrap'}}>
+                                            eu: {formatPrice(offer.tollCost?.eu?.value, 'EUR')}</Typography>)}
                                     </TableCell>
-                                    <TableCell>{formatPrice(offer.pricePerKmEurGrossCorrected, 'EUR')}</TableCell>
+                                    <TableCell>
+                                        {formatPrice(offer.pricePerKmEurGrossCorrected, 'EUR')} ({formatDistance(offer.tollCost?.general?.distance)})
+                                        { offer.tollCost?.hasNonEuCountries && (<Typography style={{whiteSpace:'nowrap'}}>
+                                            {formatPrice(offer.pricePerKmEurGrossCorrectedEuOnly, 'EUR')} ({formatDistance(offer.tollCost?.eu?.distance)})
+                                        </Typography>)}
+                                    </TableCell>
                                     <TableCell>
                                         <Button
                                             variant="outlined"

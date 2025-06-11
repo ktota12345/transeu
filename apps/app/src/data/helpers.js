@@ -14,6 +14,17 @@ export const formatPrice = (amount: number | null, currency: string): string => 
     }).format(amount);
 };
 
+export const formatDistance = (distance: number | null): string => {
+    if (distance == null || isNaN(distance)) return '-';
+
+    if (distance < 1000) {
+        return `${distance} m`;
+    } else {
+        const km = (distance / 1000).toFixed(0);
+        return `${km} km`;
+    }
+}
+
 type Coordinate = { lat: number; lng: number };
 
 export const googleMapsRouteLink = (points: Coordinate[]): string => {

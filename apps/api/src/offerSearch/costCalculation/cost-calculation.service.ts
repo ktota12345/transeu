@@ -17,8 +17,15 @@ export class CostCalculationService {
 
     async getTollCost(
         start: { lat: number; lng: number },
-        end: { lat: number; lng: number }
-    ): Promise<{ value: number | null, allInfo: any }> {
+        end: { lat: number; lng: number },
+        excludeCountries?: string[] | null
+    ): Promise<{
+        value: number | null,
+        allInfo: any,
+        distance: number | null,
+        duration: number | null,
+        baseDuration: number | null
+    }> {
         const sixMonthsAgo = subMonths(new Date(), 6);
 
         // Zaokrąglone współrzędne (~5 km)
@@ -27,24 +34,28 @@ export class CostCalculationService {
         const roundedEndLat = this.roundCoord(end.lat);
         const roundedEndLng = this.roundCoord(end.lng);
 
+        const where = {
+            startLat: roundedStartLat,
+            startLng: roundedStartLng,
+            endLat: roundedEndLat,
+            endLng: roundedEndLng,
+            createdAt: { gte: sixMonthsAgo }
+        };
+        if (excludeCountries) {
+            where['excludeCountries'] = { hasEvery: excludeCountries };
+        }
         // Sprawdź cache
         const cached = await this.prisma.tollCostCache.findFirst({
-            where: {
-                startLat: roundedStartLat,
-                startLng: roundedStartLng,
-                endLat: roundedEndLat,
-                endLng: roundedEndLng,
-                createdAt: { gte: sixMonthsAgo }
-            }
+            where: where
         });
 
-        if (cached) {
-            //this.logger.log('Zwracam wynik z cache (zaokrąglony)');
-            return {
-                value: cached.costValue ?? null,
-                allInfo: cached.allInfo
-            };
-        }
+        // if (cached) {
+        //     //this.logger.log('Zwracam wynik z cache (zaokrąglony)');
+        //     return {
+        //         value: cached.costValue ?? null,
+        //         allInfo: cached.allInfo
+        //     };
+        // }
 
         // Jeśli nie ma w cache, pobierz z API
         const url = 'https://router.hereapi.com/v8/routes';
@@ -55,13 +66,20 @@ export class CostCalculationService {
             return: 'summary,tolls',
             apiKey: this.hereApiKey,
             'tolls[summaries]': 'total',
-            'tolls[vignettes]': 'all',
+            //'tolls[vignettes]': 'all',
             currency: 'EUR',
         };
+        if (excludeCountries && excludeCountries.length > 0) {
+                params['exclude[countries]'] = excludeCountries.join(',');
+        }
+
 
         try {
             const response = await axios.get(url, { params });
             const tollCost = response.data.routes?.[0].sections?.[0]?.summary?.tolls?.total?.value || 0;
+            const distance = response.data.routes?.[0].sections?.[0]?.summary?.length || 0;
+            const duration = response.data.routes?.[0].sections?.[0]?.summary?.duration || 0;
+            const baseDuration = response.data.routes?.[0].sections?.[0]?.summary?.baseDuration || 0;
 
             // Zapisz do cache z zaokrąglonymi współrzędnymi
             await this.prisma.tollCostCache.create({
@@ -71,12 +89,19 @@ export class CostCalculationService {
                     endLat: roundedEndLat,
                     endLng: roundedEndLng,
                     costValue: tollCost,
-                    allInfo: response.data
+                    allInfo: response.data,
+                    excludeCountries: excludeCountries || [],
+                    distance: distance,
+                    duration: duration,
+                    baseDuration: baseDuration,
                 }
             });
 
             return {
                 value: tollCost,
+                distance: distance,
+                duration: duration,
+                baseDuration: baseDuration,
                 allInfo: response.data
             };
 
@@ -84,6 +109,9 @@ export class CostCalculationService {
             this.logger.error('Błąd podczas pobierania opłat drogowych z API Here', error);
             return {
                 value: null,
+                distance: null,
+                duration: null,
+                baseDuration: null,
                 allInfo: null
             };
         }

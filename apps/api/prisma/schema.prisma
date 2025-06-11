@@ -353,6 +353,10 @@ model TollCostCache {
   endLng        Float
   costValue     Float?
   allInfo       Json?
+  excludeCountries String[]
+  distance      Float?
+  duration      Int?
+  baseDuration Int?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
