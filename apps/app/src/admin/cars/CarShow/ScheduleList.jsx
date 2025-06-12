@@ -253,7 +253,7 @@ export const ScheduleList = () => {
     return (
         <Card>
             <CardContent>
-                <Typography variant="h6" gutterBottom>Harmonogramy (aktywne okresy okresy)</Typography>
+                <Typography variant="h6" gutterBottom>Harmonogramy (aktywne okresy)</Typography>
                 <Stack spacing={2}>
                     {futureSchedules.map((s, idx) => (
                         <Stack key={idx} direction="row" spacing={2}>
@@ -263,7 +263,7 @@ export const ScheduleList = () => {
                         </Stack>
                     ))}
 
-                    <SearchParameters
+                    {(futureSchedules.length > 0) ? (<SearchParameters
                         numUnloadingCities={numUnloadingCities}
                         setNumUnloadingCities={setNumUnloadingCities}
                         searchArea={searchArea}
@@ -274,13 +274,13 @@ export const ScheduleList = () => {
                         setSearchServices={setSearchServices}
                         useDestinationCityService={useDestinationCityService}
                         setUseDestinationCityService={setUseDestinationCityService}
-                    />
-                    <CarPlanSummary
+                    />) : (<Typography color="error">Brak aktywnych harmonogramów. Dodaj harmonogram, aby wyszukiwać oferty.</Typography>)}
+                    {(futureSchedules.length > 0) && (<CarPlanSummary
                         from={currentSchedule?.from}
                         to={currentSchedule?.to}
                         offers={assignedOffers}
                         baseAddress={record?.baseAddress}
-                    />
+                    />)}
 
                     <CarPlanTimeline
                         from={currentSchedule?.from}
@@ -310,9 +310,9 @@ export const ScheduleList = () => {
 
 
 
-                    <Button variant="contained" onClick={()=>handleSearchOffers(null)} disabled={loading}>
+                    {(futureSchedules.length > 0) && (<Button variant="contained" onClick={()=>handleSearchOffers(null)} disabled={loading}>
                         {loading ? 'Szukam...' : 'Szukaj ofert'}
-                    </Button>
+                    </Button>)}
 
                     <ProgressBar progress={progress} percent={progressPercent} loading={loading} found={found} />
                     {error && <Typography color="error">{error}</Typography>}
