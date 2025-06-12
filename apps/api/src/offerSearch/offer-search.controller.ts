@@ -32,8 +32,7 @@ export class OfferSearchController {
             numUnloadingCities: numUnloadingCities ? parseInt(numUnloadingCities) : 0,
         });
 
-        const plannedLocationOverrideParsed = plannedLocationOverride ? JSON.parse(plannedLocationOverride) : null;
-
+        const plannedLocationOverrideParsed = plannedLocationOverride ? JSON.parse(JSON.parse(plannedLocationOverride)) : null;
         if (plannedLocationOverrideParsed?.lat && plannedLocationOverrideParsed?.lng && plannedLocationOverrideParsed?.date) {
             carData.plannedLocation = {
                 latitude: parseFloat(plannedLocationOverrideParsed.lat),
