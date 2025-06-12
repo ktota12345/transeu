@@ -1,5 +1,5 @@
 import {Card, CardContent, Grid, Typography} from "@mui/material";
-import {ChipField, ReferenceArrayField, ReferenceField, SingleFieldList, TextField, useGetOne, useRecordContext} from "react-admin";
+import { ReferenceArrayField, ReferenceField, SingleFieldList, TextField, useGetOne, useRecordContext} from "react-admin";
 
 export const General = () => {
     const record = useRecordContext();
@@ -38,13 +38,13 @@ export const General = () => {
                     </Grid>
                     <Grid item xs={8}>
                         <ReferenceField source="driverId" reference="drivers" link='edit'>
-                            <TextField source="name"/>
+                            <TextField source="name"/> <TextField source="surname"/>
                         </ReferenceField>
                     </Grid>
                     <Grid item xs={4}>
                         <Typography variant="body2" color="textSecondary">Dozwolone kraje</Typography>
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid item xs={8} style={{paddingBottom:10, paddingTop:5}}>
                         {driver && driver.allowedCountries && driver.allowedCountries.length > 0 ? (
                             <ReferenceArrayField reference="countries" source="allowedCountries" record={driver} >
                                 <SingleFieldList linkType={false}>
