@@ -453,6 +453,7 @@ export class OfferSearchService {
             }
             allOffers.push(...timocomOffers);
         }
+        /*
         if (searchServices.includes('transEu')) {
             const partialTransEuOffers = await this.transEuApiAppService.fetchOffers(searchParams);
             const transEuOffers = await this.mapOffers(this.filterOffers(partialTransEuOffers?.data?.payload ?? []),
@@ -463,6 +464,8 @@ export class OfferSearchService {
             }
             allOffers.push(...transEuOffers);
         }
+
+         */
         if (searchServices.includes('smartsearch')) {
             const partialTransEuSmartSearchOffers = await this.transEuApiClientService.fetchOffers(searchParams);
             const transEuSmartSearchOffers = await this.mapOffers(this.filterOffers(partialTransEuSmartSearchOffers?.data?.payload ?? []),

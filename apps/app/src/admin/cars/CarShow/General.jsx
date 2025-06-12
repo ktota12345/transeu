@@ -1,9 +1,11 @@
 import {Card, CardContent, Grid, Typography} from "@mui/material";
-import {ReferenceField, TextField, useRecordContext} from "react-admin";
+import {ChipField, ReferenceArrayField, ReferenceField, SingleFieldList, TextField, useGetOne, useRecordContext} from "react-admin";
 
 export const General = () => {
     const record = useRecordContext();
+    const { data: driver, isLoading, error } = useGetOne('drivers', { id: record?.driverId??0 });
     if (!record) return null;
+
 
     return (
         <Card sx={{height: '100%', width: '100%'}}>
@@ -35,13 +37,27 @@ export const General = () => {
                         <Typography variant="body2" color="textSecondary">Kierowca</Typography>
                     </Grid>
                     <Grid item xs={8}>
-                        <ReferenceField source="driverId" reference="drivers" link={false}>
+                        <ReferenceField source="driverId" reference="drivers" link='edit'>
                             <TextField source="name"/>
                         </ReferenceField>
                     </Grid>
+                    <Grid item xs={4}>
+                        <Typography variant="body2" color="textSecondary">Dozwolone kraje</Typography>
+                    </Grid>
+                    <Grid item xs={8}>
+                        {driver && driver.allowedCountries && driver.allowedCountries.length > 0 ? (
+                            <ReferenceArrayField reference="countries" source="allowedCountries" record={driver}>
+                                <SingleFieldList>
+                                    <ChipField source="name" link={false}/>
+                                </SingleFieldList>
+                            </ReferenceArrayField>
+                        ) : (
+                            <Typography variant="body2" color="textSecondary">Brak dozwolonych krajów</Typography>
+                        )}
+                    </Grid>
 
                     <Grid item xs={4}>
-                        <Typography variant="body2" color="textSecondary">Przewoźnik</Typography>
+                        <Typography variant="body2" color="textSecondary"  link='edit'>Przewoźnik</Typography>
                     </Grid>
                     <Grid item xs={8}>
                         <ReferenceField source="carrierId" reference="carriers" link={false}>

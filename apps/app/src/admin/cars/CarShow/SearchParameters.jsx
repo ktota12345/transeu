@@ -1,6 +1,6 @@
 import {Checkbox, FormControlLabel, FormGroup, Grid, TextField, Typography} from "@mui/material";
 
-const availableSearchServices = ['timocom', 'transEu', 'smartsearch'];
+const availableSearchServices = ['timocom',  'smartsearch'];
 
 export const SearchParameters = ({
                                      numUnloadingCities,
@@ -24,16 +24,6 @@ export const SearchParameters = ({
 
     return (
         <Grid container spacing={2} mb={4} alignItems="stretch">
-            <Grid item xs={12} md={3}>
-                <TextField
-                    label="Liczba miast końcowych"
-                    type="number"
-                    value={numUnloadingCities}
-                    onChange={(e) => setNumUnloadingCities(e.target.value)}
-                    size="small"
-                    fullWidth
-                />
-            </Grid>
             <Grid item xs={12} md={3}>
                 <TextField
                     label="Search Area (km)"
@@ -83,6 +73,17 @@ export const SearchParameters = ({
                     label="użyj podpowiadania miast"
                 />
             </Grid>
+
+            {!useDestinationCityService && <Grid item xs={12} md={3}>
+                <TextField
+                    label="Liczba miast końcowych"
+                    type="number"
+                    value={numUnloadingCities}
+                    onChange={(e) => setNumUnloadingCities(e.target.value)}
+                    size="small"
+                    fullWidth
+                />
+            </Grid>}
         </Grid>
     );
 };
