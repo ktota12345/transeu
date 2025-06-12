@@ -36,7 +36,7 @@ export class CountriesController {
         const sortObj = buildSort(query['sort[field]'], query['sort[order]']);
         const filterObj = buildFilters(query);
 
-        const [countries, total] = await this.countriesService.findAll(skip, take, filterObj, sortObj);
+        const [countries, total] = await this.countriesService.findAll(skip, 250, filterObj, sortObj);
 
         res.setHeader('Content-Range', `countries ${skip}-${skip + countries.length - 1}/${total}`);
         res.setHeader('Access-Control-Expose-Headers', 'Content-Range');
