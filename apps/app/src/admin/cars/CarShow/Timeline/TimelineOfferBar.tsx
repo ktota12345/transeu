@@ -19,6 +19,9 @@ export const TimelineOfferBar = ({
                                      selectedOfferId,
                                      onSelect
                                  }: Props) => {
+    if(offer.to === null) {
+        offer.to = offer.from
+    }
     const leftFrom = getPercent(offer.from, from, to);
     const leftLatestFrom = getPercent(offer.latestFrom || offer.from, from, to);
     const rightEarliestTo = getPercent(offer.earliestTo || offer.to, from, to);

@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const TimelineDayLabel = ({ date, from, to }: Props) => {
-    const left = getPercent(date, from, to);
+    const left = getPercent(date??new Date(), from, to);
 
     return (
         <>
