@@ -56,7 +56,8 @@ export const CarEdit = () => {
                     sort={{field: 'name', order: 'ASC'}}
                     filterToQuery={(searchText: string) => ({name: searchText})}
                 >
-                    <SelectInput optionText="name" optionValue="code" />
+                    <SelectInput optionText="name" optionValue="code"
+                                 label="Kraj" />
                 </ReferenceInput>
                 <TextInput source="baseAddress.postalCode" label="Kod pocztowy"/>
                 <TextInput source="baseAddress.city" label="Miasto"/>

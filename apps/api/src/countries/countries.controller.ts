@@ -15,6 +15,7 @@ import { CountriesService } from './countries.service';
 import { Prisma } from '../../generated/prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { getPagination, buildSort, buildFilters } from '../helpers/helpers';
+import {isNumber} from "class-validator";
 
 @Controller('countries')
 @UseGuards(JwtAuthGuard)
@@ -35,8 +36,15 @@ export class CountriesController {
 
         const sortObj = buildSort(query['sort[field]'], query['sort[order]']);
         const filterObj = buildFilters(query);
-        filterObj['code'] = filterObj['id'];
-        delete filterObj['id'];
+        if(
+            filterObj['id']
+            && filterObj['id'].in
+            && filterObj['id'].in.length > 0
+            && !isNumber(filterObj['id'].in[0])
+        ) {
+            filterObj['code'] = filterObj['id'];
+            delete filterObj['id'];
+        }
 
         const [countries, total] = await this.countriesService.findAll(skip, 250, filterObj, sortObj);
 
