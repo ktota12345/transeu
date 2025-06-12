@@ -45,17 +45,15 @@ export const General = () => {
                         <Typography variant="body2" color="textSecondary">Dozwolone kraje</Typography>
                     </Grid>
                     <Grid item xs={8}>
-                        <div style={{maxHeight:100,overflow:'auto'}}>
                         {driver && driver.allowedCountries && driver.allowedCountries.length > 0 ? (
                             <ReferenceArrayField reference="countries" source="allowedCountries" record={driver} >
-                                <SingleFieldList>
-                                    <TextField source="name" link={false}/>
+                                <SingleFieldList linkType={false}>
+                                    <TextField source="code" style={{fontSize:11,lineHeight:'100%'}}/>
                                 </SingleFieldList>
                             </ReferenceArrayField>
                         ) : (
                             <Typography variant="body2" color="textSecondary">Brak dozwolonych krajów</Typography>
                         )}
-                        </div>
                     </Grid>
 
                     <Grid item xs={4}>
