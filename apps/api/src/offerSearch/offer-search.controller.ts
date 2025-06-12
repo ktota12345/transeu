@@ -66,6 +66,7 @@ export class OfferSearchController {
 
                 const destinationCities = result.statistics?.destinations?.map((d) => ({
                     name: d.city,
+                    postalCode:d.postal_code,
                     latitude: d.latitude,
                     longitude: d.longitude,
                     country: d.country || 'DE',

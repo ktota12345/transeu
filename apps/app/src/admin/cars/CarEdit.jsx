@@ -15,6 +15,7 @@ import {
 } from 'react-admin';
 import {trailerTypes, scheduleStatuses} from "../../data/dictOptions";
 import {Typography} from "@mui/material";
+import React from "react";
 
 export const CarEdit = () => {
 
@@ -46,7 +47,17 @@ export const CarEdit = () => {
                 </ReferenceInput>
 
                 <Typography variant="h6" gutterBottom>Adres bazowy</Typography>
-                <TextInput source="baseAddress.country" label="Kraj"/>
+
+                <ReferenceInput
+                    source="baseAddress.country"
+                    reference="countries"
+                    label="Kraj"
+                    perPage={250}
+                    sort={{field: 'name', order: 'ASC'}}
+                    filterToQuery={(searchText: string) => ({name: searchText})}
+                >
+                    <SelectInput optionText="name" optionValue="code" />
+                </ReferenceInput>
                 <TextInput source="baseAddress.postalCode" label="Kod pocztowy"/>
                 <TextInput source="baseAddress.city" label="Miasto"/>
                 <TextInput source="baseAddress.latitude" label="Szerokość geograficzna"/>

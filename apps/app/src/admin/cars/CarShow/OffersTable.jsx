@@ -170,7 +170,7 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssigned
                                         )}
                                         {formatPrice(offer.tollCost?.general?.value, 'EUR')} <br />
                                         {offer.tollCost?.hasNonEuCountries && (<Typography style={{whiteSpace:'nowrap'}}>
-                                            eu: {formatPrice(offer.tollCost?.eu?.value, 'EUR')}</Typography>)}
+                                            EU: {formatPrice(offer.tollCost?.eu?.value, 'EUR')}</Typography>)}
                                     </TableCell>
                                     <TableCell>
                                         {formatPrice(offer.pricePerKmEurGrossCorrected, 'EUR')} ({formatDistance(offer.tollCost?.general?.distance)})

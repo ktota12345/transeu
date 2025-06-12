@@ -18,7 +18,8 @@ import {
     ViewModule as BodyPropertyIcon,
     Build as EquipmentIcon,
     Tune as SearchSetupIcon,
-    VpnKey as TokenIcon
+    VpnKey as TokenIcon,
+    PeopleAlt as ContractorIcon
 } from '@mui/icons-material';
 import { Collapse, List } from '@mui/material';
 
@@ -30,6 +31,11 @@ export const CustomMenu = () => {
 
     return (
         <Menu>
+            <MenuItemLink
+                to={`${process.env.REACT_APP_ADMIN_PREFIX}contractors`}
+                primaryText="Kontrahenci"
+                leftIcon={<ContractorIcon />}
+            />
             <MenuItemLink
                 to={`${process.env.REACT_APP_ADMIN_PREFIX}carriers`}
                 primaryText="Przewoźnicy"

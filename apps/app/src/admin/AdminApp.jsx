@@ -33,6 +33,9 @@ import VehicleBodyList from "./vehicleBody/VehicleBodyList";
 import VehicleBodyEdit from "./vehicleBody/VehicleBodyEdit";
 
 
+import ContractorList from "./contractors/ContractorList";
+import {ContractorCreate, ContractorEdit, ContractorShow} from "./contractors/ContractorForm";
+
 
 const AdminApp = () => (
     <Admin
@@ -69,6 +72,12 @@ const AdminApp = () => (
             edit={CarrierEdit}
             create={CarrierCreate}
         />
+        <Resource name={"contractors"}
+                  label="Kontrahenci"
+                  list={ContractorList}
+                  edit={ContractorEdit}
+                  create={ContractorCreate}
+        />
         <Resource
             name="search-schedule-setup"
             list={SearchScheduleSetupList}
@@ -89,10 +98,10 @@ const AdminApp = () => (
                   create={VehicleLoadSecuringCreate}
         />
         <Resource name={"vehicle-equipment"}
-                    label="Wyposażenie pojazdu"
-                    list={VehicleLoadSecuringList}
-                    edit={VehicleLoadSecuringEdit}
-                    create={VehicleLoadSecuringCreate}
+                  label="Wyposażenie pojazdu"
+                  list={VehicleLoadSecuringList}
+                  edit={VehicleLoadSecuringEdit}
+                  create={VehicleLoadSecuringCreate}
         />
         <Resource name={"swap-body"}
                   label="Rodzaje nadwozia"

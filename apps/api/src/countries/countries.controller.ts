@@ -35,6 +35,8 @@ export class CountriesController {
 
         const sortObj = buildSort(query['sort[field]'], query['sort[order]']);
         const filterObj = buildFilters(query);
+        filterObj['code'] = filterObj['id'];
+        delete filterObj['id'];
 
         const [countries, total] = await this.countriesService.findAll(skip, 250, filterObj, sortObj);
 

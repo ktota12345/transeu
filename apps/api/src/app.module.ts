@@ -19,6 +19,7 @@ import {CarScheduleOffersModule} from './carScheduleOffers/car-schedule-offers.m
 import {CarSchedulesModule} from "./carSchedules/car-schedules.module";
 import {CarriersModule} from "./carriers/carriers.module";
 import {SearchScheduleSetupModule} from "./search-schedule-setup/search-schedule-setup.module";
+import {ContractorsModule}   from "./contractors/contractors.module";
 
 import {VehicleBodyModule} from "./car-attributes/vehicle-body/vehicle-body.module";
 import {VehicleTypesModule} from "./car-attributes/vehicle-types/vehicle-types.module"
@@ -62,7 +63,7 @@ import {ScheduleModule} from '@nestjs/schedule';
         ScheduleModule.forRoot(),
 
         TransEuAuthModule,
-
+        ContractorsModule
     ],
     controllers: [
         AppController,

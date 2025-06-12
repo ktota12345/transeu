@@ -327,20 +327,6 @@ model TransEuAppToken {
   updatedAt   DateTime @updatedAt
 }
 
-model offers {
-  id                                   Int       @id @default(autoincrement())
-  starting_center                      String?
-  starting_center_latitude             Decimal?  @db.Decimal
-  starting_center_longitude            Decimal?  @db.Decimal
-  destination_center                   String?
-  destination_center_latitude          Decimal?  @db.Decimal
-  destination_center_longitude         Decimal?  @db.Decimal
-  enlistment_date                      DateTime? @db.Date
-  trailer_avg_price_per_km             Decimal?  @db.Decimal
-  vehicle_up_to_3_5_t_avg_price_per_km Decimal?  @db.Decimal
-  vehicle_up_to_12_t_avg_price_per_km  Decimal?  @db.Decimal
-}
-
 enum Role {
   ADMIN
   USER
@@ -361,4 +347,47 @@ model TollCostCache {
   updatedAt     DateTime @updatedAt
 
   @@index([startLat, startLng, endLat, endLng])
+}
+
+model Contractor {
+  id              Int               @id @default(autoincrement())
+  legalName       String
+  taxId           String?           // NIP itp.
+  address         String?
+  postalCode      String?
+  city            String?
+  country         String?
+
+  aliases         ContractorAlias[]
+  ratings         Rating[]          // Oceny od innych firm
+
+  blacklisted     Boolean           @default(false)
+  blacklistReason String?
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model ContractorAlias {
+  id            Int        @id @default(autoincrement())
+  name          String
+  contractor    Contractor @relation(fields: [contractorId], references: [id])
+  contractorId  Int
+}
+
+model Rating {
+  id              Int        @id @default(autoincrement())
+  contractor      Contractor @relation(fields: [contractorId], references: [id])
+  contractorId    Int
+
+  ratedByCompany  String     // Nazwa firmy oceniającej (można rozszerzyć na relację)
+  ratingAverage   Float      // Np. 4.9
+  communication   Int        // np. 1–5
+  loadAsDescribed Int
+  waitingForLoading   Int
+  waitingForUnloading Int
+  paymentIssue    Boolean    // Czy był problem z płatnością
+
+  comment         String?    // Opcjonalna uwaga do oceny
+  createdAt       DateTime   @default(now())
 }
