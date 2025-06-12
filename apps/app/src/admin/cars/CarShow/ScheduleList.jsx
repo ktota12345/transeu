@@ -30,7 +30,7 @@ export const ScheduleList = () => {
 
     const [numUnloadingCities, setNumUnloadingCities] = useState(10);
     const [searchArea, setSearchArea] = useState(100);
-    const [perPage, setPerPage] = useState(50);
+    const [perPage, setPerPage] = useState(500);
     const [assignedOffers, setAssignedOffers] = useState([]);
     const [selectedOffer, setSelectedOffer] = useState(null);
     const [currentOfferMapped, setCurrentOfferMapped] = useState(null);

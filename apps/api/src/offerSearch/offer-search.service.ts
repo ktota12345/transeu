@@ -475,7 +475,7 @@ export class OfferSearchService {
         }
 
 
-        return allOffers;
+        return allOffers.slice(0, 500);
     }
 
 
@@ -490,20 +490,29 @@ export class OfferSearchService {
     }
 
     private filterOffers(offers: any[]): any[] {
-        return offers.filter(offer =>
-            offer &&
-            typeof offer === 'object' &&
-            'price' in offer &&
-            offer.price &&
-            typeof offer.price === 'object' &&
-            offer.price.amount != null &&
-            typeof offer.price.amount === 'number' &&
-            offer.price.amount >= this.MIN_PRICE
-        );
+        return offers;
+        // return offers.filter(offer =>
+        //     offer &&
+        //     typeof offer === 'object' &&
+        //     'price' in offer &&
+        //     offer.price &&
+        //     typeof offer.price === 'object' &&
+        //     offer.price.amount != null &&
+        //     typeof offer.price.amount === 'number' &&
+        //     offer.price.amount >= this.MIN_PRICE
+        // );
     }
 
     private async mapOffers(offers: any[], plannedLocation: { location: [number, number] }): Promise<any[]> {
         return Promise.all(offers.map(async offer => {
+
+
+            offer.price={
+                amount: offer.price?.amount ?? 0,
+                currency: offer.price?.currency ?? 'EUR',
+            };
+
+
             const price = offer?.price?.amount;
             const distance = offer?.distance_km;
 
@@ -540,7 +549,6 @@ export class OfferSearchService {
                 const convertedGross = await this.exchangeRateService.convertToEUR(price / totalDistance, offer.price.currency);
                 pricePerKmEurGross = Number((convertedGross ?? 0).toFixed(2));
             }
-
             return {
                 ...offer,
                 pricePerKm,
