@@ -11,10 +11,12 @@ import {TransEuHelperService} from './transeuApi/trans-eu-helper.service';
 import {CostCalculationService} from "./costCalculation/cost-calculation.service";
 import {TollGuruCostCalculationService} from "./costCalculation/tollguru-cost-calculation.service";
 import {TomTomCostCalculationService} from "./costCalculation/tomtom-cost-calculation.service";
+import {AuthModule} from "../auth/auth.module";
 
 @Module({
     imports: [
-        PrismaModule],
+        PrismaModule
+    ,AuthModule],
     controllers: [OfferSearchController],
     providers: [
         OfferSearchService,

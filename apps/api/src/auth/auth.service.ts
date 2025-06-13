@@ -106,4 +106,12 @@ export class AuthService {
 
     return true;
   }
+  async verifyAccessToken(token: string) {
+    try {
+      return this.jwtService.verify(token);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid access token');
+    }
+  }
+
 }

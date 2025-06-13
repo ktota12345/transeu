@@ -121,6 +121,7 @@ export const ScheduleList = () => {
     };
 
     const handleSearchOffers = async (plannedLocationOverride = null) => {
+        await axiosNest.get('/countries');
         setLoading(true);
         setError(null);
         setOffers(null);
@@ -136,6 +137,14 @@ export const ScheduleList = () => {
                 searchServices: JSON.stringify(searchServices),
                 useDestinationCityService: useDestinationCityService ? "1" : "0",
             });
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setError("Brak tokena autoryzacyjnego.");
+                setLoading(false);
+                return;
+            }
+            params.append("accessToken", token);
+
 
             if (plannedLocationOverride) {
                 params.append("plannedLocationOverride", JSON.stringify(plannedLocationOverride));

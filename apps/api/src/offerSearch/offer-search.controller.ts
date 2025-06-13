@@ -3,10 +3,11 @@ import {
     Param,
     Query,
     Sse,
-    MessageEvent,
+    MessageEvent, UnauthorizedException,
 } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { OfferSearchService } from './offer-search.service';
+import { AuthService } from '../auth/auth.service';
 
 const SEARCH_AREA = 50;
 
@@ -14,11 +15,13 @@ const SEARCH_AREA = 50;
 export class OfferSearchController {
     constructor(
         private readonly offerSearchService: OfferSearchService,
+        private readonly authService: AuthService,
     ) {}
 
     @Sse('car/:id')
     async car(
         @Param('id') id: string,
+        @Query('accessToken') accessToken: string,
         @Query('numUnloadingCities') numUnloadingCities?: string,
         @Query('searchArea') searchArea?: string,
         @Query('perPage') perPage?: string,
@@ -26,6 +29,14 @@ export class OfferSearchController {
         @Query('searchServices') searchServices?: string,
         @Query('useDestinationCityService') useDestinationCityService?: string,
     ): Promise<Observable<MessageEvent>> {
+
+
+        try {
+            const decoded = await this.authService.verifyAccessToken(accessToken);
+        } catch (err) {
+            throw new UnauthorizedException('Invalid access token');
+        }
+
         const progress$ = new Subject<MessageEvent>();
 
         const carData = await this.offerSearchService.getCarForSearch(parseInt(id), {
