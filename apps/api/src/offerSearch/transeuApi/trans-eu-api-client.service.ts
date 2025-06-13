@@ -61,7 +61,7 @@ export class TransEuApiClientService implements OnModuleInit {
         const cached = await this.readCache(cacheKey);
         if (cached) {
             this.logger.debug(`Zwracam z lokalnego cache: ${cacheKey}`);
-            return cached;
+            //return cached;
         }
 
         const baseUrl = '/ext/offers-api/v2/offers';
@@ -113,7 +113,6 @@ export class TransEuApiClientService implements OnModuleInit {
                 paramsSerializer: (params) =>
                     new URLSearchParams({ filter: JSON.stringify(params.filter) }).toString(),
             });
-
             if (res.status >= 200 && res.status < 300 && res.data) {
                 const offers = res.data?.offers?.map((offer: any) => this.convertToTimocomOffer(offer, 'smartsearch')) || [];
                 const result = {
@@ -157,7 +156,6 @@ export class TransEuApiClientService implements OnModuleInit {
             const operation = spot.operations?.[0];
             const beginDate = operation?.local_timespan?.begin?.substring(0, 10);
             const endDate = operation?.local_timespan?.end?.substring(0, 10);
-
             return {
                 loadingType: type.toUpperCase(),
                 address: {
@@ -229,6 +227,34 @@ export class TransEuApiClientService implements OnModuleInit {
             pricePerKmEur: distanceKm && amount ? +(amount / distanceKm).toFixed(2) : null,
             alreadySaved: false,
             sourceSystem: source,
+
+            offerPublisher: {
+                companyAddress: {
+                    objectType: "postalAddress",
+                    city: null,
+                    country: null,
+                    geoCoordinate: null,
+                    geocoded: false,
+                    postalCode: null,
+                    streetOrPostbox: null,
+                },
+                creationDateTime: null,
+                fax: null,
+                id: null,
+                name: offer.company?.legal_name || null,
+                phone: null,
+                postalAddress: null,
+                taxId: offer.company?.vat_id || null,
+                rating_summary: {
+                    rating_average: offer.company?.rating_summary?.rating_average || null,
+                    ratings_sender_companies_count: offer.company?.rating_summary?.ratings_sender_companies_count || null,
+                },
+                trans_risk:{
+                    description: offer.company?.trans_risk?.description || null,
+                    rating: offer.company?.trans_risk?.rating || null,
+                    score: offer.company?.trans_risk?.score || null,
+                }
+            }
         };
     }
 }

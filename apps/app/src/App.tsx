@@ -3,18 +3,9 @@ import {ChakraProvider} from '@chakra-ui/react';
 import {BrowserRouter as Router, Routes, Route, Navigate, useLocation} from 'react-router-dom';
 import {Provider} from 'react-redux';
 import {store} from './store/store';
-import {AgentsList} from './components/agents/AgentsList';
-import {AgentForm} from './components/agents/AgentForm';
 import {LoginForm} from './components/auth/LoginForm';
 import {isAuthenticated} from './components/auth/auth';
-import Dashboard from './components/dashboard/Dashboard';
 import Layout from './components/layout/Layout';
-import OrdersList from './components/orders/OrdersList';
-import OrderCard from './components/orders/OrderCard';
-import Settings from './components/settings/Settings';
-import Schedule from './components/schedule/Schedule';
-import QuickSearchPage from './pages/QuickSearchPage';
-import AgentHistoryPage from './pages/AgentHistoryPage';
 import AdminApp from './admin/AdminApp';
 
 const RequireAuth = ({children}: { children: JSX.Element }) => {

@@ -40,7 +40,6 @@ export class TomTomCostCalculationService {
 
         try {
             const response = await axios.get(url, { params });
-            console.log(response.data.routes?.[0]); // Debugging output
             const route = response.data.routes?.[0];
 
             // W TomTom w summary może być sekcja tollCosts

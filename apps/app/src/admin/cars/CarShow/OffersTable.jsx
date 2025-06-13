@@ -7,15 +7,12 @@ import {
     TableRow,
     Paper,
     Typography,
-    Button,
-    CircularProgress
 } from "@mui/material";
-
-import {dateFormat, formatDistance, formatPrice, getLoadingPlace, getUnloadingPlace,  googleMapsRouteLink} from '../../../data/helpers';
 import axiosNest from "../../../api/axiosNest";
-import {useState} from "react";
+import {Fragment, useState} from "react";
 import {useNotify} from "react-admin";
-import PlaceInfoCell from "./PlaceInfoCell";
+import {OfferMetaTable} from "./OfferMetaTable";
+import {OfferRow} from "./OffersTable/OfferRow";
 
 export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssignedOffers}) => {
 
@@ -77,28 +74,13 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssigned
 
     return (
         <>
-            <TableContainer component={Paper} sx={{mb: 2}}>
-                <Table size="small">
-                    <TableBody>
-                        <TableRow>
-                            <TableCell><strong>Planowana lokalizacja auta</strong></TableCell>
-                            <TableCell>{plannedLocation} ({plannedLocationDate})</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell><strong>Miasta najdalsze (szukanie)</strong></TableCell>
-                            <TableCell>{furthestCities}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell><strong>Miasta początkowe (załadunek)</strong></TableCell>
-                            <TableCell>{loadingCities.join(', ') || '-'}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell><strong>Miasta docelowe (rozładunek)</strong></TableCell>
-                            <TableCell>{unloadingCities.join(', ') || '-'}</TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <OfferMetaTable
+                plannedLocation={plannedLocation}
+                plannedLocationDate={plannedLocationDate}
+                furthestCities={furthestCities}
+                loadingCities={loadingCities}
+                unloadingCities={unloadingCities}
+            />
 
 
             <Typography variant="h6" gutterBottom>Lista ofert</Typography>
@@ -108,8 +90,6 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssigned
                     <TableHead>
                         <TableRow>
                             <TableCell>Data</TableCell>
-                            <TableCell>System</TableCell>
-                            <TableCell>Ładunek</TableCell>
                             <TableCell>Dystans</TableCell>
                             <TableCell>Załadunek</TableCell>
                             <TableCell>Rozładunek</TableCell>
@@ -118,103 +98,24 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssigned
                             <TableCell>Cena za km</TableCell>
                             <TableCell>Koszty dodatkowe</TableCell>
                             <TableCell>Po korekcie</TableCell>
-                            <TableCell>Trasa</TableCell>
-                            <TableCell>Oferta</TableCell>
-                            <TableCell>Dodaj</TableCell>
+                            <TableCell>Akcja</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {offers.offers.map((offer) => {
-                            const loading = getLoadingPlace(offer);
-                            const unloading = getUnloadingPlace(offer);
 
-                            return (<TableRow
-                                    key={offer.id}
-                                    hover
-                                    selected={selectedOffer?.id === offer.id}
-                                    onClick={() => onSelectOffer(offer)}
-                                    sx={{cursor: "pointer"}}
-                                >
-                                    <TableCell>{dateFormat(offer.creationDateTime)}</TableCell>
-                                    <TableCell>{offer.sourceSystem || 'timo'}</TableCell>
-                                    <TableCell>waga: {offer.weight_t} t
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary">
-                                            {offer.freightDescription}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary"
-                                            sx={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}
-                                        >{offer.startAccessDistance} + {offer.distance_km}</Typography>
-                                        <b>{offer.totalDistance} km</b>
-                                    </TableCell>
-                                    <TableCell>
-                                        <PlaceInfoCell place={loading} />
-                                    </TableCell>
-                                    <TableCell>
-                                        <PlaceInfoCell place={unloading} />
-                                    </TableCell>
-                                    <TableCell>
-                                        {formatPrice(offer.price.amount, offer.price.currency)}
-                                    </TableCell>
-                                    <TableCell>{formatPrice(offer.pricePerKmEur, 'EUR')}</TableCell>
-                                    <TableCell>{formatPrice(offer.pricePerKmEurGross, 'EUR')}</TableCell>
-                                    <TableCell style={{whiteSpace:'nowrap'}}>
-                                        {offer.tollCost?.hasNonEuCountries && (
-                                            <span>{offer.tollCost?.nonEuCountryCodes.join(', ')}: </span>
-                                        )}
-                                        {formatPrice(offer.tollCost?.general?.value, 'EUR')} <br />
-                                        {offer.tollCost?.hasNonEuCountries && (<Typography style={{whiteSpace:'nowrap'}}>
-                                            EU: {formatPrice(offer.tollCost?.eu?.value, 'EUR')}</Typography>)}
-                                    </TableCell>
-                                    <TableCell>
-                                        {formatPrice(offer.pricePerKmEurGrossCorrected, 'EUR')} ({formatDistance(offer.tollCost?.general?.distance)})
-                                        { offer.tollCost?.hasNonEuCountries && (<Typography style={{whiteSpace:'nowrap'}}>
-                                            {formatPrice(offer.pricePerKmEurGrossCorrectedEuOnly, 'EUR')} ({formatDistance(offer.tollCost?.eu?.distance)})
-                                        </Typography>)}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            href={googleMapsRouteLink([
-                                                    {lat: offers.car.plannedLocation.address.location[0], lng: offers.car.plannedLocation.address.location[1]},
-                                                    {lat: loading.address.geoCoordinate.latitude, lng: loading.address.geoCoordinate.longitude},
-                                                    {lat: unloading.address.geoCoordinate.latitude, lng: unloading.address.geoCoordinate.longitude}
-                                                ]
-                                            )} target="_blank" rel="noopener noreferrer">Trasa</Button>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button
-                                            variant="outlined" size="small" href={offer.deeplink} target="_blank" rel="noopener noreferrer">Oferta</Button>
-                                    </TableCell>
-                                    <TableCell>
-                                        {offer.alreadySaved ? (
-                                            <Button
-                                                variant="outlined"
-                                                size="small"
-                                                color="error"
-                                                onClick={() => handleRejectOffer(offer)}
-                                                disabled={loadingOfferId === offer.id}
-                                            >
-                                                {loadingOfferId === offer.id ? <CircularProgress size={16}/> : "Odrzuć"}
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="contained"
-                                                size="small"
-                                                onClick={() => handleAddOffer(offer)}
-                                                disabled={loadingOfferId === offer.id}
-                                            >
-                                                {loadingOfferId === offer.id ? <CircularProgress size={16}/> : "Dodaj"}
-                                            </Button>
-                                        )}
-                                    </TableCell>
-                                </TableRow>
+                            return (
+
+                                    <OfferRow
+                                        key={offer.id}
+                                        offer={offer}
+                                        selectedOffer={selectedOffer}
+                                        onSelectOffer={onSelectOffer}
+                                        loadingOfferId={loadingOfferId}
+                                        handleAddOffer={handleAddOffer}
+                                        handleRejectOffer={handleRejectOffer}
+                                        carPlannedLocation={offers.car.plannedLocation.address.location}
+                                    />
                             );
                         })}
                     </TableBody>

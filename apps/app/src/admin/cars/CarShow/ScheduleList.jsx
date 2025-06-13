@@ -190,7 +190,7 @@ export const ScheduleList = () => {
             eventSource.onerror = (err) => {
                 console.error("Błąd SSE:", err);
 
-                let errorMessage = "Błąd połączenia SSE.";
+                let errorMessage = "Błąd połączenia SSE: " + JSON.stringify(err?.data, null, 2);
                 if (err?.message) {
                     errorMessage = err.message;
                 } else if (err?.status) {

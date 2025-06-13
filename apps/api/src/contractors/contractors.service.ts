@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {BadRequestException, Injectable} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {Prisma, Contractor} from '../../generated/prisma/client';
 import {isNumber} from "class-validator";
@@ -9,6 +9,15 @@ export class ContractorsService {
     }
 
     async create(data: Prisma.ContractorCreateInput): Promise<Contractor> {
+
+        if (data.taxId) {
+            const exists = await this.prisma.contractor.findFirst({
+                where: { taxId: data.taxId },
+            });
+            if (exists) {
+                throw new BadRequestException(`Kontrahent z NIP-em ${data.taxId} już istnieje.`);
+            }
+        }
         const {aliases, ratings, ...rest} = data as any;
 
         return this.prisma.contractor.create({
@@ -130,5 +139,6 @@ export class ContractorsService {
             },
         });
     }
+
 
 }

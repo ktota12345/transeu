@@ -621,8 +621,27 @@ export class OfferSearchService {
                 const pricePerKmEurGrossCorrected =((offerTotalPriceEur??0) / (distance + startAccessDistance)) - (tollCostPerKm ?? 0);
                 const pricePerKmEurGrossCorrectedEuOnly = ((offerTotalPriceEur??0) / (distanceEuOnly + startAccessDistance)) - (tollCostPerKmEUOnly ?? 0);
 
+                let offerPublisher = (offer.sourceSystem  === 'smartsearch') ?
+                    offer.offerPublisher:
+                    await this.timocomApiService.getOfferPublisherByOfferId(offer.id)
+                    ;
+                if (offerPublisher?.taxId) {
+                    const existingContractor = await this.prisma.contractor.findFirst({
+                        where: { taxId: offerPublisher.taxId },
+                        select: { id: true, blacklisted: true }
+                    });
+
+                    if (existingContractor) {
+                        offerPublisher = {
+                            ...offerPublisher,
+                            contractorId: existingContractor.id,
+                            isBlackListed: existingContractor.blacklisted
+                        };
+                    }
+                }
                 return {
                     ...offer,
+                    offerPublisher: offerPublisher??offer.offerPublisher?? null,
                     tollCost: {
                         hasNonEuCountries: hasNonEuCountries,
                         nonEuCountryCodes: nonEuCountryCodes,
@@ -644,7 +663,7 @@ export class OfferSearchService {
 
                     pricePerKmEurGrossCorrected: pricePerKmEurGrossCorrected,
                     pricePerKmEurGrossCorrectedEuOnly: pricePerKmEurGrossCorrectedEuOnly,
-                    tollCostAllInfo: tollCost.allInfo,
+                    tollCostAllInfo: null,//tollCost.allInfo,
                 };
             })
         );

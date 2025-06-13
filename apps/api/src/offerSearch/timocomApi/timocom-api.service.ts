@@ -121,6 +121,26 @@ export class TimocomApiService {
         }
     }
 
+
+    async getSingleOffer(offerId: string): Promise<any> {
+        try {
+            const res = await this.client.get('/freight-offers', {
+                params: { ids: offerId }
+            });
+            return res.data.payload?.[0] ?? null;
+        } catch (e) {
+            this.logger.error('Błąd getSingleOffer:', e.response?.data || e.message);
+            return this.handleError(e);
+        }
+    }
+
+
+    async getOfferPublisherByOfferId(offerId: string): Promise<any> {
+        const offer = await this.getSingleOffer(offerId);
+        if (!offer) return null;
+        return offer.customer || null;
+    }
+
     private handleError(error: any) {
         const response = error.response;
         if (response) {
