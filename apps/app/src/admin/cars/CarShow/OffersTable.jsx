@@ -6,13 +6,12 @@ import {
     TableHead,
     TableRow,
     Paper,
-    Link,
     Typography,
     Button,
     CircularProgress
 } from "@mui/material";
 
-import {dateFormat, formatDistance, formatPrice, getLoadingPlace, getUnloadingPlace, googleMapsLink, googleMapsRouteLink} from '../../../data/helpers';
+import {dateFormat, formatDistance, formatPrice, getLoadingPlace, getUnloadingPlace,  googleMapsRouteLink} from '../../../data/helpers';
 import axiosNest from "../../../api/axiosNest";
 import {useState} from "react";
 import {useNotify} from "react-admin";

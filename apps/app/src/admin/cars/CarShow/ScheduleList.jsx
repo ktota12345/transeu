@@ -1,5 +1,5 @@
 import {DateField, useRecordContext} from "react-admin";
-import {useState, useEffect} from "react";
+import {useState, useEffect, useCallback} from "react";
 import axiosNest from "../../../api/axiosNest";
 import {
     Button,
@@ -14,7 +14,6 @@ import {CarPlanTimeline} from "./CarPlanTimeline";
 import {OfferDetailsCard} from "./OfferDetailsCard";
 import {getUnloadingPlace} from "../../../data/helpers";
 import {CarPlanSummary} from "./CarPlanSummary";
-import AxiosNest from "../../../api/axiosNest";
 import { ProgressBar } from "./ProgressBar";
 
 export const ScheduleList = () => {
@@ -44,7 +43,7 @@ export const ScheduleList = () => {
     });
 
     const currentSchedule = futureSchedules[0];
-    const fetchAssignedOffers = async () => {
+    const fetchAssignedOffers = useCallback(async () => {
         if (!record?.id || !currentSchedule?.id) return;
 
         try {
@@ -59,12 +58,12 @@ export const ScheduleList = () => {
                 }
             });
 
-            setAssignedOffers(res.data); // ← pełna lista obiektów
-            setCurrentOfferMapped(null); // resetuj aktualną ofertę
+            setAssignedOffers(res.data);
+            setCurrentOfferMapped(null);
         } catch (e) {
             console.error("Błąd podczas pobierania assignedOffers", e);
         }
-    };
+    }, [record?.id, currentSchedule?.id]);
     useEffect(() => {
         if (selectedOffer) {
             setCurrentOfferMapped(mapOfferToTimelineFormat(selectedOffer));
@@ -78,7 +77,7 @@ export const ScheduleList = () => {
         if (record && currentSchedule) {
             fetchAssignedOffers();
         }
-    }, [record, currentSchedule]);
+    }, [record, currentSchedule, fetchAssignedOffers]);
     const handleDeleteOffer = async (offerId) => {
         const confirmed = window.confirm("Czy na pewno chcesz usunąć tę ofertę?");
         if (!confirmed) return;
@@ -181,7 +180,15 @@ export const ScheduleList = () => {
 
             eventSource.onerror = (err) => {
                 console.error("Błąd SSE:", err);
-                setError("Błąd połączenia SSE.");
+
+                let errorMessage = "Błąd połączenia SSE.";
+                if (err?.message) {
+                    errorMessage = err.message;
+                } else if (err?.status) {
+                    errorMessage = `Błąd SSE – status: ${err.status}`;
+                }
+
+                setError(errorMessage);
                 eventSource.close();
                 setLoading(false);
             };
@@ -191,36 +198,6 @@ export const ScheduleList = () => {
             setOffers(null);
             setLoading(false);
         }
-    };
-
-    const handleSearchOffersOld = async (plannedLocationOverride = null) => {
-        setLoading(true);
-        setError(null);
-        setOffers(null);
-
-        try {
-            const params = {
-                numUnloadingCities,
-                searchArea,
-                perPage,
-                searchServices: JSON.stringify(searchServices),
-            };
-
-            if (plannedLocationOverride) {
-                params.plannedLocationOverride = plannedLocationOverride;
-            }
-            params.useDestinationCityService = useDestinationCityService?1:0;
-
-            console.log(params);
-
-            const res = await axiosNest.get(`/offerSearch/car/${record.id}`, { params });
-            console.log(res.data.progress);
-            setOffers(res.data);
-        } catch (error) {
-            setError("Błąd podczas pobierania ofert.");
-            setOffers(null);
-        }
-        setLoading(false);
     };
 
     function mapOfferToTimelineFormat(offer) {

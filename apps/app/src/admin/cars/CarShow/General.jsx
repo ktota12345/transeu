@@ -3,7 +3,7 @@ import { ReferenceArrayField, ReferenceField, SingleFieldList, TextField, useGet
 
 export const General = () => {
     const record = useRecordContext();
-    const { data: driver, isLoading, error } = useGetOne('drivers', { id: record?.driverId??0 });
+    const { data: driver } = useGetOne('drivers', { id: record?.driverId??0 });
     if (!record) return null;
 
 

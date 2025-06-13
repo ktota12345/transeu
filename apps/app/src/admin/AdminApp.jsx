@@ -34,7 +34,7 @@ import VehicleBodyEdit from "./vehicleBody/VehicleBodyEdit";
 
 
 import ContractorList from "./contractors/ContractorList";
-import {ContractorCreate, ContractorEdit, ContractorShow} from "./contractors/ContractorForm";
+import {ContractorCreate, ContractorEdit} from "./contractors/ContractorForm";
 
 
 const AdminApp = () => (

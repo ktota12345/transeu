@@ -7,10 +7,9 @@ import {
     useRefresh,
     useNotify,
     useUpdate,
-    Button, EditButton, ShowButton,
+    Button, EditButton,
 } from 'react-admin';
 import ContractorFilters from './ContractorFilters';
-import { Stack } from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
 import UndoIcon from '@mui/icons-material/Undo';
 

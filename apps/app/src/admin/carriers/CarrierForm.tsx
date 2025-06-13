@@ -110,8 +110,6 @@ const ContactsInput = () => (
 );
 
 const CarrierEditFields = () => {
-    const record = useRecordContext();
-    const contact = record?.contacts?.[0];
 
     return (
         <>

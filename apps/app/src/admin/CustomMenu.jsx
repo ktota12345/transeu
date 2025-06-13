@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Menu, MenuItemLink, useSidebarState } from 'react-admin';
-import { Link } from 'react-router-dom';
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import {
     ExpandLess,
     ExpandMore,
-    Dashboard as DashboardIcon,
     LocalOffer as OfferIcon,
     LocalShipping as CarrierIcon,
     DirectionsCar as CarIcon,
