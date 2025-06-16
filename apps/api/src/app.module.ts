@@ -20,6 +20,7 @@ import {CarSchedulesModule} from "./carSchedules/car-schedules.module";
 import {CarriersModule} from "./carriers/carriers.module";
 import {SearchScheduleSetupModule} from "./search-schedule-setup/search-schedule-setup.module";
 import {ContractorsModule}   from "./contractors/contractors.module";
+import {CompaniesModule} from "./companies/companies.module";
 
 import {VehicleBodyModule} from "./car-attributes/vehicle-body/vehicle-body.module";
 import {VehicleTypesModule} from "./car-attributes/vehicle-types/vehicle-types.module"
@@ -34,6 +35,7 @@ import {ExchangeRateModule} from './exchangeRate/exchange-rate.module';
 import {TransEuAuthModule} from './transeu-auth/trans-eu-auth.module';
 import {ScheduleModule} from '@nestjs/schedule';
 
+
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -45,6 +47,7 @@ import {ScheduleModule} from '@nestjs/schedule';
         CarScheduleOffersModule,
         CarSchedulesModule,
         CarriersModule,
+        CompaniesModule,
         SearchScheduleSetupModule,
 
         VehicleTypesModule,

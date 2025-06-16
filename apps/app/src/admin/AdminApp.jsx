@@ -35,6 +35,12 @@ import VehicleBodyEdit from "./vehicleBody/VehicleBodyEdit";
 
 import ContractorList from "./contractors/ContractorList";
 import {ContractorCreate, ContractorEdit} from "./contractors/ContractorForm";
+import CompanyList from "./companies/CompanyList";
+import {CompanyEdit} from "./companies/CompanyEdit";
+import {CompanyCreate} from "./companies/CompanyCreate";
+import UserList from "./users/UserList";
+import UserEdit from "./users/UserEdit";
+import UserCreate from "./users/UserCreate";
 
 
 const AdminApp = () => (
@@ -119,6 +125,20 @@ const AdminApp = () => (
                   label="Rodzaj zabudowy"
                   list={VehicleBodyList}
                   edit={VehicleBodyEdit}
+        />
+
+        <Resource
+            name="companies"
+            list={CompanyList}
+            edit={CompanyEdit}
+            create={CompanyCreate}
+        />
+
+        <Resource
+            name="users"
+            list={UserList}
+            edit={UserEdit}
+            create={UserCreate}
         />
 
     </Admin>

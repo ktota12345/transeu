@@ -1,14 +1,17 @@
-// src/users/users.service.ts
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service'; // Importujemy PrismaService
+import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '../../generated/prisma/client';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
     constructor(private prisma: PrismaService) {}
 
-
     async create(data: Prisma.UserCreateInput) {
+        if (data.password) {
+            const hashedPassword = await bcrypt.hash(data.password, 10);
+            data.password = hashedPassword;
+        }
         return this.prisma.user.create({ data });
     }
 
@@ -35,6 +38,15 @@ export class UsersService {
     }
 
     async update(id: number, data: Prisma.UserUpdateInput) {
+        // Jeśli jest password w danych, zahashuj je
+        if ('password' in data && data.password) {
+            const hashedPassword = await bcrypt.hash(data.password as string, 10);
+            data.password = hashedPassword;
+        } else {
+            // Jeśli password jest undefined lub null, usuń pole z update, żeby nie nadpisać
+            delete data.password;
+        }
+
         return this.prisma.user.update({
             where: { id },
             data,
@@ -46,15 +58,14 @@ export class UsersService {
             where: { id },
         });
     }
+
     async findByEmail(email: string) {
-        // Zwracamy użytkownika z pełnymi danymi (w tym hasłem)
         return this.prisma.user.findUnique({
             where: { email },
         });
     }
 
     async findById(id: number) {
-        // Zwracamy użytkownika z pełnymi danymi (w tym hasłem)
         return this.prisma.user.findUnique({
             where: { id },
         });

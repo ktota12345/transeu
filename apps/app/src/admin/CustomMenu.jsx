@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, MenuItemLink, useSidebarState } from 'react-admin';
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import {useAuth} from '../components/auth/useAuth';
 import {
     ExpandLess,
     ExpandMore,
@@ -17,15 +18,22 @@ import {
     Build as EquipmentIcon,
     Tune as SearchSetupIcon,
     VpnKey as TokenIcon,
-    PeopleAlt as ContractorIcon
+    PeopleAlt as ContractorIcon,
+    Business as CompanyIcon,
+    Group as UsersIcon,
+    AdminPanelSettings as AdminIcon
 } from '@mui/icons-material';
 import { Collapse, List } from '@mui/material';
 
 export const CustomMenu = () => {
     const [openCars, setOpenCars] = useState(false);
     const [openConfig, setOpenConfig] = useState(false);
+    const [openAdmin, setOpenAdmin] = useState(false);
     const [open] = useSidebarState(); // open === true jeśli menu rozwinięte
+    const { getUserData } = useAuth();
 
+    const { role } =getUserData();
+    const isAdmin = role === 'ADMIN';
 
     return (
         <Menu>
@@ -135,6 +143,38 @@ export const CustomMenu = () => {
                     />
                 </List>
             </Collapse>
+            {/* Administracja */}
+            {isAdmin && (
+                <>
+                    <ListItemButton onClick={() => setOpenAdmin(!openAdmin)}>
+                        <ListItemIcon>
+                            <AdminIcon />
+                        </ListItemIcon>
+                        {open && (
+                            <>
+                                <ListItemText primary="Administracja" />
+                                {openAdmin ? <ExpandLess /> : <ExpandMore />}
+                            </>
+                        )}
+                    </ListItemButton>
+                    <Collapse in={openAdmin} timeout="auto" unmountOnExit>
+                        <List disablePadding>
+                            <MenuItemLink
+                                to={`${process.env.REACT_APP_ADMIN_PREFIX}companies`}
+                                primaryText="Firmy"
+                                leftIcon={<CompanyIcon />}
+                                style={{ paddingLeft: open ? 32 : 16 }}
+                            />
+                            <MenuItemLink
+                                to={`${process.env.REACT_APP_ADMIN_PREFIX}users`}
+                                primaryText="Użytkownicy"
+                                leftIcon={<UsersIcon />}
+                                style={{ paddingLeft: open ? 32 : 16 }}
+                            />
+                        </List>
+                    </Collapse>
+                </>
+            )}
         </Menu>
     );
 };
