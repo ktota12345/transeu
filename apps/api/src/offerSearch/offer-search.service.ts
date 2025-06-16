@@ -453,19 +453,6 @@ export class OfferSearchService {
             }
             allOffers.push(...timocomOffers);
         }
-        /*
-        if (searchServices.includes('transEu')) {
-            const partialTransEuOffers = await this.transEuApiAppService.fetchOffers(searchParams);
-            const transEuOffers = await this.mapOffers(this.filterOffers(partialTransEuOffers?.data?.payload ?? []),
-                carData.plannedLocation.address);
-            if (partialTransEuOffers?.data?.payload?.length > 0) {
-                console.log(partialTransEuOffers?.data?.payload?.length, 'transEu before filter offers found');
-                console.log(transEuOffers.length, 'transEu after filter offers found');
-            }
-            allOffers.push(...transEuOffers);
-        }
-
-         */
         if (searchServices.includes('smartsearch')) {
             const partialTransEuSmartSearchOffers = await this.transEuApiClientService.fetchOffers(searchParams);
             const transEuSmartSearchOffers = await this.mapOffers(this.filterOffers(partialTransEuSmartSearchOffers?.data?.payload ?? []),
@@ -506,7 +493,7 @@ export class OfferSearchService {
         // );
     }
 
-    private async mapOffers(offers: any[], plannedLocation: { location: [number, number] }): Promise<any[]> {
+    private async mapOffers(offers: any[], plannedLocation?: { location: [number, number] }): Promise<any[]> {
         return Promise.all(offers.map(async offer => {
 
 
@@ -525,7 +512,7 @@ export class OfferSearchService {
             const startLng = loading?.address?.geoCoordinate?.longitude;
 
             let startAccessDistance = 0;
-            if (typeof startLat === 'number' && typeof startLng === 'number') {
+            if (typeof startLat === 'number' && typeof startLng === 'number' && plannedLocation) {
                 startAccessDistance = Math.round(this.transEuHelperService.calculateDistance(
                     plannedLocation.location[0],
                     plannedLocation.location[1],
@@ -676,6 +663,31 @@ export class OfferSearchService {
         }));
 
         return [...enhancedOffers, ...restOffers];
+    }
+
+    async getOfferDetails(offerId: string, sourceSystem: string) {
+        if (sourceSystem === 'timo') {
+            const response = await this.timocomApiService.getSingleOffer(offerId);
+            const offers = await this.mapOffers([response]);
+            const enchancedOffers = await this.enhanceOffers(offers, 1);
+            return enchancedOffers[0];
+        }
+        if (sourceSystem === 'smartsearch') {
+            const searchParams = {
+                paging: {
+                    page: 1,
+                    limit: 1,
+                },
+                id: offerId,
+            }
+            const response = await this.transEuApiClientService.fetchOffers(searchParams);
+            if (!response?.data?.payload || response.data.payload.length === 0) {
+                return null;
+            }
+            const enchancedOffers = await this.enhanceOffers(response.data.payload, 1);
+            return enchancedOffers[0];
+        }
+        throw new Error(`Unsupported source system: ${sourceSystem}`);
     }
 
 

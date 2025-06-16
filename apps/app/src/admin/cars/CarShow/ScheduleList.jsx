@@ -308,6 +308,7 @@ export const ScheduleList = () => {
                             onSelectOffer={setSelectedOffer}
                             selectedOffer={selectedOffer}
                             fetchAssignedOffers={fetchAssignedOffers}
+                            setOffers={setOffers}
                         />
                     )}
 

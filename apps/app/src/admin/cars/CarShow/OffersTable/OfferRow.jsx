@@ -18,11 +18,13 @@ export const OfferRow = ({
                              loadingOfferId,
                              handleAddOffer,
                              handleRejectOffer,
-                             carPlannedLocation
+                             carPlannedLocation,
+                             onUpdateOffer
                          }) => {
 
     const [addingContractor, setAddingContractor] = useState(false);
     const [contractorAdded, setContractorAdded] = useState(false);
+    const [loadingDetails, setLoadingDetails] = useState(false);
     const loading = getLoadingPlace(offer);
     const unloading = getUnloadingPlace(offer);
     const notify = useNotify();
@@ -57,6 +59,27 @@ export const OfferRow = ({
             setAddingContractor(false);
         }
     };
+
+    const loadOfferDetails = async (offerId, sourceSystem) => {
+        const system = sourceSystem??'timo';
+        if (!offerId || !system) return;
+        setLoadingDetails(true);
+
+        try {
+            const response = await axiosNest.get(`/offerSearch/details/${offerId}/${system}`);
+            const updatedOffer = response.data;
+            console.log(updatedOffer);
+
+            onUpdateOffer(offerId, updatedOffer);
+
+        } catch (error) {
+            notify("Nie udało się pobrać szczegółów oferty", {type: "error"});
+            console.error("Error loading offer details:", error);
+        } finally {
+            setLoadingDetails(false);
+        }
+    };
+
 
 
     return (
@@ -143,6 +166,8 @@ export const OfferRow = ({
                             ⚠️ Firma znajduje się na czarnej liście!
                         </Typography>
                     )}
+                    {offer.offerPublisher?.taxId ? (
+                        <>
                     {offer?.offerPublisher?.contractorId ? (
                         <Link to={`/admin/contractors/${offer.offerPublisher.contractorId}`} target="_blank" rel="noopener noreferrer">
                             zobacz
@@ -161,6 +186,19 @@ export const OfferRow = ({
                             </Button>
                         )
                     )}
+                    </>) : (
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => loadOfferDetails(offer?.id, offer.sourceSystem)}
+                            disabled={loadingDetails}
+                        >
+                            {loadingDetails ? "Wyczytywanie..." : "Wczytaj szczegóły"}
+                        </Button>
+
+                    )}
+
+
                 </TableCell>
 
                 <TableCell colSpan={2} align="right"  style={{borderBottom:'2px solid #000000'}}>

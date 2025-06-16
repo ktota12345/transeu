@@ -3,7 +3,7 @@ import {
     Param,
     Query,
     Sse,
-    MessageEvent, UnauthorizedException,
+    MessageEvent, UnauthorizedException, NotFoundException, InternalServerErrorException, Get,
 } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { OfferSearchService } from './offer-search.service';
@@ -115,5 +115,21 @@ export class OfferSearchController {
             });
 
         return progress$.asObservable();
+    }
+    @Get('details/:id/:sourceSystem')
+    async getOfferDetails(
+        @Param('id') id: string,
+        @Param('sourceSystem') sourceSystem: string
+    ) {
+        try {
+            const offerDetails = await this.offerSearchService.getOfferDetails(id, sourceSystem);
+            if (!offerDetails) {
+                throw new NotFoundException('Nie znaleziono oferty');
+            }
+            return offerDetails;
+        } catch (error) {
+            console.error('Błąd pobierania szczegółów oferty:', error);
+            throw new InternalServerErrorException('Wystąpił błąd podczas pobierania szczegółów oferty');
+        }
     }
 }

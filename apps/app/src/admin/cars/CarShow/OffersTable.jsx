@@ -14,7 +14,7 @@ import {useNotify} from "react-admin";
 import {OfferMetaTable} from "./OfferMetaTable";
 import {OfferRow} from "./OffersTable/OfferRow";
 
-export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssignedOffers}) => {
+export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssignedOffers, setOffers}) => {
 
     const [loadingOfferId, setLoadingOfferId] = useState(null);
 
@@ -70,6 +70,15 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssigned
             setLoadingOfferId(null);
         }
     };
+    const handleUpdateOffer = (offerId, updatedOffer) => {
+        setOffers(prevOffers => {
+                return {
+                    ...prevOffers,
+                    offers: prevOffers.offers.map(offer => offer.id === offerId ? updatedOffer : offer)
+                }
+            }
+        );
+    };
 
 
     return (
@@ -115,6 +124,7 @@ export const OffersTable = ({offers, onSelectOffer, selectedOffer, fetchAssigned
                                         handleAddOffer={handleAddOffer}
                                         handleRejectOffer={handleRejectOffer}
                                         carPlannedLocation={offers.car.plannedLocation.address.location}
+                                        onUpdateOffer={handleUpdateOffer}
                                     />
                             );
                         })}
