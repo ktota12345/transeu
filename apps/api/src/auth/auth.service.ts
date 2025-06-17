@@ -113,5 +113,15 @@ export class AuthService {
       throw new UnauthorizedException('Invalid access token');
     }
   }
+  async getUserFromToken(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token);
+      return this.usersService.findByEmail(decoded.email);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid access token');
+    }
+  }
+
+
 
 }

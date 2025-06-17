@@ -8,21 +8,20 @@ export const buildSort = (sortField: string | undefined, sortOrder: string | und
     return undefined;
 };
 
-// helpers.ts
-export function buildFilters(query: Record<string, any>) {
+export function buildFilters(query: Record<string, any>, companyId: number | null = null) {
     const filterObj: Record<string, any> = {};
 
     for (const key in query) {
         if (key.startsWith('filter[') && key.endsWith(']')) {
-            const fieldName = key.slice(7, -1); // Usuwamy 'filter[' i ']' z klucza
-            filterObj[fieldName] = query[key];  // Dodajemy filtr do obiektu
+            const fieldName = key.slice(7, -1);
+            filterObj[fieldName] = query[key];
         }
     }
 
     if (query.filter) {
         try {
             const jsonFilters = JSON.parse(query.filter);
-            Object.assign(filterObj, jsonFilters);  // Łączymy filtry z URL i JSON
+            Object.assign(filterObj, jsonFilters);
         } catch (e) {
             console.error('Błąd parsowania JSON filtra:', e);
         }
@@ -47,6 +46,9 @@ export function buildFilters(query: Record<string, any>) {
                 };
             }
         }
+    }
+    if (companyId !== null) {
+        prismaFilters.companyId = { equals: companyId };
     }
 
     return prismaFilters;

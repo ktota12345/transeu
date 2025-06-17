@@ -329,7 +329,9 @@ model TransEuAppToken {
 
 enum Role {
   ADMIN
+  COMPANY_ADMIN
   USER
+  GUEST
 }
 model TollCostCache {
   id            String   @id @default(uuid())

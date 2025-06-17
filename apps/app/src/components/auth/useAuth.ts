@@ -3,10 +3,14 @@ import { useToast } from '@chakra-ui/react';
 import { jwtDecode } from 'jwt-decode';
 import axiosNest from '../../api/axiosNest';
 
+import {roleHasPrivilege} from '../../shared/permissions';
+
+
 type LoginInput = {
     email: string;
     password: string;
 };
+
 
 export const useAuth = () => {
     const toast = useToast();
@@ -68,6 +72,15 @@ export const useAuth = () => {
         }
     };
 
+    const hasPrivilege = (privilege: string) => {
+        const userData = getUserData();
+        if (!userData.role) return false;
+
+        return roleHasPrivilege(userData.role, privilege);
+    }
+
+
+
     return {
         login,
         logout,
@@ -75,6 +88,7 @@ export const useAuth = () => {
         isAuthenticated: !!localStorage.getItem('token'),
         token: localStorage.getItem('token'),
         refreshToken: localStorage.getItem('refresh_token'),
-        getUserData
+        getUserData,
+        hasPrivilege
     };
 };

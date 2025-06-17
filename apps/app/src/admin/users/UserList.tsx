@@ -5,8 +5,9 @@ import {
     DateField,
     EditButton,
     DeleteButton,
-    ReferenceField,
+    ReferenceField, FunctionField,
 } from 'react-admin';
+import { roles } from '../../shared/permissions';
 
 const UserList = () => (
     <List>
@@ -14,7 +15,10 @@ const UserList = () => (
             <TextField source="id" />
             <TextField source="email" />
             <TextField source="username" />
-            <TextField source="role" />
+            <FunctionField
+                label="Rola"
+                render={record => roles.find(role => role.id === record.role)?.name || 'Nieznana rola'}
+            />
             <ReferenceField source="companyId" reference="companies" emptyText="Brak">
                 <TextField source="name" />
             </ReferenceField>

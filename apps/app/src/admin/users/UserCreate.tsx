@@ -6,12 +6,7 @@ import {
     ReferenceInput,
     PasswordInput,
 } from 'react-admin';
-
-const roles = [
-    { id: 'ADMIN', name: 'Administrator' },
-    { id: 'USER', name: 'Użytkownik' },
-    { id: 'GUEST', name: 'Gość' },
-];
+import { roles } from '../../shared/permissions';
 
 const UserCreate = () => (
     <Create mutationMode="pessimistic">

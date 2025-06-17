@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Menu, MenuItemLink, useSidebarState } from 'react-admin';
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import {useAuth} from '../components/auth/useAuth';
+import { privilegesOptions } from '../shared/permissions';
+
 import {
     ExpandLess,
     ExpandMore,
@@ -30,10 +32,8 @@ export const CustomMenu = () => {
     const [openConfig, setOpenConfig] = useState(false);
     const [openAdmin, setOpenAdmin] = useState(false);
     const [open] = useSidebarState(); // open === true jeśli menu rozwinięte
-    const { getUserData } = useAuth();
+    const { hasPrivilege } = useAuth();
 
-    const { role } =getUserData();
-    const isAdmin = role === 'ADMIN';
 
     return (
         <Menu>
@@ -144,7 +144,7 @@ export const CustomMenu = () => {
                 </List>
             </Collapse>
             {/* Administracja */}
-            {isAdmin && (
+            {hasPrivilege(privilegesOptions.ADMIN_SECTION) && (
                 <>
                     <ListItemButton onClick={() => setOpenAdmin(!openAdmin)}>
                         <ListItemIcon>
@@ -159,18 +159,19 @@ export const CustomMenu = () => {
                     </ListItemButton>
                     <Collapse in={openAdmin} timeout="auto" unmountOnExit>
                         <List disablePadding>
-                            <MenuItemLink
+                            {hasPrivilege(privilegesOptions.MANAGE_COMPANIES) && <MenuItemLink
                                 to={`${process.env.REACT_APP_ADMIN_PREFIX}companies`}
                                 primaryText="Firmy"
                                 leftIcon={<CompanyIcon />}
                                 style={{ paddingLeft: open ? 32 : 16 }}
-                            />
-                            <MenuItemLink
+                            />}
+
+                            {hasPrivilege(privilegesOptions.MANAGE_USERS) && <MenuItemLink
                                 to={`${process.env.REACT_APP_ADMIN_PREFIX}users`}
                                 primaryText="Użytkownicy"
                                 leftIcon={<UsersIcon />}
                                 style={{ paddingLeft: open ? 32 : 16 }}
-                            />
+                            />}
                         </List>
                     </Collapse>
                 </>
