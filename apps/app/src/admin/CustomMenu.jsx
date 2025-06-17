@@ -62,7 +62,8 @@ export const CustomMenu = () => {
                 primaryText="Oferty"
                 leftIcon={<OfferIcon />}
             />
-            <ListItemButton onClick={() => setOpenCars(!openCars)}>
+
+            {hasPrivilege(privilegesOptions.DICTIONARY_SECTION) && (<ListItemButton onClick={() => setOpenCars(!openCars)}>
                 <ListItemIcon>
                     <DictionaryIcon />
                 </ListItemIcon>
@@ -72,9 +73,9 @@ export const CustomMenu = () => {
                         {openCars ? <ExpandLess /> : <ExpandMore />}
                     </>
                 )}
-            </ListItemButton>
+            </ListItemButton>)}
 
-            <Collapse in={openCars} timeout="auto" unmountOnExit>
+            {hasPrivilege(privilegesOptions.DICTIONARY_SECTION) && (<Collapse in={openCars} timeout="auto" unmountOnExit>
                 <List disablePadding>
                     <MenuItemLink
                         to={`${process.env.REACT_APP_ADMIN_PREFIX}vehicle-types`}
@@ -113,9 +114,9 @@ export const CustomMenu = () => {
                         style={{ paddingLeft: open?32:16 }}
                     />
                 </List>
-            </Collapse>
+            </Collapse>)}
 
-            <ListItemButton onClick={() => setOpenConfig(!openConfig)}>
+            {hasPrivilege(privilegesOptions.CONFIG_SECTION) && (<ListItemButton onClick={() => setOpenConfig(!openConfig)}>
                 <ListItemIcon>
                     <ConfigIcon />
                 </ListItemIcon>
@@ -125,7 +126,7 @@ export const CustomMenu = () => {
                         {openCars ? <ExpandLess /> : <ExpandMore />}
                     </>
                 )}
-            </ListItemButton>
+            </ListItemButton>)}
             <Collapse in={openConfig} timeout="auto" unmountOnExit>
                 <List disablePadding>
                     <MenuItemLink

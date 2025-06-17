@@ -11,6 +11,8 @@ export const privilegesOptions = {
     MANAGE_USERS: 'Manage users',
     MANAGE_COMPANIES: 'Manage companies',
     MANAGE_ALL_USERS: 'Manage all users',
+    DICTIONARY_SECTION: 'Dictionary',
+    CONFIG_SECTION: 'Configuration',
 }
 
 const privileges:{
@@ -20,7 +22,9 @@ const privileges:{
         privilegesOptions.ADMIN_SECTION,
         privilegesOptions.MANAGE_COMPANIES,
         privilegesOptions.MANAGE_USERS,
-        privilegesOptions.MANAGE_ALL_USERS
+        privilegesOptions.MANAGE_ALL_USERS,
+        privilegesOptions.DICTIONARY_SECTION,
+        privilegesOptions.CONFIG_SECTION
     ],
     COMPANY_ADMIN: [
         privilegesOptions.ADMIN_SECTION,
