@@ -8,4 +8,5 @@ export interface RequestWithUser extends Request {
         username: string;
         companyId: number;
     };
+    companyScope?: number | null;
 }

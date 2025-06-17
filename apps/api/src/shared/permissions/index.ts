@@ -10,7 +10,7 @@ export const privilegesOptions = {
     ADMIN_SECTION: 'Administrator section',
     MANAGE_USERS: 'Manage users',
     MANAGE_COMPANIES: 'Manage companies',
-    MANAGE_ALL_USERS: 'Manage all users',
+    GLOBAL_CONTEXT: 'Global Context',
 }
 
 const privileges:{
@@ -20,7 +20,7 @@ const privileges:{
         privilegesOptions.ADMIN_SECTION,
         privilegesOptions.MANAGE_COMPANIES,
         privilegesOptions.MANAGE_USERS,
-        privilegesOptions.MANAGE_ALL_USERS
+        privilegesOptions.GLOBAL_CONTEXT
     ],
     COMPANY_ADMIN: [
         privilegesOptions.ADMIN_SECTION,

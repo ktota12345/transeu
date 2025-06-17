@@ -102,6 +102,10 @@ model Company {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   users     User[]
+    carriers Carrier[]
+    drivers  Driver[]
+    contractors Contractor[]
+    cars    Car[]
 }
 
 model Carrier {
@@ -117,6 +121,9 @@ model Carrier {
   cars              Car[]            @relation("CarrierCars")
   contacts          CarrierContact[]
   drivers           Driver[]         @relation("CarrierDrivers")
+
+  companyId       Int @default(4)
+  company         Company           @relation(fields: [companyId], references: [id])
 }
 
 model CarrierContact {
@@ -151,6 +158,9 @@ model Car {
   carrier                 Carrier?                 @relation("CarrierCars", fields: [carrierId], references: [id])
   driver                  Driver?                  @relation(fields: [driverId], references: [id])
   schedules               CarSchedule[]
+
+  companyId       Int @default(4)
+  company         Company           @relation(fields: [companyId], references: [id])
   offers                  CarScheduleOffer[]
   searchNotificationSetup SearchNotificationSetup?
   bodyProperties          BodyProperty[]           @relation("CarBodyProperties")
@@ -193,6 +203,8 @@ model Driver {
   offers           CarScheduleOffer[]
   carrier          Carrier?           @relation("CarrierDrivers", fields: [carrierId], references: [id])
   allowedCountries Country[]          @relation("AllowedCountries")
+  companyId       Int @default(4)
+  company         Company           @relation(fields: [companyId], references: [id])
 }
 
 model CarSchedule {
@@ -359,6 +371,9 @@ model Contractor {
   postalCode      String?
   city            String?
   country         String?
+  companyId       Int @default(4)
+  company         Company           @relation(fields: [companyId], references: [id])
+
 
   aliases         ContractorAlias[]
   ratings         Rating[]          // Oceny od innych firm
