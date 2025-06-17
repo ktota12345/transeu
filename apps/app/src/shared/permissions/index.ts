@@ -5,6 +5,11 @@ export const roles = [
     { id: 'USER', name: 'Użytkownik' },
     { id: 'GUEST', name: 'Gość' },
 ];
+export const limitedRoles = [
+    { id: 'COMPANY_ADMIN', name: 'Administrator firmy' },
+    { id: 'USER', name: 'Użytkownik' },
+    { id: 'GUEST', name: 'Gość' },
+];
 
 export const privilegesOptions = {
     ADMIN_SECTION: 'Administrator section',
