@@ -1,13 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '../../generated/prisma/client';
-import { Car } from '../../generated/prisma/client';
 
 @Injectable()
 export class CarsService {
     constructor(private prisma: PrismaService) {}
 
-    async create(data: Prisma.CarCreateInput) {
+    async create(data: any) {
+        const driverId = data.driverId;
+        if (driverId && typeof driverId === 'number') {
+            data.driver = {
+                connect: { id: driverId },
+            };
+            delete data.driverId;
+        }
+
         return this.prisma.car.create({
             data,
         });
@@ -106,6 +113,9 @@ export class CarsService {
         if ('baseAddressId' in data) {
             delete data.baseAddressId;
         }
+        if ('companyId' in data) {
+            delete data.companyId;
+        }
         const {
             schedules,
             driverId,
@@ -128,6 +138,7 @@ export class CarsService {
                 connect: { id: driverId },
             };
         }
+
 
 
         if (carrierId && typeof carrierId === 'number') {
@@ -283,8 +294,6 @@ export class CarsService {
                 };
             }
         }
-
-
 
         await this.prisma.car.update({
             where: { id },

@@ -106,6 +106,7 @@ model Company {
     drivers  Driver[]
     contractors Contractor[]
     cars    Car[]
+    carScheduleOffers CarScheduleOffer[]
 }
 
 model Carrier {
@@ -240,6 +241,8 @@ model CarScheduleOffer {
   driver        Driver?      @relation(fields: [driverId], references: [id])
   fromAddress   Address?     @relation("OfferFromAddress", fields: [fromAddressId], references: [id])
   toAddress     Address?     @relation("OfferToAddress", fields: [toAddressId], references: [id])
+  companyId       Int @default(4)
+  company         Company           @relation(fields: [companyId], references: [id])
 }
 
 model VehicleType {

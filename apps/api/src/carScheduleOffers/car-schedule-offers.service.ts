@@ -172,6 +172,9 @@ export class CarScheduleOffersService {
                 carSchedule: {connect: {id: matchingSchedule.id}},
                 fromAddress: {connect: {id: fromAddress.id}},
                 toAddress: {connect: {id: toAddress.id}},
+                company: {
+                    connect: {id: car.companyId},
+                }
             },
         });
 

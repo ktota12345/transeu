@@ -23,7 +23,6 @@ import {RequireScopedModel} from "../auth/decorators/require-scoped-model.decora
 
 @Controller('contractors')
 @UseGuards(JwtAuthGuard, CompanyAccessGuard)
-@RequireScopedModel('contractors')
 export class ContractorsController {
     constructor(private readonly contractorsService: ContractorsService) {
     }
