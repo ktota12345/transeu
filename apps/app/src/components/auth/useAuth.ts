@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import axiosNest from '../../api/axiosNest';
 
 import {roleHasPrivilege} from '../../shared/permissions';
+import {useNavigate} from "react-router-dom";
 
 
 type LoginInput = {
@@ -53,6 +54,7 @@ export const useAuth = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('refresh_token');
         toast({ title: 'Wylogowano', status: 'info' });
+        window.location.href = '/login';
     };
 
     const getUserData = () => {
